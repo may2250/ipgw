@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>数字网管---登录</title>
+    <meta charset="utf-8" />
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">    
+    <link rel="stylesheet" href="css/all.css" type="text/css">
+</head>
+<body>
+    <div id="wrapper">	
+		<div id="login" class="animate form">
+				<h1>用户登录</h1> 
+				<p> 
+					<label class="uname" > 用户名 </label>
+					<input class="username" required="required" type="text" autocomplete="off" value='' placeholder="请输入用户名"/>
+				</p>
+				<p> 
+					<label for="password" class="youpasswd"> 密码 </label>
+					<input class="password" required="required" type="password" autocomplete="off" value='' placeholder="请输入密码" />
+				</p>
+				<p class="keeplogin"> 
+					<input type="checkbox" class="loginkeeping" value="loginkeeping" />
+					<label>记住密码</label>
+				</p>
+				<p class="login button"> 
+					<input type="button" class="btn_submit" value="登录" />
+				</p>
+		</div>
+		
+    </div>   
+	<div class="footer">
+		<hr/>
+		<p>© Prevail Software, 2014-2024. All rights reserved.</p>
+	</div>
+	<script type="text/javascript" src="lib/jquery.min.js"></script>
+    <script type="text/javascript">
+        var localip = window.location.href.substr(7, window.location.href.indexOf(':', 7) - 7);
+		var isremember = localStorage.getItem("remember");
+		if(isremember == undefined || isremember == "" || isremember == "false"){
+			localStorage.setItem("remember", false);
+			$('.password').val("");
+		}else{
+			$('.password').val(localStorage.getItem("password"));
+			$('.loginkeeping')[0].checked = true;
+		}
+		$('.username').val(localStorage.getItem("username"));
+		
+		$('.loginkeeping').click(function(){
+			isremember = $('.loginkeeping')[0].checked;
+			localStorage.setItem("username", $('.username')[0].value);
+			if(isremember){
+				localStorage.setItem("remember",true);
+				localStorage.setItem("password", $('.password')[0].value);
+			}else{
+				localStorage.setItem("remember",false);
+				localStorage.setItem("password", "");
+			}
+		});
+		
+		$('.btn_submit').click(function(){
+		    $('.username').removeClass("inputerror");
+		    $('.password').removeClass("inputerror");
+		    var jsonstr = '{"username":"' + $('.username').val() + '","password":"'+$('.password').val() + '"}';
+		    $.ajax({
+                type: "GET",
+                async:false,
+                url: "http://"+localip+":4000/do/login/check",
+                data: JSON.parse(jsonstr),
+                dataType: "json",
+                timeout : 5000,
+                success: function(data){
+                    if(data.sts == 0){
+                        localStorage.setItem("username", $('.username')[0].value);
+                        if(isremember){
+                            localStorage.setItem("remember",true);
+                            localStorage.setItem("password", $('.password')[0].value);
+                        }
+                        window.location.href="http://"+localip+":4000/index.esp";
+                    }else if(data.sts == 1){
+                        $('.username').addClass("inputerror");
+                        alert("用户名不存在!");
+                    }else if(data.sts == 2){
+                        $('.password').addClass("inputerror");
+                        alert("密码错误!");
+                    }
+                },
+                error : function(err) {
+
+                }
+            });
+		});
+		
+    </script> 
+</body>
+</html>

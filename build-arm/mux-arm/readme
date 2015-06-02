@@ -1,0 +1,13 @@
+How to run appweb in arm
+
+#option one to put file
+1. cp -a mux-arm /usr/local/
+2. tar -jcvf mux-arm.tar.bz2 -C /usr/local/
+
+2. vi /etc/profile 
+export PATH="/usr/local/mux-arm/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+export LD_LIBRARY_PATH="/usr/local/mux-arm/lib:/usr/lib:/lib"
+
+3.run
+
+appweb --home /usr/local/mux-arm/muxnms/ --show --config /usr/local/mux-arm/muxnms/appweb.conf

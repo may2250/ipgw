@@ -1,0 +1,34 @@
+{
+    'user': {
+        hints: {
+            ncols: 4
+        },
+        schema: {
+            'id': { type: 'int', autoinc: true, index: true, key: true },
+            'username': { type: 'string' },
+            'password': { type: 'string' },
+            'roles': { type: 'string' },
+        },
+        data: [
+            [ 1,'root','888888','root',],
+            [ 2,'admin','888888','admin',],
+            [ 3,'user','888888','user',],
+        ],
+    },
+    'optlog': {
+        hints: {
+            ncols: 5
+        },
+        schema: {
+            'id': { type: 'int', autoinc: true, index: true, key: true },
+            'user': { type: 'string' },
+            'desc': { type: 'string' },
+            'level': { type: 'int' },
+            'logtime': { type: 'int' },
+        },
+        data: [
+            [ 1,'root','用户登录',1,1433205702,],
+            [ 2,'root','重新分配PID.',2,1433205716,],
+        ],
+    },
+}
