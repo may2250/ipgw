@@ -79,7 +79,7 @@ static void common(HttpConn *conn) {
 /* 
     Dynamic module initialization 
  */  
-ESP_EXPORT int esp_controller_muxnms_login(HttpRoute *route, MprModule *module) {  
+ESP_EXPORT int esp_controller_ipgw_login(HttpRoute *route, MprModule *module) {
     espDefineBase(route, common);  
     espDefineAction(route, "login-cmd-check", checkLogin);  
 	espDefineAction(route, "login-cmd-logout", checkLoginOut); 

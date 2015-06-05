@@ -20,34 +20,37 @@
 			<div class="ny_zb">
 				<div class="ny_zblb1">
 					<ul class="clearfix">
-						<li id="l1">
-							<a class="cur STRING_BASE" href="javascript:toHome()"><strong>节目列表</strong></a>
-						</li>
-						<li class="subs" id="l2">
-							<a class="flag STRING_DETAIL" href="javascript:void(0)"><strong>发送源</strong></a>
+                        <li id="l1">
+                            <a class="cur STRING_BASE" href="javascript:toHome()"><strong>基本信息</strong></a>
+                        </li>
+						<li id="l2">
+							<a class="cur STRING_BASE" href="javascript:createHomeUI()"><strong>节目列表</strong></a>
 						</li>
 						<li class="subs" id="l3">
-							<a class="flag STRING_NETSET" href="javascript:void(0)"><strong>设备功能</strong></a>
+							<a class="flag STRING_DETAIL" href="javascript:createSendSrcUI()"><strong>发送源</strong></a>
 						</li>
 						<li class="subs" id="l4">
+							<a class="flag STRING_NETSET" href="javascript:void(0)"><strong>设备功能</strong></a>
+						</li>
+						<li class="subs" id="l5">
 							<a class="flag STRING_MDEVICE" href="javascript:void(0)"><strong>设备管理</strong></a>
 							<ul>
-                                <li id="l41"><a href="javascript:gbl_setIp()">IP地址设置</a></li>
-                                <li id="l42"><a href="javascript:gbl_reset()">恢复出厂设置</a></li>
-                                <li id="l43"><a href="javascript:gbl_restart()">重启设备</a></li>
-                                <li id="l44"><a href="javascript:gbl_password()">修改密码</a></li>
+                                <li id="l51"><a href="javascript:gbl_setIp()">IP地址设置</a></li>
+                                <li id="l52"><a href="javascript:gbl_reset()">恢复出厂设置</a></li>
+                                <li id="l53"><a href="javascript:gbl_restart()">重启设备</a></li>
+                                <li id="l54"><a href="javascript:gbl_password()">修改密码</a></li>
                             </ul>
                         </li>
-                        <li class="subs" id="l5">
+                        <li class="subs" id="l6">
                             <a class="flag STRING_LOG" href="javascript:void(0)"><strong>日志记录</strong></a>
                             <ul>
-                                <li id="l51"><a href="javascript:alarm_output(2)">操作日志</a></li>
+                                <li id="l61"><a href="javascript:alarm_output(2)">操作日志</a></li>
                              </ul>
                          </li>
-                         <li id="l6">
+                         <li id="l7">
                             <!-- <a href="javascript:void(0)" class="STRING_HELP"><strong>帮助</strong></a> -->
                          </li>
-                         <li id="l7">
+                         <li id="l8">
                              <a href="javascript:btn_close()" class="STRING_EXIT"><strong>退出</strong></a>
                          </li>
                      </ul>
@@ -75,6 +78,7 @@
 	<script src="lib/jquery.fancytree.menu.js" type="text/javascript"></script>
     <script type="text/javascript">		
 		var localip = window.location.href.substr(7, window.location.href.indexOf(':', 7) - 7);
+        var recdata;
 		var os = getOS();
 		function getOS(){
             var str=navigator.userAgent;
@@ -84,6 +88,143 @@
                 if(str.indexOf(BrowserS[i])>=0){return BrowserS[i].replace('MSIE','IE');}
             }
 		}
+        //获取设备基本信息
+//        $.ajax({
+//            type: "GET",
+//            async:false,
+//            url: "http://"+localip+":4000/do/programs/getDevinfo",
+//            dataType: "json",
+//            success: function(data){
+//                if(data.sts == 8){
+//                    window.location = "/login.esp";
+//                }
+//                recdata = data;
+//            },
+//            error : function(err,b,c) {
+//                if(err.responseText == "login.esp"){
+//                    window.location = "/login.esp";
+//                }
+//            }
+//        });
+//        $('.main-content').empty();
+//        $('.main-content').append(
+//                '<table id="basedev" class="tbl_baseinfo" cellspacing="0" width="100%">'
+//                +'<tbody>'
+//                +'<tr>'
+//                +'<th><label>名称:</label></th>'
+//                +'<th><label id="dev-name" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>类型:</label></th>'
+//                +'<th><label id="dev-type" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>有效性:</label></th>'
+//                +'<th><label id="dev-valid" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>链接方式:</label></th>'
+//                +'<th><label id="dev-connect" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>网络地址:</label></th>'
+//                +'<th><label id="dev-ip" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>端口号:</label></th>'
+//                +'<th><label id="dev-port" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>硬件版本:</label></th>'
+//                +'<th><label id="dev-biosversion" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>软件版本:</label></th>'
+//                +'<th><label id="dev-softversion" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'<tr>'
+//                +'<th><label>固件版本:</label></th>'
+//                +'<th><label id="dev-firmware" class="tbl_th">T</label></th>'
+//                +'</tr>'
+//                +'</tbody>'
+//                +'</table>'
+//        );
+//
+//        function toHome() {
+//            if(globalObj.timerID != undefined){
+//                clearInterval(globalObj.timerID);
+//            }
+//            //获取设备基本信息
+//            $.ajax({
+//                type: "GET",
+//                async:false,
+//                url: "http://"+localip+":4000/do/programs/getDevinfo",
+//                dataType: "json",
+//                success: function(data){
+//                    recdata = data;
+//                },
+//                error : function(err) {
+//                }
+//            });
+//            //
+//            //
+//            $('.main-content').empty();
+//            $('.main-content').append(
+//                    '<table id="basedev" class="tbl_baseinfo" cellspacing="0" width="100%">'
+//                    +'<tbody>'
+//                    +'<tr>'
+//                    +'<th><label>名称:</label></th>'
+//                    +'<th><label id="dev-name" class="tbl_th">T'+recdata.IP+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>类型:</label></th>'
+//                    +'<th><label id="dev-type" class="tbl_th">'+recdata.devType+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>有效性:</label></th>'
+//                    +'<th><label id="dev-valid" class="tbl_th">是</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>链接方式:</label></th>'
+//                    +'<th><label id="dev-connect" class="tbl_th">TCP</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>网络地址:</label></th>'
+//                    +'<th><label id="dev-ip" class="tbl_th">'+recdata.IP+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>端口号:</label></th>'
+//                    +'<th><label id="dev-port" class="tbl_th">'+recdata.port+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>硬件版本:</label></th>'
+//                    +'<th><label id="dev-biosversion" class="tbl_th">'+recdata.HardVersion+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>软件版本:</label></th>'
+//                    +'<th><label id="dev-softversion" class="tbl_th">'+recdata.SoftVersion+'</label></th>'
+//                    +'</tr>'
+//                    +'<tr>'
+//                    +'<th><label>固件版本:</label></th>'
+//                    +'<th><label id="dev-firmware" class="tbl_th">'+recdata.FpgaVersion+'</label></th>'
+//                    +'</tr>'
+//                    +'</tbody>'
+//                    +'</table>'
+//            );
+//        }
+//        try{
+//            $("#dev-name")[0].textContent = "T"+recdata.IP;
+//            $("#dev-type")[0].textContent = recdata.devType;
+//            $("#dev-valid")[0].textContent = "是";
+//            $("#dev-connect")[0].textContent = "TCP";
+//            $("#dev-ip")[0].textContent = recdata.IP;
+//            $("#dev-port")[0].textContent = recdata.port;
+//            $("#dev-biosversion")[0].textContent = recdata.HardVersion;
+//            $("#dev-softversion")[0].textContent = recdata.SoftVersion;
+//            $("#dev-firmware")[0].textContent = recdata.FpgaVersion;
+//        }catch(err){
+//
+//        }
 
 		function btn_close() {
 			var userAgent = navigator.userAgent;

@@ -13,10 +13,7 @@ LD      = $(CROSS_COMPILE)ld
 
 
 #host compile
-IFLAGS = -I../include 
-#CFLAGS +=-g -O2 -fno-stack-protector
-#CFLAGS +=-g -O2 -Wl,-rpath,/home/nixinlong/work/digit-nms/src/hfc/mux/stanlibs/jsonlibs 
-#LDFLAGS += -L./ -L./stanlibs/jsonlibs/ -ljson-c -lm
+IFLAGS = -I../include
 CFLAGS +=-g -O2 -fPIC
 LDFLAGS += -L./ -lm
 
@@ -25,9 +22,11 @@ BIN_PATH = $(BUILD_PATH)/bin
 LIB_PATH = $(BUILD_PATH)/lib
 
 
-OBJ=  tcpclient.o list.o communicate.o cJSON.o
+OBJ=  tcpclient.o list.o communicate.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o \
+ freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o
 
-LIB_OBJ=  communicate.o list.o cJSON.o 
+LIB_OBJ=  communicate.o list.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o  \
+freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o
 
 .PHONY: all clean distclean
 
@@ -38,9 +37,13 @@ build:
 	$(CC) $(CFLAGS) $(IFLAGS) -c communicate.c
 	$(CC) $(CFLAGS) $(IFLAGS) -c list.c	
 	$(CC) $(CFLAGS) $(IFLAGS) -c cJSON.c
-	
-
-	
+	$(CC) $(CFLAGS) $(IFLAGS) -c ipgw.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpSrc.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c clsUcBase.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c freePrograms.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c clsMuxprgInfoGet.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c getJsonstr.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
 	
 	
 	

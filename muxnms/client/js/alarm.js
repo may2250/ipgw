@@ -1,4 +1,4 @@
-	//var dataSet = [];
+	var dataSet = [];
 
     function alarm_output(flag){
 		if(flag == 1){

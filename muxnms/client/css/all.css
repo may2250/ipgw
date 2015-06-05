@@ -1,11 +1,3 @@
-/*
-    all.less - Aggregate all stylesheets (esp-angular-mvc)
- */
-
-/*
-    app.less - Default ESP angular-mvc style sheet. (esp-angular-mvc)
- */
-
 body {
   padding: 0;
   margin: 0;
@@ -14,7 +6,7 @@ body {
   line-height: 1.428571429;
   color: #222233;
   /*background-color: #a7b5ce;*/
-  background:url(../img/ca6ea9664ffdd1d83aba4509a70abc6f.jpg) top center no-repeat; background-size:cover;
+  background:url(../img/ca6ea9664ffdd1d83aba4509a70abc6f.jpg); background-size:cover;
 }
 
 * {
@@ -357,39 +349,7 @@ ul,ol{
  .footer p {
 	margin-top: 15px;
  }
- 
- .channel_input {
-	width: 48%;
-	float:left;
-	border: 1px solid #dddddd;
- }
- 
- .program{
-	width: 48%;
-	float:left;
-	margin: 0px 10px;
-	border: 1px solid #dddddd;
- }
- 
- .tbl_baseinfo {
-	padding: 45px 25px;
- }
- 
-  .tbl_baseinfo  tbody tr th{
-	text-align: left;	
-	width: 50%;
-	line-height: 1.9;
- }
- 
- .tbl_baseinfo  tbody tr th label{
-	margin-left: 80px;	
- }
- 
-  .tbl_baseinfo .tbl_th {
-	text-align: left;
-	margin-left: 2px;
-  }
-  
+
   .base_hr {
 	height:1px;
 	border:none;
@@ -406,97 +366,16 @@ ul,ol{
 	  font-size: 100%;
 	  z-index: 3;
   }
-  
-  #dialog-form {
-	display:none;
-	width: 602px;
-	line-height: 1.9;
-  }
-  
-  .tbl_editprg {
-	margin: 10px 3px;
-  }  
-  
-  #dialog-items {
-	display:none;
-	padding: 10px;
-	line-height: 1.9;
-  }
 
-  .dialog-nit {
-      display:none;
-      padding: 10px;
-      line-height: 1.9;
-  }
-
-fieldset input {
-	margin-left: 30px;
-  }
-  
-  .pat_auto {
-	margin-left: 2px;
-  }
-  
-  .src_btn {
-	float: left;
-	margin: 10px 0px 10px 300px;
-  }
-  
-  .src_btn button {
-	margin-left: 10px;
-  }
-  
   .src_content {
 	padding: 10px;
 	line-height: 1.9;
   }
-  
-  .src_content  table{
-	margin: 20px 40px;
+
+  .tree_content {
+      line-height: 1.3;
   }
-  
-  .nit_edit {
-	line-height: 1.9;
-  }
-  
-  .nit_edit input {
-	margin-left: 30px;
-  }
-  
-  .nit_edit label {
-	margin-left: 30px;
-  }
-  
-  .tbl_struct {
-	float:left;
-	width: 48%;
-	border: 1px solid #dddddd;
-  }
-  
-  #out_table {
-	float:left;
-	margin-left: 10px;
-	width: 49%;
-  }
-  
-  #out_table  table{
-	border: 1px solid #dddddd;	
-	width: 100%;
-  }
-  
-  #dialog-descriptor {
-	display:none;
-	padding: 10px;
-	line-height: 1.9;
-  }
-  
-  .tbl_descriptor {
-	border: 1px solid #dddddd;	
-	float:left;
-	margin-left: 10px;
-	width: 48%;
-  }
-  
+
   .desc_content {
 	float:left;
 	border: 1px solid #dddddd;	
@@ -738,78 +617,6 @@ p.signin.button{
 	width: 80%;
 }
 
-* {
-    box-sizing: border-box;
-}
-
-.register_form {
-    padding-left: 6rem !important;
-    padding-right: 6rem !important;
-    padding-bottom: 3rem !important;
-}
-
-.register_formrow {
-    margin: 20px auto 0 auto;
-    display: block;
-    text-align: left;
-}
-
-.register_hr {
-    margin-top: 20px;
-    width: 100%;
-}
-
-.register_item {
-    vertical-align: middle;
-    display: inline-block;
-    position: relative;
-    padding-left: 2rem;
-}
-
-.rlb {
-    width: 33.33333% !important;
-}
-
-.rip {
-    width: 66.66667% !important;
-}
-
-.rab {
-    width: 40% !important;
-}
-
-.rnp {
-    width: 60% !important;
-}
-
-.register_item label{
-    margin-top: 8px;
-    font-size: 18px;
-}
-
-.register_item input{
-    font-size: 1.2rem;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    font: inherit;
-    overflow: visible;
-    width: 100%;
-    margin: 0 0;
-    padding: 0.9rem;
-    border: 0.1rem solid #BABBC1;
-    border-radius: 0.2rem;
-    background-color: #FFFFFF;
-}
-
-.register_item input:hover{
-    border: 0.1rem solid black;
-}
-
-.register_item input:focus{
-    border: 0.1rem solid #00bcd4;
-}
-
 #progressbar {
     margin-top: 20px;
 }
@@ -844,30 +651,102 @@ span.fancytree-node.userprg > span.fancytree-title {
     line-height: 4em;
 }
 
-.monitortable {
-    margin: 0px!important;
-}
-
-.tbl_right {
-    text-align: right;
-}
-
-.tbl_center {
-    text-align: center;
-}
-
-.nit_section label {
-    display: block;
-    float: left;
-    width: 100px;
-    margin-left: 20px;
-}
-
-.nit_section input {
-    float: left;
+.lb_mr {
     margin-right: 20px;
 }
 
-.tbl_nit {
-    padding: 20px;
+.lb_ml {
+    margin-left: 20px;
 }
+
+.fieldset_tbl{
+    margin-left: 20px;
+    width: 95%;
+}
+
+.fieldset_tbl input{
+    width: 100px;
+}
+
+.fieldset_tbl select{
+    width: 80px;
+}
+
+.input_tree {
+    width: 30%;
+    float:left;
+    border: 1px solid #dddddd;
+}
+
+.input_spts {
+    padding: 5px 0px;
+}
+
+.tree_content {
+    margin-top: 5px;
+    padding: 2px;
+}
+
+.prg_detail{
+    width: 65%;
+    float:left;
+    margin-left:20px;
+}
+
+.prg_content {
+    margin-top: 10px;
+}
+
+.btn_css {
+    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+    box-shadow:inset 0px 1px 0px 0px #ffffff;
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9));
+    background:-moz-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background:-webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background:-o-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background:-ms-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9',GradientType=0);
+    background-color:#f9f9f9;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    cursor:pointer;
+    color:#666666;
+    font-family:Arial;
+    font-size:12px;
+    font-weight:bold;
+    padding:2px 20px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #ffffff;
+}
+.btn_css:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9));
+    background:-moz-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+    background:-webkit-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+    background:-o-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+    background:-ms-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+    background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9',GradientType=0);
+    background-color:#e9e9e9;
+}
+.btn_css:active {
+    position:relative;
+    top:1px;
+}
+
+.sendsrcdiv {
+    display:block;
+    margin: 2px 15px;
+    font-size: 15px;
+}
+
+.s_inlock {
+    width: 16px;
+    height: 16px;
+}
+
+

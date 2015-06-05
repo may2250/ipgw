@@ -1,8 +1,10 @@
 #include "datastructdef.h"
 
-#ifndef _CLS_PROGRAM_H_
-#define _CLS_PROGRAM_H_
+#ifndef _IPGW_IPGW_GET_H_
+#define _IPGW_IPGW_GET_H_
 
+void Init();
 void RefreshIpInOutMode(char *ip);
+int IpRead(char *ip);
 
 #endif

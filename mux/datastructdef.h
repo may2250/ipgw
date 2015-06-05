@@ -73,13 +73,21 @@ typedef struct IpGWDbSt
     int ttl;
 } IpGWDbSt_st;
 
+typedef struct UcIpSrcDbSt
+{
+    int netInterfaceMode;
+    unsigned char ip[4];
+    int port;
+    unsigned char mac[16];
+} UcIpSrcDbSt_st;
+
 typedef struct ChannelProgramt
 {
 	int channelId;
 	list_t prgNodes; // struct Dev_prgInfo_st
-	Chn_ca_st caNode;
-	list_t userPrgNodes; // struct User_prgInfo_t
-	list_t dtPidList; // MuxPidInfo_st , 透传表, 数组以输出通道为序
+	//Chn_ca_st caNode;
+	//list_t userPrgNodes; // struct User_prgInfo_t
+	//list_t dtPidList; // MuxPidInfo_st , 透传表, 数组以输出通道为序
 }ChannelProgramSt;
 
 typedef struct  ClsProgram_t
@@ -105,6 +113,12 @@ typedef struct  ClsProgram_t
     IpGWDbSt_st *ipGwDb;
 }ClsProgram_st;
 
+typedef struct  ClsGlobal_t{
+    int _moduleBaseCmd;
+    int _moduleId;
+    UcIpSrcDbSt_st *_ucDb;
+    IpGWDbSt_st *ipGwDb;
+}ClsGlobal_st;
 
 #pragma pack()
 
