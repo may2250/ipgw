@@ -240,9 +240,9 @@ void getbaseJson(char *ip, char *outprg){
 	free(prgjsonstring);
 }
 
-void getIpReadJson(char *ip, char *outprg){
+int getIpReadJson(char *ip, char *outprg){
     if(IpRead(ip)){
-        return;
+        return 1;
     }
     cJSON *baseinfo = cJSON_CreateObject();
     char *prgjsonstring;
@@ -256,6 +256,26 @@ void getIpReadJson(char *ip, char *outprg){
     cJSON_AddNumberToObject(baseinfo,"netInterfaceMode", clsGlobal._ucDb->netInterfaceMode);
     cJSON_AddNumberToObject(baseinfo,"dvbIptvMode", clsGlobal.ipGwDb->dvbIptvMode);
     cJSON_AddNumberToObject(baseinfo,"ttl", clsGlobal.ipGwDb->ttl);
+
+    prgjsonstring = cJSON_PrintUnformatted(baseinfo);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+
+    //释放内存
+    cJSON_Delete(baseinfo);
+    free(prgjsonstring);
+}
+
+int getInputStsJson(char *ip, char *outprg){
+    int lockStatus = 0, bitrate = 0;
+    if(ReadInputStatus(ip, &lockStatus, &bitrate)){
+        return 1;
+    }
+    cJSON *baseinfo = cJSON_CreateObject();
+    char *prgjsonstring;
+    char str[32] = {0};
+
+    cJSON_AddNumberToObject(baseinfo,"lockStatus", lockStatus);
+    cJSON_AddNumberToObject(baseinfo,"bitrate", bitrate);
 
     prgjsonstring = cJSON_PrintUnformatted(baseinfo);
     memcpy(outprg, prgjsonstring, strlen(prgjsonstring));

@@ -9,6 +9,7 @@ int ParamsReadAll(char *ip){
     int isGood = 1;
     clsGlobal._moduleId = 1;
     isGood &= ParamReadByBytesCmd(ip, 1, clsGlobal._ucDb->ip, 4);
+    //printf("===ip==%d.%d.%d.%d\n", clsGlobal._ucDb->ip[0], clsGlobal._ucDb->ip[1],clsGlobal._ucDb->ip[2],clsGlobal._ucDb->ip[3]);
     isGood &= ParamReadByBytesCmd(ip, 2, clsGlobal._ucDb->mac, 6);
     isGood &= ParamReadByIntCmd(ip, 3, &clsGlobal._ucDb->port, 2);
     if (1)
@@ -43,6 +44,6 @@ int ReadInputStatus(char *ip, int *lockStatus, int *bitrate){
     isGood &= ParamReadByIntCmd(ip, 2, bitrate, 4);
     clsGlobal._moduleId = 1;
 
-    return 1;
+    return 0;
 }
 

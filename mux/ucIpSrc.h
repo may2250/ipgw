@@ -6,6 +6,8 @@
 
 
 int ParamsReadAll(char *ip);
-
+int ParamsRead_dvbIptvMode(char *ip, int *outMode);
+int ParamsRead_ttl(char *ip, int *outMode);
+int ReadInputStatus(char *ip, int *lockStatus, int *bitrate);
 
 #endif

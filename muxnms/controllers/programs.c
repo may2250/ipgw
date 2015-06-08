@@ -11,11 +11,14 @@
 #include "cJSON.h"
 #include "ipgw.h"
 #include "getJsonstr.h"
+#include "clsUcBase.h"
 #include "clsMuxprgInfoGet.h"
 
 char *tmpip = "192.168.1.49";
 
 extern ClsProgram_st clsProgram;
+extern ClsGlobal_st  clsGlobal;
+
 
 static void rendersts(char *str,int status)
 {
@@ -112,18 +115,74 @@ static void ipRead(HttpConn *conn) {
     render(outprg);
 }
 
-//
-//cchar *role = getSessionVar("role");
-//if(role == NULL){
-//    rendersts(str, 9);
-//    render(str);
-//    return;
-//}
-// if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
-//    rendersts(str, 5);//无权限
-//    render(str);
-//    return;
-//}
+static void readinputsts(HttpConn *conn) {
+    char str[64] = {0};
+    if(getInputStsJson(tmpip, str)){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    render(str);
+}
+
+static void ParamsWriteAll(HttpConn *conn) {
+    if(isAuthed()){
+        return;
+    }
+    char str[32] = {0};
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+
+    MprJson *jsonparam = httpGetParams(conn);
+    //printf("==========ParamsWriteAll===========%s\n", mprJsonToString (jsonparam, MPR_JSON_QUOTES));
+    cchar *sip = mprGetJson(jsonparam, "ip");
+    int port = atoi(mprGetJson(jsonparam, "port"));
+    cchar *smac = mprGetJson(jsonparam, "mac");
+    clsGlobal._ucDb->port = port;
+    char *newip = strtok(sip, ".");
+    int i=0, tmp = 0;
+    while(newip)
+    {
+        clsGlobal._ucDb->ip[i] = (unsigned char)atoi(newip);
+        newip = strtok(NULL, ".");
+        i++;
+    }
+    //printf("===ip==%d.%d.%d.%d\n", clsGlobal._ucDb->ip[0], clsGlobal._ucDb->ip[1],clsGlobal._ucDb->ip[2],clsGlobal._ucDb->ip[3]);
+    i=0;
+    char *tmpmac = strtok(smac, ":");
+    while(tmpmac)
+    {
+        sscanf(tmpmac,"%x", &tmp);
+        clsGlobal._ucDb->mac[i] = (unsigned char)tmp;
+        tmpmac = strtok(NULL, ":");
+        i++;
+    }
+    //printf("===mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb->mac[0], clsGlobal._ucDb->mac[1],clsGlobal._ucDb->mac[2],clsGlobal._ucDb->mac[3],clsGlobal._ucDb->mac[4],clsGlobal._ucDb->mac[5]);
+    int isGood = 1;
+    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)1, clsGlobal._ucDb->ip, 4);
+    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
+    isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)3, clsGlobal._ucDb->port, 2);
+
+    if (!isGood){
+        isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
+    }
+    if(isGood){
+        rendersts(str, 6);
+    }else{
+        rendersts(str, 1);
+    }
+    render(str);
+
+}
 
 //
 //static void redirectPost() {
@@ -165,6 +224,9 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-ipRead", ipRead);
     espDefineAction(route, "programs-cmd-getPrgs", getPrgs);
     espDefineAction(route, "programs-cmd-search", search);
+    espDefineAction(route, "programs-cmd-readinputsts", readinputsts);
+    espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
+
     
 #if SAMPLE_VALIDATIONS
     Edi *edi = espGetRouteDatabase(route);

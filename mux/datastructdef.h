@@ -78,7 +78,7 @@ typedef struct UcIpSrcDbSt
     int netInterfaceMode;
     unsigned char ip[4];
     int port;
-    unsigned char mac[16];
+    unsigned char mac[6];
 } UcIpSrcDbSt_st;
 
 typedef struct ChannelProgramt

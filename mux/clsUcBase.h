@@ -8,4 +8,8 @@ int ParamReadByBytesCmd(char *ip, int cmdType, unsigned char *outBytes, int need
 int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *outBuf, int needLen);
 int ParamReadByIntCmd(char *ip, int cmdType, int *outInt, int needBytesLen);
 int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int needLen);
+int ParamWriteByBytesCmd(char *ip, int cmdType, unsigned char *writeBytes, int writeBytesLen);
+int ParamWriteByIntCmd(char *ip, int cmdType, int writeBytes, int writeBytesLen);
+int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, int writeLen);
+int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *writeBytes, int writeLen);
 #endif

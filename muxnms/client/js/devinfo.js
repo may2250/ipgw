@@ -1,5 +1,6 @@
 var globalObj = {
-    _outtable: null
+    _outtable: null,
+    timerID: undefined
 };
 
 var channel_root = [
@@ -67,6 +68,9 @@ function ipread(flag){
 }
 
 function createHomeUI(){
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
     $('.main-content').empty();
     $('.main-content').append(
         '<div class="src_content">'
@@ -264,11 +268,39 @@ function createHomeUI(){
 
 }
 
+function readinputsts(){
+    $.ajax({
+        type: "GET",
+        async: true,
+        url: "http://"+localip+":4000/do/programs/readinputsts",
+        dataType: "json",
+        success: function(res){
+            if(res.sts == 6){
+                alert("通讯错误");
+            }else if(res.sts == 8){
+                window.location = "/login.esp";
+            }else{
+                $('.s_inrate').val(res.bitrate/1000000);
+                if(res.lockStatus){
+                    $('.s_inlock')[0].src = "../img/circle16_green.ico";
+                }else{
+                    $('.s_inlock')[0].src = "../img/circle16_error.ico";
+                }
+            }
+        },
+        error : function(err) {
+            alert("AJAX ERROR---readinputsts!!");
+        }
+    });
+}
+
 function createSendSrcUI(){
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
     $('.main-content').empty();
     $('.main-content').append(
         '<div class="src_content">'
-            +'<div class="field_head">'
             +'<fieldset>'
                 +'<legend>发送源</legend>'
                 +'<div class="sendsrcdiv">'
@@ -280,24 +312,24 @@ function createSendSrcUI(){
                     +'<label class="lb_mr">输入码率</label>'
                     +'<input class="s_inrate lb_mr" type="text" />Mbps'
                 +'</div>'
-            +'<div class="sendsrcdiv">'
-                +'<label class="lb_mr">源IP地址</label>'
-                +'<input class="s_ip lb_mr" type="text" />'
-                +'<label class="lb_mr">eg(192.168.1.103)</label>'
-            +'</div>'
-            +'<div class="sendsrcdiv">'
-                +'<label class="lb_mr">源端口号</label>'
-                +'<input class="s_port lb_mr" type="text" />'
-                +'<label class="lb_mr">[0~65535]</label>'
-                +'<label class="lb_mr">输入锁定</label>'
-                +'<img src="" class="s_inlock lb_mr" />'
-            +'</div>'
-            +'<div class="sendsrcdiv">'
-                +'<label class="lb_mr">源MAC</label>'
-                +'<input class="s_mac lb_mr" type="text" />'
-                +'<label class="lb_mr">值为16进制</label>'
-                +'<label class="lb_mr">eg(00:11:22:33:44:55)</label>'
-            +'</div>'
+                +'<div class="sendsrcdiv">'
+                    +'<label class="lb_mr">源IP地址</label>'
+                    +'<input class="s_ip lb_mr" pattern="^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$" type="text" />'
+                    +'<label class="lb_mr">eg(192.168.1.103)</label>'
+                +'</div>'
+                +'<div class="sendsrcdiv">'
+                    +'<label class="lb_mr">源端口号</label>'
+                    +'<input class="s_port lb_mr" type="text" />'
+                    +'<label class="lb_mr">[0~65535]</label>'
+                    +'<label class="lb_mr">输入锁定</label>'
+                    +'<img src="" class="s_inlock lb_mr" />'
+                +'</div>'
+                +'<div class="sendsrcdiv">'
+                    +'<label class="lb_mr">源MAC</label>'
+                    +'<input class="s_mac lb_mr" pattern="([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2})" type="text" />'
+                    +'<label class="lb_mr">值为16进制</label>'
+                    +'<label class="lb_mr">eg(00:11:22:33:44:55)</label>'
+                +'</div>'
             +'</fieldset>'
         +'</div>'
 
@@ -311,6 +343,9 @@ function createSendSrcUI(){
     $('.s_netInterfaceMode').attr("disabled", true);
 
     ipread(2);
+    //创建定时器定时获取输出比特率
+    //globalObj.timerID = setInterval(readinputsts,2000);
+
     $( "#src-read" ).button({
         icons: {
             primary: "ui-icon-comment"
@@ -326,10 +361,48 @@ function createSendSrcUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
+        if($('.s_port').val()>65535 || $('.s_port').val()<0){
+            alert("端口号溢出.");
+            return false;
+        }
+        var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        var valid = regexp.test($('.s_ip').val());
+        if(!valid){//首先必须是 xxx.xxx.xxx.xxx 类型的数字，如果不是，返回false
+            alert("无效的IP地址.");
+            return false;
+        }
 
+        regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
+        var valid = regexp.test($('.s_mac').val());
+        if(!valid){//首先必须是 xxx.xxx.xxx.xxx 类型的数字，如果不是，返回false
+            alert("无效的MAC地址.");
+            return false;
+        }
+
+        var jsonstr = '{"ip":"' + $('.s_ip').val() + '","port":' + $('.s_port').val() + ',"mac":"' + $('.s_mac').val() + '"}';
+        $.ajax({
+            type: "GET",
+            async:false,
+            url: "http://"+localip+":4000/do/programs/ParamsWriteAll",
+            data: JSON.parse(jsonstr),
+            dataType: "json",
+            success: function(res){
+                if(res.sts == 6){
+                    alert("通讯错误");
+                }else if(res.sts == 8){
+                    window.location = "/login.esp";
+                }else if(res.sts == 5){
+                    alert("该用户权限不足.");
+                }else{
+                    alert("下发成功.");
+                }
+            },
+            error : function(err) {
+                alert("AJAX ERROR---ParamsWriteAll!!");
+            }
+        });
     });
 }
-
 
 
 

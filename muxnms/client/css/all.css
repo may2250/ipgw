@@ -740,13 +740,19 @@ span.fancytree-node.userprg > span.fancytree-title {
 
 .sendsrcdiv {
     display:block;
+    height: 40px;
     margin: 2px 15px;
     font-size: 15px;
 }
 
+.sendsrcdiv label {
+    line-height: 40px;
+}
+
 .s_inlock {
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
+    line-height: 40px;
 }
 
 
