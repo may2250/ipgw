@@ -79,3 +79,34 @@ int freePrograms(list_t *prginfolist)
 	
 	return 0;
 }
+
+int freeUcIpDestPrg(list_t *prginfolist)
+{
+	if(!prginfolist) {
+		printf("prginfolist==NULL not need to free.\n");
+		return -1;
+	}
+
+
+	UcIpDestPrgMuxInfoSt_st *ptmpPrgInfo = NULL;
+	int i;
+	int len = list_len(prginfolist);
+	for(i= len -1 ;i>-1;i--){
+		list_get(prginfolist,i, &ptmpPrgInfo);
+		//free ptemp
+		if(ptmpPrgInfo != NULL){
+			if(ptmpPrgInfo->avPidListLen>0){
+			    free(ptmpPrgInfo->avPidList);
+			}
+			free(ptmpPrgInfo);
+			list_pop(prginfolist,i);
+			ptmpPrgInfo = NULL;
+		}
+
+	}
+
+	prginfolist = NULL;
+
+
+	return 1;
+}

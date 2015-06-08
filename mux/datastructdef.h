@@ -81,6 +81,38 @@ typedef struct UcIpSrcDbSt
     unsigned char mac[6];
 } UcIpSrcDbSt_st;
 
+typedef struct UcIpDestPrgMuxInfoSt
+{
+    int inChn;
+    int prgId;
+
+    int pmtPID;
+    unsigned char *avPidList;
+    int avPidListLen;
+} UcIpDestPrgMuxInfoSt_st
+
+typedef struct UcIpDestDbSt3
+{
+    int outMode; // 0=udp,1=rtp,2=rtsp, 3=multicast
+    unsigned char ip[4];
+    int port;
+    unsigned char mac[6];
+    int outputEnable;
+    list_t *prgList; //UcIpDestPrgMuxInfoSt_st
+} UcIpDestDbSt3_st;
+
+typedef struct UcIpDestDbSt4
+{
+    int outMode; // 0=udp,1=rtp,2=rtsp, 3=multicast
+    unsigned char ip[4];
+    int port;
+    unsigned char mac[6];
+    int outputEnable;
+
+    int outChn;
+    list_t *prgList; //UcIpDestPrgMuxInfoSt_st
+} UcIpDestDbSt4_st
+
 typedef struct ChannelProgramt
 {
 	int channelId;
@@ -110,14 +142,15 @@ typedef struct  ClsProgram_t
     list_t **PrgPmtMuxList; // MuxPrgInfoGet_st  list Array
     list_t **PrgAVMuxList;  // list Array MuxPidInfo_st , 节目映射PID, 数组以输出通道为序
     list_t NitSection; // list Array Nit_section_st
-    IpGWDbSt_st *ipGwDb;
 }ClsProgram_st;
 
 typedef struct  ClsGlobal_t{
     int _moduleBaseCmd;
     int _moduleId;
     UcIpSrcDbSt_st *_ucDb;
+    UcIpDestDbSt4_st *_ucDb4;
     IpGWDbSt_st *ipGwDb;
+    list_t *ucIpDestDb; //UcIpDestDbSt3_st
 }ClsGlobal_st;
 
 #pragma pack()
