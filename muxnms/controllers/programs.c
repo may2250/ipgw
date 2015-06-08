@@ -82,13 +82,27 @@ static void search(HttpConn *conn) {
     char str[32] = {0};
     RefreshIpInOutMode(tmpip);
     if(clsProgram.ipGwDb->devNetFun == 0){
-        if(Search(tmpip, 1)){
+        if(!Search(tmpip, 1)){
             //error
             rendersts(str, 6);
             render(str);
             return;
         }
     }
+    //add optlog
+     EdiRec *optlog = ediCreateRec(db, "optlog");
+     if(optlog == NULL){
+        printf("================>>>optlog is NULL!!\n");
+     }
+
+     time_t curTime;
+     time(&curTime);
+     sprintf(optstr, "{'user': '%s', 'desc': '用户搜索节目源.', 'level': '1', 'logtime':'%d'}", name, curTime);
+     MprJson  *row = mprParseJson(optstr);
+     if(ediSetFields(optlog, row) == 0){
+        printf("================>>>ediSetFields Failed!!\n");
+     }
+     ediUpdateRec(db, optlog);
     rendersts(str, 1);
     render(str);
 }
@@ -107,7 +121,7 @@ static void ipRead(HttpConn *conn) {
         return;
     }
     char outprg[128] = {0};
-    if(getIpReadJson(tmpip, outprg)){
+    if(!getIpReadJson(tmpip, outprg)){
         rendersts(outprg, 8);
         render(outprg);
         return;
@@ -117,7 +131,7 @@ static void ipRead(HttpConn *conn) {
 
 static void readinputsts(HttpConn *conn) {
     char str[64] = {0};
-    if(getInputStsJson(tmpip, str)){
+    if(!getInputStsJson(tmpip, str)){
         rendersts(str, 8);
         render(str);
         return;
@@ -172,10 +186,24 @@ static void ParamsWriteAll(HttpConn *conn) {
     isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
     isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)3, clsGlobal._ucDb->port, 2);
 
-    if (!isGood){
+    if (isGood){
         isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
     }
-    if(isGood){
+    //add optlog
+     EdiRec *optlog = ediCreateRec(db, "optlog");
+     if(optlog == NULL){
+        printf("================>>>optlog is NULL!!\n");
+     }
+
+     time_t curTime;
+     time(&curTime);
+     sprintf(optstr, "{'user': '%s', 'desc': '用户下发发送源配置.', 'level': '1', 'logtime':'%d'}", name, curTime);
+     MprJson  *row = mprParseJson(optstr);
+     if(ediSetFields(optlog, row) == 0){
+        printf("================>>>ediSetFields Failed!!\n");
+     }
+     ediUpdateRec(db, optlog);
+    if(!isGood){
         rendersts(str, 6);
     }else{
         rendersts(str, 1);

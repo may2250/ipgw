@@ -176,7 +176,7 @@ function createHomeUI(){
         event.preventDefault();
         $.ajax({
             type: "GET",
-            async:true,
+            async: false,
             url: "http://"+localip+":4000/do/programs/search",
             dataType: "json",
             success: function(data){
@@ -344,7 +344,7 @@ function createSendSrcUI(){
 
     ipread(2);
     //创建定时器定时获取输出比特率
-    //globalObj.timerID = setInterval(readinputsts,2000);
+    globalObj.timerID = setInterval(readinputsts,2000);
 
     $( "#src-read" ).button({
         icons: {
@@ -367,14 +367,14 @@ function createSendSrcUI(){
         }
         var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
         var valid = regexp.test($('.s_ip').val());
-        if(!valid){//首先必须是 xxx.xxx.xxx.xxx 类型的数字，如果不是，返回false
+        if(!valid){
             alert("无效的IP地址.");
             return false;
         }
 
         regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
         var valid = regexp.test($('.s_mac').val());
-        if(!valid){//首先必须是 xxx.xxx.xxx.xxx 类型的数字，如果不是，返回false
+        if(!valid){
             alert("无效的MAC地址.");
             return false;
         }
@@ -382,7 +382,7 @@ function createSendSrcUI(){
         var jsonstr = '{"ip":"' + $('.s_ip').val() + '","port":' + $('.s_port').val() + ',"mac":"' + $('.s_mac').val() + '"}';
         $.ajax({
             type: "GET",
-            async:false,
+            async: false,
             url: "http://"+localip+":4000/do/programs/ParamsWriteAll",
             data: JSON.parse(jsonstr),
             dataType: "json",

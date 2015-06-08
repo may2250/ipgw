@@ -6,7 +6,7 @@ extern ClsGlobal_st  clsGlobal;
 
 int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *outBuf, int needLen){
     if (cmdBytes == NULL)
-        return 1;
+        return 0;
     unsigned char buf[1024] = {0};
     unsigned char sendbuf[32] = {0};
     int iAddr = 0;
@@ -31,17 +31,17 @@ int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *
     {
         //outBuf = new byte[needLen];
         if (rlen < iAddr + needLen)
-            return 1;
+            return 0;
 
         memcpy(outBuf, buf+iAddr, needLen);
 
     }
-    return 0;
+    return 1;
 }
 
 int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int needLen){
     if (cmdBytes == NULL)
-        return 1;
+        return 0;
     unsigned char buf[1024] = {0};
     unsigned char sendbuf[32] = {0};
     unsigned char outBuf[needLen];
@@ -66,7 +66,7 @@ int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int 
     else
     {
         if (rlen < iAddr + needLen)
-            return 1;
+            return 0;
         memcpy(outBuf, buf+iAddr, needLen);
 //        int i = 0;
 //        for(i=0;i<needLen;i++){
@@ -85,13 +85,13 @@ int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int 
 
         //printf("===dbInt==%x\n", *dbInt);
     }
-    return 0;
+    return 1;
 }
 
 int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *writeBytes, int writeLen)
 {
     if (cmdBytes == NULL)
-        return 1;
+        return 0;
     unsigned char buf[1024] = {0};
     unsigned char sendbuf[32] = {0};
     int iAddr = 0, i = 0;
@@ -116,13 +116,13 @@ int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char 
 //        printf("---=-=-rlen==%d\n", rlen);
 //        return 1;
 //    }
-    return 0;
+    return 1;
 }
 
 int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, int writeLen)
 {
     if (cmdBytes == NULL)
-        return 1;
+        return 0;
     int i = 0, iAddr = 0, rlen = 0, offset = 0;
     char writeBytes[writeLen];
     for (i = 0; i < writeLen; i++)
@@ -149,7 +149,7 @@ int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, i
 //        printf("xxxxxxrlen==%d\n", rlen);
 //        return 1;
 //    }
-    return 0;
+    return 1;
 }
 
 

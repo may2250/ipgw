@@ -44,6 +44,11 @@ int ReadInputStatus(char *ip, int *lockStatus, int *bitrate){
     isGood &= ParamReadByIntCmd(ip, 2, bitrate, 4);
     clsGlobal._moduleId = 1;
 
-    return 0;
+    return 1;
+}
+
+int ParamRead_outChnMax(char *ip, int *chnMax){
+    unsigned char cmdBytes = { 0xf2, 0, 3 };
+    return ParamReadint(ip, cmdBytes, 3, chnMax, 1);
 }
 

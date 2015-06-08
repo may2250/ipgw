@@ -36,7 +36,7 @@ void RefreshIpInOutMode(char *ip)
 int IpRead(char *ip){
     int rslt = ParamsReadAll(ip);
     rslt &= ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
-    if (rslt) return 1;
+    if (!rslt) return 0;
     rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
     return rslt;
 }
@@ -44,8 +44,7 @@ int IpRead(char *ip){
 int IptvRead(char *ip){
     int rslt = 1;
     int chnMax = 0;
-//    if (ucIpDest1.ParamRead_outChnMax(ref chnMax) && chnMax > 0)
-//    {
+    if (ParamRead_outChnMax(ip, &chnMax) && chnMax > 0){
 //        if(frmWait != null) frmWait.progressBar1.PerformStep();
 //        if (ucIpDestDb == null || ucIpDestDb.Length != chnMax)
 //            ucIpDestDb = new UcIpDestDbSt3[chnMax];
@@ -68,10 +67,10 @@ int IptvRead(char *ip){
 //            }
 //            if(frmWait != null) frmWait.progressBar1.PerformStep();
 //        }
-//    }
-//    else
-//    {
-//        ucIpDestDb = null;
-//    }
+   }
+    else
+    {
+        //ucIpDestDb = null;
+    }
     return rslt;
 }

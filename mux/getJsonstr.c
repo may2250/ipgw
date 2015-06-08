@@ -241,8 +241,8 @@ void getbaseJson(char *ip, char *outprg){
 }
 
 int getIpReadJson(char *ip, char *outprg){
-    if(IpRead(ip)){
-        return 1;
+    if(!IpRead(ip)){
+        return 0;
     }
     cJSON *baseinfo = cJSON_CreateObject();
     char *prgjsonstring;
@@ -263,12 +263,13 @@ int getIpReadJson(char *ip, char *outprg){
     //释放内存
     cJSON_Delete(baseinfo);
     free(prgjsonstring);
+    return 1;
 }
 
 int getInputStsJson(char *ip, char *outprg){
     int lockStatus = 0, bitrate = 0;
-    if(ReadInputStatus(ip, &lockStatus, &bitrate)){
-        return 1;
+    if(!ReadInputStatus(ip, &lockStatus, &bitrate)){
+        return 0;
     }
     cJSON *baseinfo = cJSON_CreateObject();
     char *prgjsonstring;
@@ -283,4 +284,5 @@ int getInputStsJson(char *ip, char *outprg){
     //释放内存
     cJSON_Delete(baseinfo);
     free(prgjsonstring);
+    return 1;
 }
