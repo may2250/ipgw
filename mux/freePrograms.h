@@ -9,5 +9,7 @@
 
 int freePrograms(list_t *prginfolist);
 int freeProgramsMalloc(Dev_prgInfo_st * data);
+int freeUcIpDestPrg(list_t *prginfolist);
+int freeUcIpDestdbs(list_t *prginfolist);
 
 #endif

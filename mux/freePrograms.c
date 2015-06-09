@@ -87,7 +87,6 @@ int freeUcIpDestPrg(list_t *prginfolist)
 		return -1;
 	}
 
-
 	UcIpDestPrgMuxInfoSt_st *ptmpPrgInfo = NULL;
 	int i;
 	int len = list_len(prginfolist);
@@ -100,13 +99,38 @@ int freeUcIpDestPrg(list_t *prginfolist)
 			}
 			free(ptmpPrgInfo);
 			list_pop(prginfolist,i);
-			ptmpPrgInfo = NULL;
+			//ptmpPrgInfo = NULL;
+		}
+
+	}
+    //free(prginfolist);
+	prginfolist = NULL;
+
+
+	return 1;
+}
+
+int freeUcIpDestdbs(list_t *prginfolist)
+{
+	if(!prginfolist) {
+		printf("prginfolist==NULL not need to free.\n");
+		return -1;
+	}
+	UcIpDestDbSt3_st *destdb = NULL;
+	int i;
+	int len = list_len(prginfolist);
+	for(i= len -1 ;i>-1;i--){
+		list_get(prginfolist,i, &destdb);
+		//free ptemp
+		if(destdb->prgList != NULL){
+			freeUcIpDestPrg(destdb->prgList);
+			free(destdb);
+			list_pop(prginfolist,i);
+			destdb = NULL;
 		}
 
 	}
 
 	prginfolist = NULL;
-
-
 	return 1;
 }

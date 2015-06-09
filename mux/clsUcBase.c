@@ -40,6 +40,7 @@ int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *
 }
 
 int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int needLen){
+    //int i = 0;
     if (cmdBytes == NULL)
         return 0;
     unsigned char buf[1024] = {0};
@@ -52,13 +53,15 @@ int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int 
     memcpy(sendbuf+iAddr, cmdBytes, cmdLen);
     iAddr += cmdLen;
     sendbuf[iAddr++] = 1; // read
-
+//    for(i=0;i<8;i++){
+//        printf("===sendbuf==[%x]\n", sendbuf[i]);
+//    }
     communicate(ip, sendbuf, iAddr, buf, &rlen);
     if (needLen == -1)
     {
         if (rlen > iAddr)
         {
-            printf("ParamReadbyte::::assert\n");
+            printf("ParamReadint::::assert\n");
             //outBuf = new byte[rlen - iAddr];
             //Array.Copy(buf, iAddr, outBuf, 0, outBuf.Length);
         }
@@ -68,7 +71,7 @@ int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int 
         if (rlen < iAddr + needLen)
             return 0;
         memcpy(outBuf, buf+iAddr, needLen);
-//        int i = 0;
+
 //        for(i=0;i<needLen;i++){
 //            printf("===outBuf==[%x]\n", outBuf[i]);
 //        }

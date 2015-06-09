@@ -40,7 +40,7 @@ function getprgs(){
 function ipread(flag){
     $.ajax({
         type: "GET",
-        async:true,
+        async: false,
         url: "http://"+localip+":4000/do/programs/ipRead",
         dataType: "json",
         success: function(res){
@@ -59,6 +59,27 @@ function ipread(flag){
                     $('.s_port').val(Number(res.port));
                     $('.s_mac').val(res.mac);
                 }
+            }
+        },
+        error : function(err) {
+            alert("AJAX ERROR---ipRead!!");
+        }
+    });
+}
+
+function iptvread(){
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/iptvRead",
+        dataType: "json",
+        success: function(res){
+            if(res.sts == 6){
+                alert("通讯错误");
+            }else if(res.sts == 8){
+                window.location = "/login.esp";
+            }else{
+
             }
         },
         error : function(err) {
@@ -186,6 +207,7 @@ function createHomeUI(){
                 }
                 getprgs();
                 ipread(1);
+                iptvread();
             },
             error : function(err) {
                 alert("AJAX ERROR---search!!");
@@ -201,6 +223,7 @@ function createHomeUI(){
         event.preventDefault();
         getprgs();
         ipread(1);
+        iptvread();
     });
 
     $( "#output-auto" ).button({

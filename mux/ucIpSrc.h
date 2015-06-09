@@ -6,10 +6,9 @@
 
 
 int ParamsReadAll(char *ip);
-int ParamsRead_dvbIptvMode(char *ip, int *outMode);
-int ParamsRead_ttl(char *ip, int *outMode);
+
 int ReadInputStatus(char *ip, int *lockStatus, int *bitrate);
-int ParamRead_outChnMax(char *ip, int *chnMax);
-int dest1_ParamsReadAll(char *ip);
+
+
 
 #endif

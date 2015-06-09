@@ -51,31 +51,20 @@ int IptvRead(char *ip){
     int rslt = 1, i = 0;
     int chnMax = 0;
     if (ParamRead_outChnMax(ip, &chnMax) && chnMax > 0){
-//        if(frmWait != null) frmWait.progressBar1.PerformStep();
-//        if (ucIpDestDb == null || ucIpDestDb.Length != chnMax)
-//            ucIpDestDb = new UcIpDestDbSt3[chnMax];
-//        ucIpDest1.ModuleId = 0;
+        clsGlobal._moduleId = 0;
         rslt = ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
         if (!rslt) return 0;
         rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
         if (!rslt) return 0;
-//        if(frmWait != null) frmWait.progressBar1.PerformStep();
+        //clear db3
+        freeUcIpDestdbs(clsGlobal.ucIpDestDb);
         for (i = 0; i < chnMax; i++)
         {
-            //ucIpDest1.ModuleId = (byte)(i + 1);
-            rslt &= ParamsReadAll();
+            clsGlobal._moduleId = (i + 1);
+            rslt &= dest1_ParamsReadAll(ip);
             if (!rslt) return 0;
-//            ucIpDest1.GetDb3(ref ucIpDestDb[i]);
-//            if (ucIpDestDb[i].outputEnable == 0)
-//            {
-//                if (ucIpDestDb[i].prgList != null)
-//                    ucIpDestDb[i].prgList.Clear();
-//            }
+            GetDb3(clsGlobal.ucIpDestDb);
         }
    }
-    else
-    {
-        //ucIpDestDb = null;
-    }
-    return rslt;
+   return rslt;
 }

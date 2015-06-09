@@ -89,7 +89,7 @@ typedef struct UcIpDestPrgMuxInfoSt
     int pmtPID;
     unsigned char *avPidList;
     int avPidListLen;
-} UcIpDestPrgMuxInfoSt_st
+} UcIpDestPrgMuxInfoSt_st;
 
 typedef struct UcIpDestDbSt3
 {
@@ -111,7 +111,7 @@ typedef struct UcIpDestDbSt4
 
     int outChn;
     list_t *prgList; //UcIpDestPrgMuxInfoSt_st
-} UcIpDestDbSt4_st
+} UcIpDestDbSt4_st;
 
 typedef struct ChannelProgramt
 {

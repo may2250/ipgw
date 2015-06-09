@@ -80,8 +80,10 @@ static void search(HttpConn *conn) {
         return;
     }
     char str[32] = {0};
+    char optstr[256] = {0};
+
     RefreshIpInOutMode(tmpip);
-    if(clsProgram.ipGwDb->devNetFun == 0){
+    if(clsGlobal.ipGwDb->devNetFun == 0){
         if(!Search(tmpip, 1)){
             //error
             rendersts(str, 6);
@@ -90,19 +92,20 @@ static void search(HttpConn *conn) {
         }
     }
     //add optlog
-     EdiRec *optlog = ediCreateRec(db, "optlog");
-     if(optlog == NULL){
-        printf("================>>>optlog is NULL!!\n");
-     }
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
 
-     time_t curTime;
-     time(&curTime);
-     sprintf(optstr, "{'user': '%s', 'desc': '用户搜索节目源.', 'level': '1', 'logtime':'%d'}", name, curTime);
-     MprJson  *row = mprParseJson(optstr);
-     if(ediSetFields(optlog, row) == 0){
-        printf("================>>>ediSetFields Failed!!\n");
-     }
-     ediUpdateRec(db, optlog);
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户搜索节目源.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
     rendersts(str, 1);
     render(str);
 }
@@ -144,6 +147,7 @@ static void ParamsWriteAll(HttpConn *conn) {
         return;
     }
     char str[32] = {0};
+    char optstr[256] = {0};
     cchar *role = getSessionVar("role");
     if(role == NULL){
         rendersts(str, 8);
@@ -190,19 +194,20 @@ static void ParamsWriteAll(HttpConn *conn) {
         isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
     }
     //add optlog
-     EdiRec *optlog = ediCreateRec(db, "optlog");
-     if(optlog == NULL){
-        printf("================>>>optlog is NULL!!\n");
-     }
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
 
-     time_t curTime;
-     time(&curTime);
-     sprintf(optstr, "{'user': '%s', 'desc': '用户下发发送源配置.', 'level': '1', 'logtime':'%d'}", name, curTime);
-     MprJson  *row = mprParseJson(optstr);
-     if(ediSetFields(optlog, row) == 0){
-        printf("================>>>ediSetFields Failed!!\n");
-     }
-     ediUpdateRec(db, optlog);
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户下发发送源配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
     if(!isGood){
         rendersts(str, 6);
     }else{
@@ -212,6 +217,16 @@ static void ParamsWriteAll(HttpConn *conn) {
 
 }
 
+static void iptvRead(HttpConn *conn) {
+    char str[32] = {0};
+    if(!IptvRead(tmpip)){
+        rendersts(str, 6);
+        render(str);
+        return;
+    }
+    rendersts(str, 1);
+    render(str);
+}
 //
 //static void redirectPost() {
 //    redirect(sjoin(getConn()->rx->uri, "/", NULL));
@@ -254,8 +269,8 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-search", search);
     espDefineAction(route, "programs-cmd-readinputsts", readinputsts);
     espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
+    espDefineAction(route, "programs-cmd-iptvRead", iptvRead);
 
-    
 #if SAMPLE_VALIDATIONS
     Edi *edi = espGetRouteDatabase(route);
     ediAddValidation(edi, "present", "programs", "title", 0);

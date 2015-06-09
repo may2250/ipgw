@@ -35,6 +35,15 @@ appweb --home /usr/local/mux-arm/muxnms/ --show --config /usr/local/mux-arm/muxn
 
 vi /usr/local/Dev_Info/dev_run.local
 
+#for ipgw
+    EspCompile ${CC} -shared ${DEBUG} -Wall -unused-result -DPIC -fPIC -I. -I/home/nixinlong/work/digit-nms/src/ipgw/mux  -I${APPINC} -I${INC} -L${LIBPATH} -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/:/home/nixinlong/work/digit-nms/src/ipgw/mux/build/lib ${CFLAGS} ${LIBS} -L/home/nixinlong/work/digit-nms/src/ipgw/mux/build/lib -o ${MOD}${SHOBJ} ${SRC} ${LDFLAGS} -ltcpclient
+#
+    #EspCompile ${CC} -shared ${DEBUG} -Wall -unused-result -DPIC -fPIC -I. -I/home/stan/work/newsheng/hfc/mux  -I${APPINC} -I${INC} -L${LIBPATH} -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/:/home/stan/work/newsheng/hfc/mux/build/lib ${CFLAGS} ${LIBS} -L/home/stan/work/newsheng/hfc/mux/build/lib -o ${MOD}${SHOBJ} ${SRC} ${LDFLAGS} -ltcpclient
+
+    #esp compile for arm
+    #EspCompile ${CC} -shared ${DEBUG} -Wall -DPIC -fPIC -I. -I/home/stan/work/newsheng/hfc/mux  -I/opt/eldk-4.0/arm/usr/include   -I${APPINC} -I${INC} -L${LIBPATH} -Wl,--enable-new-dtags -Wl,-rpath,$ORIGIN/:/usr/local/mux-arm/lib:/usr/local/mux-arm/muxnms/cache ${CFLAGS} ${LIBS} -L/home/stan/work/newsheng/hfc/mux/build/lib -o ${MOD}${SHOBJ} ${SRC} ${LDFLAGS} -ltcpclient
+
+
 
 /*编译到设备侧运行*/
 ~/work/newsheng/hfc/mux$ :
