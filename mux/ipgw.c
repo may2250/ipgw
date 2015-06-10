@@ -58,7 +58,6 @@ int IptvRead(char *ip){
         if (!rslt) return 0;
         //clear db3
         freeUcIpDestdbs(clsGlobal.ucIpDestDb);
-        printf("==chnMax==%d\n", chnMax);
         for (i = 0; i < chnMax; i++)
         {
             clsGlobal._moduleId = (i + 1);

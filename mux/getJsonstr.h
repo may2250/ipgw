@@ -14,5 +14,6 @@ void getbaseJson(char *ip, char *outprg);
 int getIpReadJson(char *ip, char *outprg);
 int getInputStsJson(char *ip, char *outprg);
 void getPrgoutListJson(char *outprg);
+void getSPTSCHJson(int prgnum, int chnid, char *outprg);
 
 #endif

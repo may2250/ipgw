@@ -25,6 +25,7 @@ void getPrgsJson(char *ip, char *outprg){
         cJSON_AddItemToArray(channelsarray,channeljson = cJSON_CreateObject());
         cJSON_AddTrueToObject(channeljson,"folder");
         cJSON_AddTrueToObject(channeljson,"expanded");
+        cJSON_AddNumberToObject(channeljson, "chnid", 1);
         sprintf(idstr, "id1.%d", inChn);//1.2
         cJSON_AddStringToObject(channeljson,"key", idstr);
         cJSON_AddStringToObject(channeljson,"icon", "img/channel_in.ico");
@@ -42,9 +43,9 @@ void getPrgsJson(char *ip, char *outprg){
             cJSON_AddStringToObject(prgjson,"tooltip", str);
             cJSON_AddTrueToObject(prgjson,"folder");
             cJSON_AddFalseToObject(prgjson,"expanded");
-            cJSON_AddNumberToObject(prgjson, "index", ptmpPrgInfo->index);
-            cJSON_AddNumberToObject(prgjson, "pmtPid", ptmpPrgInfo->pmtPid);
-            cJSON_AddNumberToObject(prgjson, "chnid", ptmpPrgInfo->chnId);
+            //cJSON_AddNumberToObject(prgjson, "index", ptmpPrgInfo->index);
+            cJSON_AddNumberToObject(prgjson, "prgnum", ptmpPrgInfo->prgNum);
+            //cJSON_AddNumberToObject(prgjson, "chnid", ptmpPrgInfo->chnId);
             sprintf(idstr, "id1.%d.%d", inChn, ptmpPrgInfo->index);//1.2.1
             cJSON_AddStringToObject(prgjson,"key", idstr);
             cJSON_AddStringToObject(prgjson,"icon", "img/notebook.ico");
@@ -300,6 +301,10 @@ void getPrgoutListJson(char *outprg){
     cJSON_AddItemToObject(basejson, "children", prgarry = cJSON_CreateArray());
     for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
         if (clsGlobal.ipGwDb->dvbIptvMode == 0 && i > 0){
+            prgjsonstring = cJSON_PrintUnformatted(basejson);
+            memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+            cJSON_Delete(basejson);
+            free(prgjsonstring);
             return;
         }
         UcIpDestDbSt3_st *eachPrg = NULL;
@@ -357,6 +362,7 @@ void getPrgoutListJson(char *outprg){
         }else{
             cJSON_AddStringToObject(prgjson,"nameStr", " ");
         }
+
     }
 
     prgjsonstring = cJSON_PrintUnformatted(basejson);
@@ -365,6 +371,81 @@ void getPrgoutListJson(char *outprg){
     //释放内存
     cJSON_Delete(basejson);
     free(prgjsonstring);
-
-
 }
+
+void getDb3Json(char *outprg){
+    int i = 0;
+    cJSON *baseinfo = cJSON_CreateObject();
+    cJSON *prgarry, *prgjson;
+    char *prgjsonstring;
+    char str[32] = {0};
+
+    sprintf(str, "%d.%d.%d.%d", clsGlobal._ucDb4->ip[0], clsGlobal._ucDb4->ip[1],
+    clsGlobal._ucDb4->ip[2], clsGlobal._ucDb4->ip[3]);
+    cJSON_AddStringToObject(baseinfo,"ipStr", str);
+    memset(str, 0, sizeof(str));
+    sprintf(str, "%x:%x:%x:%x:%x:%x", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1], clsGlobal._ucDb4->mac[2],
+    clsGlobal._ucDb4->mac[3], clsGlobal._ucDb4->mac[4], clsGlobal._ucDb4->mac[5]);
+    cJSON_AddStringToObject(baseinfo,"macStr", str);
+    cJSON_AddNumberToObject(baseinfo,"outMode", clsGlobal._ucDb4->outMode);
+    cJSON_AddNumberToObject(baseinfo,"port", clsGlobal._ucDb4->port);
+    cJSON_AddNumberToObject(baseinfo,"outputEnable", clsGlobal._ucDb4->outputEnable);
+    cJSON_AddNumberToObject(baseinfo,"outChn", clsGlobal._ucDb4->outChn);
+    if(clsGlobal._ucDb4->outputEnable != 0){
+        if(clsGlobal._ucDb4->prgList != NULL){
+            cJSON_AddItemToObject(baseinfo, "children", prgarry = cJSON_CreateArray());
+            if(list_len(clsGlobal._ucDb4->prgList)>0){
+                UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
+                for(i=0;i<list_len(clsGlobal._ucDb4->prgList);i++){
+                    list_get(clsGlobal._ucDb4->prgList, i, &eachPrg);
+                    cJSON_AddItemToArray(prgarry,prgjson = cJSON_CreateObject());
+                    cJSON_AddNumberToObject(prgjson,"prgId", eachPrg->prgId);
+                }
+            }
+        }
+    }
+    prgjsonstring = cJSON_PrintUnformatted(baseinfo);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+
+    //释放内存
+    cJSON_Delete(baseinfo);
+    free(prgjsonstring);
+}
+
+void getSPTSCHJson(int prgnum, int chnid, char *outprg){
+    int i = 0, curindex = 0;
+    cJSON *basejson = cJSON_CreateObject();
+    cJSON *iteminfo, *itmearry;
+    char *prgjsonstring;
+    cJSON_AddItemToObject(basejson, "children", itmearry = cJSON_CreateArray());
+    cJSON_AddItemToArray(itmearry, iteminfo = cJSON_CreateObject());
+    cJSON_AddStringToObject(iteminfo,"tag", "---");
+
+    UcIpDestDbSt3_st *db3 = NULL;
+    for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if(db3->prgList != NULL){
+            if(list_len(db3->prgList)>0){
+                UcIpDestPrgMuxInfoSt_st *muxinfo = NULL;
+                list_get(db3->prgList, 0, &muxinfo);
+                if (muxinfo->inChn == chnid	&& muxinfo->prgId == prgnum){
+                    printf("-----=====[%d]------\n", i);
+                    cJSON_AddItemToArray(itmearry,iteminfo = cJSON_CreateObject());
+                    cJSON_AddNumberToObject(iteminfo,"tag", i+1);
+                    curindex = i + 1;
+                }
+            }
+        }else{
+            cJSON_AddItemToArray(itmearry,iteminfo = cJSON_CreateObject());
+            cJSON_AddNumberToObject(iteminfo,"tag", i+1);
+        }
+    }
+    cJSON_AddNumberToObject(basejson, "tag", curindex);
+    prgjsonstring = cJSON_PrintUnformatted(basejson);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+
+    //释放内存
+    cJSON_Delete(basejson);
+    free(prgjsonstring);
+}
+

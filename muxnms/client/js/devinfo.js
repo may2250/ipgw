@@ -121,6 +121,27 @@ function outprgList(){
     });
 }
 
+function setIpTvmode(mod){
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/setIpTvmode?mode="+mod,
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 6){
+                alert("通讯错误");
+            }else if(data.sts == 8){
+                window.location = "/login.esp";
+            }else{
+
+            }
+        },
+        error : function(err) {
+            alert("AJAX ERROR---setIpTvmode!!");
+        }
+    });
+}
+
 function createHomeUI(){
     if(globalObj.timerID != undefined){
         clearInterval(globalObj.timerID);
@@ -213,7 +234,7 @@ function createHomeUI(){
     $('.prg_ch').attr("disabled", true);
     $('.spts_ch').attr("disabled", true);
     $('.btn_spts').attr("disabled", true);
-    //$('.input_spts').css("display", "none");
+
     $('.btn_spts').on("click", function(){
         alert("btn_spts click!");
     });
@@ -301,6 +322,24 @@ function createHomeUI(){
             if( $.ui.fancytree.getEventTargetType(event) === "title" ){
                 data.node.toggleSelected();
             }
+            var snode = data.node;
+            var arr = snode.key.match(/\./g);
+            if(arr.length == 2){
+                var prgnum = snode.data.prgnum;
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "http://"+localip+":4000/do/programs/tree_selctdprg?prgnum="+prgnum,
+                    dataType: "json",
+                    success: function(data){
+                        var xxx = data;
+
+                    },
+                    error : function(err) {
+                        alert("AJAX ERROR---tree_selctdprg!!");
+                    }
+                });
+            }
         }
     });
 
@@ -325,14 +364,52 @@ function createHomeUI(){
     });
 
     $('#tbl_outtable tbody').on( 'click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }else {
-            $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
+        $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var index = $(this)[0].cells[0].textContent-1;
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/tbl_selctdprg?index="+index,
+            dataType: "json",
+            success: function(data){
+                if(data.outMode < 3){
+                    $('.prg_outmode')[0].selectedIndex = 0;
+                }else if(data.outMode == 3){
+                    $('.prg_outmode')[0].selectedIndex = 1;
+                }
+                $('.prg_ch').val(index + 1);
+                $('.prg_destip').val(data.ipStr);
+                $('.prg_destport').val(data.port);
+                $('.prg_destmac').val(data.macStr);
+
+            },
+            error : function(err) {
+                alert("AJAX ERROR---tbl_selctdprg!!");
+            }
+        });
+        //var modestr = $(this)[0].cells[1].textContent;
+        //if(modestr == "Unicast"){
+        //    $('.prg_outmode')[0].selectedIndex = 0;
+        //}else{
+        //    $('.prg_outmode')[0].selectedIndex = 1;
+        //}
+        //$('.prg_ch').val($(this)[0].cells[0].textContent);
+        //$('.prg_destip').val($(this)[0].cells[2].textContent);
+        //$('.prg_destport').val($(this)[0].cells[3].textContent);
+        //$('.prg_destmac').val($(this)[0].cells[4].textContent);
     } );
 
+    $('.output_mode').on('change', function(){
+        var spstindex = $('.output_mode')[0].selectedIndex;
+        setIpTvmode(spstindex);
+        if(spstindex){
+            $('.input_spts').css("display", "block");
+        }else{
+            $('.input_spts').css("display", "none");
+        }
+        outprgList();
+    });
 }
 
 function readinputsts(){

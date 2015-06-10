@@ -234,10 +234,57 @@ static void outprgList(HttpConn *conn) {
     getPrgoutListJson(outprg);
     render(outprg);
 }
-//
-//static void redirectPost() {
-//    redirect(sjoin(getConn()->rx->uri, "/", NULL));
-//}
+
+static void setIpTvmode(HttpConn *conn) {
+    if(isAuthed()){
+        return;
+    }
+    char str[64] = {0};
+    char optstr[128] = {0};
+    MprJson *jsonparam = httpGetParams(conn);
+    int mode = atoi(mprGetJson(jsonparam, "mode"));
+    clsGlobal.ipGwDb->dvbIptvMode = mode;
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    if(mode){
+        memcpy(str, "SPTS",  strlen("SPTS"));
+    }else{
+        memcpy(str, "MPTS",  strlen("MPTS"));
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出模式[%s].', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), str, curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    memset(str, 0, sizeof(str));
+    rendersts(str, 1);
+    render(str);
+}
+
+
+static void tbl_selctdprg(HttpConn *conn) {
+    char outprg[256] = {0};
+    MprJson *jsonparam = httpGetParams(conn);
+    int index = atoi(mprGetJson(jsonparam, "index"));
+    SetDb3(index);
+    getDb3Json(outprg);
+    render(outprg);
+}
+
+static void tree_selctdprg(HttpConn *conn) {
+    char outprg[512] = {0};
+    MprJson *jsonparam = httpGetParams(conn);
+    int prgnum = atoi(mprGetJson(jsonparam, "prgnum"));
+    getSPTSCHJson(prgnum, 1, outprg);
+    render(outprg);
+}
 
 
 
@@ -278,6 +325,11 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
     espDefineAction(route, "programs-cmd-iptvRead", iptvRead);
     espDefineAction(route, "programs-cmd-outprgList", outprgList);
+    espDefineAction(route, "programs-cmd-setIpTvmode", setIpTvmode);
+    espDefineAction(route, "programs-cmd-tbl_selctdprg", tbl_selctdprg);
+    espDefineAction(route, "programs-cmd-tree_selctdprg", tree_selctdprg);
+
+
 
 #if SAMPLE_VALIDATIONS
     Edi *edi = espGetRouteDatabase(route);

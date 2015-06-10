@@ -20,9 +20,6 @@
 			<div class="ny_zb">
 				<div class="ny_zblb1">
 					<ul class="clearfix">
-                        <li id="l1">
-                            <a class="cur STRING_BASE" href="javascript:toHome()"><strong>基本信息</strong></a>
-                        </li>
 						<li id="l2">
 							<a class="cur STRING_BASE" href="javascript:createHomeUI()"><strong>节目列表</strong></a>
 						</li>
@@ -88,67 +85,23 @@
                 if(str.indexOf(BrowserS[i])>=0){return BrowserS[i].replace('MSIE','IE');}
             }
 		}
-        //获取设备基本信息
-//        $.ajax({
-//            type: "GET",
-//            async:false,
-//            url: "http://"+localip+":4000/do/programs/getDevinfo",
-//            dataType: "json",
-//            success: function(data){
-//                if(data.sts == 8){
-//                    window.location = "/login.esp";
-//                }
-//                recdata = data;
-//            },
-//            error : function(err,b,c) {
-//                if(err.responseText == "login.esp"){
-//                    window.location = "/login.esp";
-//                }
-//            }
-//        });
-//        $('.main-content').empty();
-//        $('.main-content').append(
-//                '<table id="basedev" class="tbl_baseinfo" cellspacing="0" width="100%">'
-//                +'<tbody>'
-//                +'<tr>'
-//                +'<th><label>名称:</label></th>'
-//                +'<th><label id="dev-name" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>类型:</label></th>'
-//                +'<th><label id="dev-type" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>有效性:</label></th>'
-//                +'<th><label id="dev-valid" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>链接方式:</label></th>'
-//                +'<th><label id="dev-connect" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>网络地址:</label></th>'
-//                +'<th><label id="dev-ip" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>端口号:</label></th>'
-//                +'<th><label id="dev-port" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>硬件版本:</label></th>'
-//                +'<th><label id="dev-biosversion" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>软件版本:</label></th>'
-//                +'<th><label id="dev-softversion" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'<tr>'
-//                +'<th><label>固件版本:</label></th>'
-//                +'<th><label id="dev-firmware" class="tbl_th">T</label></th>'
-//                +'</tr>'
-//                +'</tbody>'
-//                +'</table>'
-//        );
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/ipRead",
+            dataType: "json",
+            success: function(res){
+                if(res.sts == 6){
+                    alert("通讯错误");
+                }else if(res.sts == 8){
+                    window.location = "/login.esp";
+                }else{
+
+                }
+            },
+            error : function(err) {
+            }
+        });
 //
 //        function toHome() {
 //            if(globalObj.timerID != undefined){

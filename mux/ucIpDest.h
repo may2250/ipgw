@@ -9,5 +9,6 @@ int ParamsRead_ttl(char *ip, int *outMode);
 int ParamRead_outChnMax(char *ip, int *chnMax);
 int dest1_ParamsReadAll(char *ip);
 void GetDb3(list_t *ucDblist);
+void SetDb3(int index);
 
 #endif

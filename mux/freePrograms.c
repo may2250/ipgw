@@ -124,11 +124,10 @@ int freeUcIpDestdbs(list_t *prginfolist)
 		//free ptemp
 		if(destdb->prgList != NULL){
 			freeUcIpDestPrg(destdb->prgList);
-			free(destdb);
-			list_pop(prginfolist,i);
-			destdb = NULL;
 		}
-
+		free(destdb);
+        list_pop(prginfolist,i);
+        destdb = NULL;
 	}
 
 	prginfolist = NULL;

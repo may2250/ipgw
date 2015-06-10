@@ -125,3 +125,39 @@ void GetDb3(list_t *ucDblist)
     }
     list_append(ucDblist, ucDb);
 }
+
+void SetDb3(int index){
+    int i = 0;
+    UcIpDestDbSt3_st *ucDb = NULL;
+    list_get(clsGlobal.ucIpDestDb, index, &ucDb);
+    memcpy(clsGlobal._ucDb4->ip, ucDb->ip, 4);
+    memcpy(clsGlobal._ucDb4->mac, ucDb->mac, 6);
+    clsGlobal._ucDb4->outMode = ucDb->outMode;
+    clsGlobal._ucDb4->port = ucDb->port;
+    clsGlobal._ucDb4->outputEnable = ucDb->outputEnable;
+    clsGlobal._ucDb4->outChn = 0;
+
+    if (ucDb->prgList != NULL)
+    {
+        freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
+        if (clsGlobal._ucDb4->prgList == NULL){
+            clsGlobal._ucDb4->prgList = malloc(sizeof(list_t));
+            list_init(clsGlobal._ucDb4->prgList);
+        }
+        UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
+
+        for(i=0;i<list_len(ucDb->prgList);i++){
+            list_get(ucDb->prgList, i, &eachPrg);
+            UcIpDestPrgMuxInfoSt_st *curPrg = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));
+            if(eachPrg->avPidListLen > 0){
+                curPrg->avPidListLen = eachPrg->avPidListLen;
+                curPrg->avPidList = malloc(sizeof(eachPrg->avPidListLen));
+                memcpy(curPrg->avPidList, eachPrg->avPidList, eachPrg->avPidListLen);
+            }
+            curPrg->inChn = eachPrg->inChn;
+            curPrg->pmtPID = eachPrg->pmtPID;
+            curPrg->prgId = eachPrg->prgId;
+            list_append(clsGlobal._ucDb4->prgList, curPrg);
+        }
+    }
+}
