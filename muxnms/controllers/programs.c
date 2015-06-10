@@ -227,6 +227,13 @@ static void iptvRead(HttpConn *conn) {
     rendersts(str, 1);
     render(str);
 }
+
+static void outprgList(HttpConn *conn) {
+    char outprg[10240] = {0};
+    DeleteInvalidOutputChn();
+    getPrgoutListJson(outprg);
+    render(outprg);
+}
 //
 //static void redirectPost() {
 //    redirect(sjoin(getConn()->rx->uri, "/", NULL));
@@ -270,6 +277,7 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-readinputsts", readinputsts);
     espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
     espDefineAction(route, "programs-cmd-iptvRead", iptvRead);
+    espDefineAction(route, "programs-cmd-outprgList", outprgList);
 
 #if SAMPLE_VALIDATIONS
     Edi *edi = espGetRouteDatabase(route);

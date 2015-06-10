@@ -6,5 +6,7 @@
 void Init();
 void RefreshIpInOutMode(char *ip);
 int IpRead(char *ip);
+int RefreshOutPrgCnt();
+void DeleteInvalidOutputChn();
 
 #endif

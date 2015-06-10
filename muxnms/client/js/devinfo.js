@@ -88,6 +88,39 @@ function iptvread(){
     });
 }
 
+function outprgList(){
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/outprgList",
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 6){
+                alert("通讯错误");
+            }else if(data.sts == 8){
+                window.location = "/login.esp";
+            }else{
+                StreamData.length = 0;
+                $('.output_cnt').val(data.prgcnt);
+                $.each(data.children, function(key, itemv) {
+                    var item = [itemv.index,itemv.modeStr, itemv.ipStr,itemv.port,itemv.macStr, itemv.nameStr];
+                    StreamData[StreamData.length] = item;
+                });
+                //编辑节目对话框表
+                if ( $.fn.dataTable.isDataTable( '#tbl_outtable' ) ) {
+                    $('#tbl_outtable').dataTable().fnClearTable();
+                    $('#tbl_outtable').dataTable().fnAddData(StreamData);
+                }else{
+
+                }
+            }
+        },
+        error : function(err) {
+            alert("AJAX ERROR---ipRead!!");
+        }
+    });
+}
+
 function createHomeUI(){
     if(globalObj.timerID != undefined){
         clearInterval(globalObj.timerID);
@@ -208,6 +241,7 @@ function createHomeUI(){
                 getprgs();
                 ipread(1);
                 iptvread();
+                outprgList();
             },
             error : function(err) {
                 alert("AJAX ERROR---search!!");
@@ -224,6 +258,7 @@ function createHomeUI(){
         getprgs();
         ipread(1);
         iptvread();
+        outprgList();
     });
 
     $( "#output-auto" ).button({
@@ -288,6 +323,15 @@ function createHomeUI(){
             { "title": "节目名称" }
         ]
     });
+
+    $('#tbl_outtable tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+        }else {
+            $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    } );
 
 }
 

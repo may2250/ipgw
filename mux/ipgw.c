@@ -58,6 +58,7 @@ int IptvRead(char *ip){
         if (!rslt) return 0;
         //clear db3
         freeUcIpDestdbs(clsGlobal.ucIpDestDb);
+        printf("==chnMax==%d\n", chnMax);
         for (i = 0; i < chnMax; i++)
         {
             clsGlobal._moduleId = (i + 1);
@@ -68,3 +69,73 @@ int IptvRead(char *ip){
    }
    return rslt;
 }
+
+int RefreshOutPrgCnt(){
+    int outPrgCnt = 0, i = 0;
+    ChannelProgramSt *pst = NULL;
+    if(clsGlobal.ipGwDb->dvbIptvMode == 0)// 0=mpts, 1=spts
+    {
+        list_get(&(clsProgram.inPrgList), 0, &pst);
+        if(pst != NULL){
+            outPrgCnt = list_len(&pst->prgNodes);
+            return outPrgCnt;
+        }
+    }
+    else
+    {
+        UcIpDestDbSt3_st *db3 = NULL;
+        if(list_len(clsGlobal.ucIpDestDb)>0){
+            for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
+                list_get(clsGlobal.ucIpDestDb, i, &db3);
+                if(db3->prgList != NULL){
+                    outPrgCnt += list_len(db3->prgList);
+                }
+            }
+        }
+        return outPrgCnt;
+    }
+}
+
+void DeleteInvalidOutputChn(){
+    int i = 0, j = 0, k = 0, m = 0;
+    ChannelProgramSt *pst = NULL;
+    Dev_prgInfo_st *inprg = NULL;
+    for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
+        UcIpDestDbSt3_st *eachChn = NULL;
+        list_get(clsGlobal.ucIpDestDb, i, &eachChn);
+        if(eachChn->prgList != NULL){
+            UcIpDestPrgMuxInfoSt_st *prg = NULL;
+            for(j=0;j<list_len(eachChn->prgList);){
+                list_get(eachChn->prgList, j, &prg);
+                if(&clsProgram.inPrgList == NULL || list_len(&clsProgram.inPrgList) <= 0){
+                    freeUcIpDestPrg(eachChn->prgList);
+                    break;
+                }
+                int isInValidPrg = 1;
+                for(k=0;k<list_len(&clsProgram.inPrgList);k++){
+                    list_get(&clsProgram.inPrgList, k, &pst);
+                    if(pst->channelId == prg->inChn){
+                        if(&pst->prgNodes != NULL){
+                            for(m=0;m<list_len(&pst->prgNodes);m++){
+                                list_get(&pst->prgNodes, m, &inprg);
+                                if(inprg->prgNum == prg->prgId)                                {
+                                    isInValidPrg = 0;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                if(isInValidPrg){
+                    printf("===DeleteInvalidOutputChn===del\n");
+                    list_pop(eachChn->prgList, j);
+                }else{
+                    j++;
+                }
+            }
+        }
+
+    }
+}
+

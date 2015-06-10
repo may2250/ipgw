@@ -286,3 +286,85 @@ int getInputStsJson(char *ip, char *outprg){
     free(prgjsonstring);
     return 1;
 }
+
+void getPrgoutListJson(char *outprg){
+    if (clsGlobal.ucIpDestDb == NULL){
+        return;
+    }
+    cJSON *basejson, *prgarry, *prgjson;
+    char *prgjsonstring;
+    char str[64] = {0};
+    int i = 0, j = 0, k = 0;
+    basejson = cJSON_CreateObject();
+    cJSON_AddNumberToObject(basejson,"prgcnt", RefreshOutPrgCnt());
+    cJSON_AddItemToObject(basejson, "children", prgarry = cJSON_CreateArray());
+    for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
+        if (clsGlobal.ipGwDb->dvbIptvMode == 0 && i > 0){
+            return;
+        }
+        UcIpDestDbSt3_st *eachPrg = NULL;
+        list_get(clsGlobal.ucIpDestDb, i, &eachPrg);
+
+        cJSON_AddItemToArray(prgarry,prgjson = cJSON_CreateObject());
+        cJSON_AddNumberToObject(prgjson,"index", i+1);
+        switch (eachPrg->outMode){
+            case 0:
+                cJSON_AddStringToObject(prgjson,"modeStr", "Unicast");
+                break;
+            //		case 1: modeStr = "RTP"; break;
+            //		case 2: modeStr = "RTSP"; break;
+            case 3:
+                cJSON_AddStringToObject(prgjson,"modeStr", "Multicast");
+                break;
+            default:
+                cJSON_AddStringToObject(prgjson,"modeStr", "?");
+                break;
+        }
+        sprintf(str, "%d.%d.%d.%d", eachPrg->ip[0], eachPrg->ip[1], eachPrg->ip[2], eachPrg->ip[3]);
+        cJSON_AddStringToObject(prgjson,"ipStr", str);
+        cJSON_AddNumberToObject(prgjson,"port", eachPrg->port);
+        if (eachPrg->outMode == 3){
+            cJSON_AddStringToObject(prgjson,"macStr", "Auto");
+        }
+        else {
+            memset(str, 0, sizeof(str));
+            sprintf(str, "%x:%x:%x:%x:%x:%x", eachPrg->mac[0], eachPrg->mac[1], eachPrg->mac[2],
+            eachPrg->mac[3], eachPrg->mac[4], eachPrg->mac[5]);
+            cJSON_AddStringToObject(prgjson,"macStr", str);
+        }
+        // 节目
+        if(eachPrg->prgList != NULL){
+            UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
+            for(j=0;j<list_len(eachPrg->prgList);j++){
+                list_get(eachPrg->prgList, j, &muxPrg);
+                if(muxPrg->inChn >0){
+                    ChannelProgramSt *pst = NULL;
+                    Dev_prgInfo_st *inprg = NULL;
+                    if(&clsProgram.inPrgList != NULL){
+                        list_get(&(clsProgram.inPrgList), 0, &pst);
+                        for(k=0;k<list_len(&(pst->prgNodes));k++){
+                            list_get(&(pst->prgNodes), k, &inprg);
+                            if(inprg->prgNum == muxPrg->prgId){
+                                memset(str, 0, sizeof(str));
+                                memcpy(str, inprg->prgName, inprg->prgNameLen);
+                                cJSON_AddStringToObject(prgjson,"nameStr", str);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }else{
+            cJSON_AddStringToObject(prgjson,"nameStr", " ");
+        }
+    }
+
+    prgjsonstring = cJSON_PrintUnformatted(basejson);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+    //printf("===getPrgoutListJson===len==%d\n", strlen(prgjsonstring));
+    //释放内存
+    cJSON_Delete(basejson);
+    free(prgjsonstring);
+
+
+}

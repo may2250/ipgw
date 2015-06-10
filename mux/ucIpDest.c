@@ -90,7 +90,7 @@ int dest1_ParamsReadAll(char *ip){
 
 void GetDb3(list_t *ucDblist)
 {
-    int i = 0, offset = 0;
+    int i = 0;
     UcIpDestDbSt3_st *ucDb = malloc(sizeof(UcIpDestDbSt3_st));
     memcpy(ucDb->ip, clsGlobal._ucDb4->ip, 4);
     memcpy(ucDb->mac, clsGlobal._ucDb4->mac, 6);
