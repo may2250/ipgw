@@ -1,5 +1,6 @@
 var globalObj = {
     _outtable: null,
+    _devtree: null,
     timerID: undefined
 };
 
@@ -197,7 +198,7 @@ function createHomeUI(){
                     +'<div class="input_spts">'
                         +'<lable class="lb_mr lb_ml">SPTS通道</lable>'
                         +'<select class="spts_ch"></select>'
-                        +'<a href="javascript:void()" class="btn_css btn_spts">确定</a>'
+                        +'<a href="javascript:void(0)" class="btn_css btn_spts">确定</a>'
                     +'</div>'
                     +'<div class="tree_content">'
                         +'<div id="devlist" class="channel_input"></div>'
@@ -208,7 +209,7 @@ function createHomeUI(){
                         +'<tr>'
                             +'<td><label class="lb_mr">通道</label></td>'
                             +'<td><input class="prg_ch lb_mr"></td>'
-                            +'<td><a href="javascript:void()" class="btn_css btn_prg">确定</a></td>'
+                            +'<td><a href="javascript:void(0)" class="btn_css btn_prg">确定</a></td>'
                         +'</tr>'
                         +'<tr>'
                             +'<td><label class="lb_mr">输出方式</label></td>'
@@ -254,7 +255,31 @@ function createHomeUI(){
     $('.btn_spts').attr("disabled", true);
 
     $('.btn_spts').on("click", function(){
-        alert("btn_spts click!");
+        var selectednode = $("#devlist").fancytree("getTree").getActiveNode();
+        if(selectednode != null && selectednode.data.prgnum != undefined){
+            var prgId = selectednode.data.prgnum;
+            if($(".spts_ch").get(0).selectedIndex > 0){
+                var outChnId = $(".spts_ch").val();
+                var jsonstr = '{"inCh":1,"prgId":' + prgId + ',"outChnId":' + outChnId + '}';
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "http://"+localip+":4000/do/programs/outchnprg_output",
+                    data: JSON.parse(jsonstr),
+                    dataType: "json",
+                    success: function(data){
+                        if(data.sts == 6){
+                            alert("通讯错误");
+                            return false;
+                        }
+                        outprgList();
+                    },
+                    error : function(err) {
+                        alert("AJAX ERROR---outchnprg_output!!");
+                    }
+                });
+            }
+        }
     });
 
     $('.btn_prg').on("click", function(){
@@ -334,7 +359,7 @@ function createHomeUI(){
     });
 
     //输入通道树
-    $("#devlist").fancytree({
+    globalObj._devtree = $("#devlist").fancytree({
         checkbox: false,
         selectMode: 1,
         minExpandLevel:2,

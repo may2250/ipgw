@@ -8,5 +8,7 @@ void RefreshIpInOutMode(char *ip);
 int IpRead(char *ip);
 int RefreshOutPrgCnt();
 void DeleteInvalidOutputChn();
+void EnableValidOutChn();
+void OutChnPrg_output(int inChn, int prgId, int outChnId);
 
 #endif

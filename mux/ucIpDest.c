@@ -136,7 +136,6 @@ void SetDb3(int index){
     clsGlobal._ucDb4->port = ucDb->port;
     clsGlobal._ucDb4->outputEnable = ucDb->outputEnable;
     clsGlobal._ucDb4->outChn = 0;
-
     if (ucDb->prgList != NULL)
     {
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
@@ -145,7 +144,6 @@ void SetDb3(int index){
             list_init(clsGlobal._ucDb4->prgList);
         }
         UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
-
         for(i=0;i<list_len(ucDb->prgList);i++){
             list_get(ucDb->prgList, i, &eachPrg);
             UcIpDestPrgMuxInfoSt_st *curPrg = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));

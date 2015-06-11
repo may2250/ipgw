@@ -138,3 +138,70 @@ void DeleteInvalidOutputChn(){
     }
 }
 
+void EnableValidOutChn(){
+    int i = 0;
+    if (clsGlobal.ucIpDestDb != NULL)
+    {
+        UcIpDestDbSt3_st *db3 = NULL;
+        if (clsGlobal.ipGwDb->dvbIptvMode == 0)
+        {
+            list_get(clsGlobal.ucIpDestDb, 0, &db3);
+            db3->outputEnable = 1;
+        }else{
+            for (i = 0; i < list_len(clsGlobal.ucIpDestDb); i++)
+            {
+                list_get(clsGlobal.ucIpDestDb, i, &db3);
+                if (db3->prgList == NULL )
+                {
+                    db3->outputEnable = 0;
+                }
+                else
+                {
+                    if(list_len(db3->prgList) == 0){
+                        db3->outputEnable = 0;
+                    }else{
+                        db3->outputEnable = 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void OutChnPrg_output(int inChn, int prgId, int outChnId){
+    //OutChnPrg_delete
+    if (clsGlobal.ucIpDestDb == NULL)
+        return;
+    int i = 0, j = 0;
+    UcIpDestDbSt3_st *db3 = NULL;
+    for(i = 0; i < list_len(clsGlobal.ucIpDestDb); i++)
+    {
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if (db3->prgList != NULL)
+        {
+            UcIpDestPrgMuxInfoSt_st * muxinfo = NULL;
+            for(j=0;j<list_len(db3->prgList); j++){
+                list_get(db3->prgList, j, &muxinfo);
+                if(muxinfo->inChn == inChn && muxinfo->prgId == prgId){
+                    freeUcIpDestPrg(db3->prgList);
+                }
+            }
+        }
+    }
+    if(list_len(clsGlobal.ucIpDestDb)< outChnId || outChnId < 1)
+        return;
+    outChnId--;
+    list_get(clsGlobal.ucIpDestDb, outChnId, &db3);
+    if (db3->prgList != NULL){
+        printf("=OutChnPrg_output==prgList!!!===NULL\n");
+        //freeUcIpDestPrg(db3->prgList);
+    }
+    db3->prgList = malloc(sizeof(list_t));
+    list_init(db3->prgList);
+    UcIpDestPrgMuxInfoSt_st *newOutPrg = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));
+    newOutPrg->inChn = inChn;
+    newOutPrg->prgId = prgId;
+    newOutPrg->avPidListLen = 0;
+    list_append(db3->prgList, newOutPrg);
+}
+

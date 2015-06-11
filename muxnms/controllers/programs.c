@@ -225,13 +225,13 @@ static void iptvRead(HttpConn *conn) {
         render(str);
         return;
     }
+    DeleteInvalidOutputChn();
     rendersts(str, 1);
     render(str);
 }
 
 static void outprgList(HttpConn *conn) {
     char outprg[10240] = {0};
-    DeleteInvalidOutputChn();
     getPrgoutListJson(outprg);
     render(outprg);
 }
@@ -293,6 +293,36 @@ static void tree_selctdprg(HttpConn *conn) {
     render(outprg);
 }
 
+static void outchnprg_output(HttpConn *conn) {
+    if(isAuthed()){
+        return;
+    }
+    char str[32] = {0};
+    char optstr[256] = {0};
+    MprJson *jsonparam = httpGetParams(conn);
+    int prgId = atoi(mprGetJson(jsonparam, "prgId"));
+    int inCh = atoi(mprGetJson(jsonparam, "inCh"));
+    int outChnId = atoi(mprGetJson(jsonparam, "outChnId"));
+    OutChnPrg_output(inCh, prgId, outChnId);
+    EnableValidOutChn();
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户更改节目[%d]SPTS通道.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
+}
+
 
 
 static void common(HttpConn *conn) {
@@ -335,7 +365,7 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-setIpTvmode", setIpTvmode);
     espDefineAction(route, "programs-cmd-tbl_selctdprg", tbl_selctdprg);
     espDefineAction(route, "programs-cmd-tree_selctdprg", tree_selctdprg);
-
+    espDefineAction(route, "programs-cmd-outchnprg_output", outchnprg_output);
 
 
 #if SAMPLE_VALIDATIONS
