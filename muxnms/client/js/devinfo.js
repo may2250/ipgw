@@ -11,7 +11,14 @@ var StreamData = [];
 
 createHomeUI();
 
+var dig_notification = $( "#progress-notification" ).dialog({
+    autoOpen: false,
+    modal: true,
+    width: 300
+});
+
 function getprgs(){
+    $('.notification-tips')[0].textContent = "正在获取节目..."
     $.ajax({
         type: "GET",
         async:true,
@@ -52,6 +59,7 @@ function ipread(flag){
                 if(flag == 1){
                     $('.output_ttl').val(res.ttl);
                     $('.output_mode')[0].options[Number(res.dvbIptvMode)].selected = true;
+                    $('.spts_ch').attr("disabled", true);
                 }else if(flag == 2){
                     //发送源
                     $('.s_netInterfaceMode')[0].options[Number(res.netInterfaceMode)].selected = true;
@@ -68,6 +76,7 @@ function ipread(flag){
 }
 
 function iptvread(){
+    $('.notification-tips')[0].textContent = "正在获取IPTV信息..."
     $.ajax({
         type: "GET",
         async: false,
@@ -89,6 +98,7 @@ function iptvread(){
 }
 
 function outprgList(){
+    $('.notification-tips')[0].textContent = "正在获取输出列表..."
     $.ajax({
         type: "GET",
         async: false,
@@ -113,6 +123,14 @@ function outprgList(){
                 }else{
 
                 }
+                var srow;
+                $.each(data.children, function(key, itemv) {
+                    if(itemv.Isoutprg){
+                        srow = globalObj._outtable[0].rows[itemv.index];
+                        $(srow).addClass('outprg');
+                    }
+                });
+
             }
         },
         error : function(err) {
@@ -178,7 +196,7 @@ function createHomeUI(){
                 +'<div class="input_tree">'
                     +'<div class="input_spts">'
                         +'<lable class="lb_mr lb_ml">SPTS通道</lable>'
-                        +'<select class="spts_ch lb_mr"></select>'
+                        +'<select class="spts_ch"></select>'
                         +'<a href="javascript:void()" class="btn_css btn_spts">确定</a>'
                     +'</div>'
                     +'<div class="tree_content">'
@@ -249,6 +267,8 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
+        $('.notification-tips')[0].textContent = "正在搜索..."
+        dig_notification.dialog( "open" );
         $.ajax({
             type: "GET",
             async: false,
@@ -263,6 +283,7 @@ function createHomeUI(){
                 ipread(1);
                 iptvread();
                 outprgList();
+                dig_notification.dialog( "close" );
             },
             error : function(err) {
                 alert("AJAX ERROR---search!!");
@@ -276,10 +297,13 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
+        dig_notification.dialog( "open" );
         getprgs();
         ipread(1);
         iptvread();
         outprgList();
+        dig_notification.dialog( "close" );
+
     });
 
     $( "#output-auto" ).button({
@@ -332,7 +356,44 @@ function createHomeUI(){
                     url: "http://"+localip+":4000/do/programs/tree_selctdprg?prgnum="+prgnum,
                     dataType: "json",
                     success: function(data){
-                        var xxx = data;
+                        if(data.sts == 8){
+                            window.location = "/login.esp";
+                        }
+                        $('.spts_ch').attr("disabled", false);
+                        $(".spts_ch").empty();
+                        $.each(data.children, function(index, item){
+                            var option = $("<option>").val(item.tag).text(item.tag);
+                            $(".spts_ch").append(option);
+                        });
+                        $('.spts_ch')[0].selectedIndex = data.tag;
+                        var srow = globalObj._outtable[0].rows[$('.spts_ch').val()];
+                        $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
+                        $(srow).addClass('selected');
+                        //$(srow).addClass('outprg');
+                        if(srow != undefined){
+                            var index = $(srow)[0].cells[0].textContent-1;
+                            $.ajax({
+                                type: "GET",
+                                async: false,
+                                url: "http://"+localip+":4000/do/programs/tbl_selctdprg?index="+index,
+                                dataType: "json",
+                                success: function(data){
+                                    if(data.outMode < 3){
+                                        $('.prg_outmode')[0].selectedIndex = 0;
+                                    }else if(data.outMode == 3){
+                                        $('.prg_outmode')[0].selectedIndex = 1;
+                                    }
+                                    $('.prg_ch').val(index + 1);
+                                    $('.prg_destip').val(data.ipStr);
+                                    $('.prg_destport').val(data.port);
+                                    $('.prg_destmac').val(data.macStr);
+
+                                },
+                                error : function(err) {
+                                    alert("AJAX ERROR---tbl_selctdprg!!");
+                                }
+                            });
+                        }
 
                     },
                     error : function(err) {
@@ -344,7 +405,7 @@ function createHomeUI(){
     });
 
     //右侧table
-    var tout = $('#tbl_outtable').dataTable( {
+    globalObj._outtable = $('#tbl_outtable').dataTable( {
         "data": StreamData,
         "order": [[ 0, "asc" ]],
         "paging":   false,
@@ -373,6 +434,9 @@ function createHomeUI(){
             url: "http://"+localip+":4000/do/programs/tbl_selctdprg?index="+index,
             dataType: "json",
             success: function(data){
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }
                 if(data.outMode < 3){
                     $('.prg_outmode')[0].selectedIndex = 0;
                 }else if(data.outMode == 3){
@@ -388,16 +452,6 @@ function createHomeUI(){
                 alert("AJAX ERROR---tbl_selctdprg!!");
             }
         });
-        //var modestr = $(this)[0].cells[1].textContent;
-        //if(modestr == "Unicast"){
-        //    $('.prg_outmode')[0].selectedIndex = 0;
-        //}else{
-        //    $('.prg_outmode')[0].selectedIndex = 1;
-        //}
-        //$('.prg_ch').val($(this)[0].cells[0].textContent);
-        //$('.prg_destip').val($(this)[0].cells[2].textContent);
-        //$('.prg_destport').val($(this)[0].cells[3].textContent);
-        //$('.prg_destmac').val($(this)[0].cells[4].textContent);
     } );
 
     $('.output_mode').on('change', function(){

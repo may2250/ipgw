@@ -48,7 +48,7 @@
             $.ajax({
                 type: "GET",
                 async:false,
-                url: "http://"+globalObj.localip+":4000/do/globalopt/getoptlogs",
+                url: "http://"+localip+":4000/do/globalopt/getoptlogs",
                 // data: {ip:"192.168.1.134", inch:2},
                 dataType: "json",
                 success: function(data){

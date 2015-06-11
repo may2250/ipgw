@@ -12,6 +12,7 @@
 #include "ipgw.h"
 #include "getJsonstr.h"
 #include "clsUcBase.h"
+#include "ucIpDest.h"
 #include "clsMuxprgInfoGet.h"
 
 char *tmpip = "192.168.1.49";
@@ -270,6 +271,9 @@ static void setIpTvmode(HttpConn *conn) {
 
 
 static void tbl_selctdprg(HttpConn *conn) {
+    if(isAuthed()){
+        return;
+    }
     char outprg[256] = {0};
     MprJson *jsonparam = httpGetParams(conn);
     int index = atoi(mprGetJson(jsonparam, "index"));
@@ -279,6 +283,9 @@ static void tbl_selctdprg(HttpConn *conn) {
 }
 
 static void tree_selctdprg(HttpConn *conn) {
+    if(isAuthed()){
+        return;
+    }
     char outprg[512] = {0};
     MprJson *jsonparam = httpGetParams(conn);
     int prgnum = atoi(mprGetJson(jsonparam, "prgnum"));

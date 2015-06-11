@@ -20,7 +20,7 @@ a {
 
 .container {
 	width: 90%;	
-	min-width: 880px;
+	min-width: 980px;
 	margin-right: auto;
 	margin-left: auto;
 }
@@ -755,4 +755,13 @@ span.fancytree-node.userprg > span.fancytree-title {
     line-height: 40px;
 }
 
+.spts_ch {
+    width: 50px;
+}
+
+.btn_spts {
+    padding: 2px 10px;
+    margin-right: 5px;
+    float: right;
+}
 

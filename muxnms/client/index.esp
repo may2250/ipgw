@@ -58,6 +58,9 @@
          <div class="main-content">
              <!--  CONTENT  -->
 		</div>
+        <div id="progress-notification" title="通知">
+            <p class="notification-tips"></p>
+        </div>
     </div>
 	<div class="footer">
 		<hr/>

@@ -353,6 +353,7 @@ void getPrgoutListJson(char *outprg){
                                 memset(str, 0, sizeof(str));
                                 memcpy(str, inprg->prgName, inprg->prgNameLen);
                                 cJSON_AddStringToObject(prgjson,"nameStr", str);
+                                cJSON_AddNumberToObject(prgjson,"Isoutprg", 1);
                                 break;
                             }
                         }
@@ -361,6 +362,7 @@ void getPrgoutListJson(char *outprg){
             }
         }else{
             cJSON_AddStringToObject(prgjson,"nameStr", " ");
+            cJSON_AddNumberToObject(prgjson,"Isoutprg", 0);
         }
 
     }
@@ -413,7 +415,7 @@ void getDb3Json(char *outprg){
 }
 
 void getSPTSCHJson(int prgnum, int chnid, char *outprg){
-    int i = 0, curindex = 0;
+    int i = 0, flag = 0, curindex = 0;
     cJSON *basejson = cJSON_CreateObject();
     cJSON *iteminfo, *itmearry;
     char *prgjsonstring;
@@ -429,13 +431,13 @@ void getSPTSCHJson(int prgnum, int chnid, char *outprg){
                 UcIpDestPrgMuxInfoSt_st *muxinfo = NULL;
                 list_get(db3->prgList, 0, &muxinfo);
                 if (muxinfo->inChn == chnid	&& muxinfo->prgId == prgnum){
-                    printf("-----=====[%d]------\n", i);
                     cJSON_AddItemToArray(itmearry,iteminfo = cJSON_CreateObject());
                     cJSON_AddNumberToObject(iteminfo,"tag", i+1);
-                    curindex = i + 1;
+                    curindex = flag + 1;
                 }
             }
         }else{
+            flag++;
             cJSON_AddItemToArray(itmearry,iteminfo = cJSON_CreateObject());
             cJSON_AddNumberToObject(iteminfo,"tag", i+1);
         }
