@@ -76,41 +76,6 @@ static void getDevinfo(HttpConn *conn) {
     }
 }
 
-static void search(HttpConn *conn) {
-    if(isAuthed()){
-        return;
-    }
-    char str[32] = {0};
-    char optstr[256] = {0};
-
-    RefreshIpInOutMode(tmpip);
-    if(clsGlobal.ipGwDb->devNetFun == 0){
-        if(!Search(tmpip, 1)){
-            //error
-            rendersts(str, 6);
-            render(str);
-            return;
-        }
-    }
-    //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
-    EdiRec *optlog = ediCreateRec(db, "optlog");
-    if(optlog == NULL){
-       printf("================>>>optlog is NULL!!\n");
-    }
-
-    time_t curTime;
-    time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户搜索节目源.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
-    MprJson  *row = mprParseJson(optstr);
-    if(ediSetFields(optlog, row) == 0){
-       printf("================>>>ediSetFields Failed!!\n");
-    }
-    ediUpdateRec(db, optlog);
-    rendersts(str, 1);
-    render(str);
-}
-
 static void getPrgs(HttpConn *conn) {
     if(isAuthed()){
         return;
@@ -125,6 +90,12 @@ static void ipRead(HttpConn *conn) {
         return;
     }
     char outprg[128] = {0};
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(outprg, 8);
+        render(outprg);
+        return;
+    }
     if(!getIpReadJson(tmpip, outprg)){
         rendersts(outprg, 8);
         render(outprg);
@@ -242,6 +213,13 @@ static void setIpTvmode(HttpConn *conn) {
     }
     char str[64] = {0};
     char optstr[128] = {0};
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+
     MprJson *jsonparam = httpGetParams(conn);
     int mode = atoi(mprGetJson(jsonparam, "mode"));
     clsGlobal.ipGwDb->dvbIptvMode = mode;
@@ -275,6 +253,12 @@ static void tbl_selctdprg(HttpConn *conn) {
         return;
     }
     char outprg[256] = {0};
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(outprg, 8);
+        render(outprg);
+        return;
+    }
     MprJson *jsonparam = httpGetParams(conn);
     int index = atoi(mprGetJson(jsonparam, "index"));
     SetDb3(index);
@@ -287,6 +271,13 @@ static void tree_selctdprg(HttpConn *conn) {
         return;
     }
     char outprg[512] = {0};
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(outprg, 8);
+        render(outprg);
+        return;
+    }
+
     MprJson *jsonparam = httpGetParams(conn);
     int prgnum = atoi(mprGetJson(jsonparam, "prgnum"));
     getSPTSCHJson(prgnum, 1, outprg);
@@ -314,6 +305,172 @@ static void outchnprg_output(HttpConn *conn) {
     time_t curTime;
     time(&curTime);
     sprintf(optstr, "{'user': '%s', 'desc': '用户更改节目[%d]SPTS通道.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
+}
+
+static void outChnConfig(HttpConn *conn) {
+    char outprg[256] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(optstr, 8);
+        render(optstr);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(optstr, 5);//无权限
+        render(optstr);
+        return;
+    }
+    MprJson *jsonparam = httpGetParams(conn);
+    int port = atoi(mprGetJson(jsonparam, "port"));
+    int outMode = atoi(mprGetJson(jsonparam, "outMode"));
+    int outChnId = atoi(mprGetJson(jsonparam, "outchn"));
+    cchar *ipstr = mprGetJson(jsonparam, "ipstr");
+    cchar *macstr = mprGetJson(jsonparam, "macstr");
+    int prgId = 0;
+    clsGlobal._ucDb4->outMode = outMode == 0 ? 0 : 3;
+    clsGlobal._ucDb4->port = port;
+    char *newip = strtok(ipstr, ".");
+    int i=0, tmp = 0;
+    while(newip)
+    {
+        clsGlobal._ucDb4->ip[i] = (unsigned char)atoi(newip);
+        newip = strtok(NULL, ".");
+        i++;
+    }
+    i=0;
+    char *tmpmac = strtok(macstr, ":");
+    while(tmpmac)
+    {
+        sscanf(tmpmac,"%x", &tmp);
+        clsGlobal._ucDb4->mac[i] = (unsigned char)tmp;
+        tmpmac = strtok(NULL, ":");
+        i++;
+    }
+    clsGlobal._ucDb4->outputEnable = 1;
+
+    outChnId--;
+    UcIpDestDbSt3_st *ucDb = NULL;
+    list_get(clsGlobal.ucIpDestDb, outChnId, &ucDb);
+    memcpy(ucDb->ip, clsGlobal._ucDb4->ip, 4);
+    memcpy(ucDb->mac, clsGlobal._ucDb4->mac, 6);
+    ucDb->outMode = clsGlobal._ucDb4->outMode;
+    ucDb->port = clsGlobal._ucDb4->port;
+    ucDb->outputEnable = clsGlobal._ucDb4->outputEnable;
+    if(clsGlobal._ucDb4->prgList != NULL){
+        if(list_len(clsGlobal._ucDb4->prgList)>0){
+            if(ucDb->prgList != NULL){
+                freeUcIpDestPrg(ucDb->prgList);
+            }
+            ucDb->prgList = malloc(sizeof(list_t));
+            list_init(ucDb->prgList);
+            UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
+            UcIpDestPrgMuxInfoSt_st *curPrg = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));
+            for(i=0;i<list_len(clsGlobal._ucDb4->prgList);i++){
+                list_get(clsGlobal._ucDb4->prgList, i, &eachPrg);
+                if(eachPrg->avPidListLen>0){
+                    curPrg->avPidListLen = eachPrg->avPidListLen;
+                    curPrg->avPidList = malloc(eachPrg->avPidListLen);
+                    memcpy(curPrg->avPidList, eachPrg->avPidList, eachPrg->avPidListLen);
+                }else{
+                    curPrg->avPidListLen = 0;
+                }
+                curPrg->inChn = eachPrg->inChn;
+                curPrg->pmtPID = eachPrg->pmtPID;
+                curPrg->prgId = eachPrg->prgId;
+                prgId = curPrg->prgId;
+                list_append(ucDb->prgList, curPrg);
+            }
+        }
+    }
+    getDb3Json(outprg);
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出节目[%d]信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    render(outprg);
+}
+
+static void prgMuxSptsMap(HttpConn *conn) {
+    char str[32] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    int i = 0;
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+    int prgIndex = 0;
+    UcIpDestDbSt3_st *db3 = NULL;
+    ChannelProgramSt *pst = NULL;
+    Dev_prgInfo_st *inprg = NULL;
+
+    for(i = 0; i < list_len(clsGlobal.ucIpDestDb); i++)
+    {
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if(db3->prgList != NULL){
+            freeUcIpDestPrg(db3->prgList);
+            free(db3->prgList);
+            db3->prgList = NULL;
+        }
+        if(db3->prgList != NULL){
+            printf("woca prgList != null\n");
+        }
+
+        list_get(&clsProgram.inPrgList, 0, &pst);
+        if(&pst->prgNodes != NULL){
+            if(prgIndex < list_len(&pst->prgNodes)){
+                db3->prgList = malloc(sizeof(list_t));
+                list_init(db3->prgList);
+                list_get(&pst->prgNodes, prgIndex, &inprg);
+                UcIpDestPrgMuxInfoSt_st *prgMuxInfo = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));
+                prgMuxInfo->inChn = inprg->chnId+1;
+                prgMuxInfo->prgId = inprg->prgNum;
+                prgMuxInfo->avPidListLen = 0;
+                list_append(db3->prgList, prgMuxInfo);
+                prgIndex++;
+            }
+        }
+    }
+    EnableValidOutChn();
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户自动映射输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -357,7 +514,6 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-getDevinfo", getDevinfo);
     espDefineAction(route, "programs-cmd-ipRead", ipRead);
     espDefineAction(route, "programs-cmd-getPrgs", getPrgs);
-    espDefineAction(route, "programs-cmd-search", search);
     espDefineAction(route, "programs-cmd-readinputsts", readinputsts);
     espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
     espDefineAction(route, "programs-cmd-iptvRead", iptvRead);
@@ -366,6 +522,8 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-tbl_selctdprg", tbl_selctdprg);
     espDefineAction(route, "programs-cmd-tree_selctdprg", tree_selctdprg);
     espDefineAction(route, "programs-cmd-outchnprg_output", outchnprg_output);
+    espDefineAction(route, "programs-cmd-outChnConfig", outChnConfig);
+    espDefineAction(route, "programs-cmd-prgMuxSptsMap", prgMuxSptsMap);
 
 
 #if SAMPLE_VALIDATIONS

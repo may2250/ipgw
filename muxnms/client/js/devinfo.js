@@ -283,7 +283,63 @@ function createHomeUI(){
     });
 
     $('.btn_prg').on("click", function(){
-        alert("btn_prg click!");
+        var outchn = $('.prg_ch').val();
+        var outMode = $('.prg_outmode').get(0).selectedIndex;
+        var ipstr = $('.prg_destip').val();
+        var port = $('.prg_destport').val();
+        var macstr = $('.prg_destmac').val();
+
+        if(isNaN(port)){
+            alert("非法的端口号.");
+        }else{
+            if(parseInt(port)<1 || parseInt(port)>65535){
+                alert("非法的端口号.");
+            }
+        }
+        var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        var valid = regexp.test(ipstr);
+        if(!valid){
+            alert("无效的IP地址.");
+            return false;
+        }
+        if(macstr != "Auto"){
+            regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
+            valid = regexp.test(macstr);
+            if(!valid){
+                alert("无效的MAC地址.");
+                return false;
+            }
+        }
+        var jsonstr = '{"outchn":"' + outchn + '","outMode":' + outMode + ',"macstr":"' + macstr + '","ipstr":"'
+            + ipstr + '","port":' + port + '}';
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/outChnConfig",
+            data: JSON.parse(jsonstr),
+            dataType: "json",
+            success: function(data){
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }else if(data.sts == 5){
+                    alert("该用户权限不足.");
+                    return false;
+                }
+                if(data.outMode < 3){
+                    $('.prg_outmode')[0].selectedIndex = 0;
+                }else if(data.outMode == 3){
+                    $('.prg_outmode')[0].selectedIndex = 1;
+                }
+                $('.prg_ch').val(index + 1);
+                $('.prg_destip').val(data.ipStr);
+                $('.prg_destport').val(data.port);
+                $('.prg_destmac').val(data.macStr);
+            },
+            error : function(err) {
+                alert("AJAX ERROR---outChnConfig!!");
+            }
+        });
+
     });
 
     $( "#output-search" ).button({
@@ -292,28 +348,12 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        $('.notification-tips')[0].textContent = "正在搜索..."
         dig_notification.dialog( "open" );
-        $.ajax({
-            type: "GET",
-            async: false,
-            url: "http://"+localip+":4000/do/programs/search",
-            dataType: "json",
-            success: function(data){
-                if(data.sts == 6){
-                    alert("通讯错误");
-                    return false;
-                }
-                getprgs();
-                ipread(1);
-                iptvread();
-                outprgList();
-                dig_notification.dialog( "close" );
-            },
-            error : function(err) {
-                alert("AJAX ERROR---search!!");
-            }
-        });
+        getprgs();
+        ipread(1);
+        iptvread();
+        outprgList();
+        dig_notification.dialog( "close" );
     });
 
     $( "#output-read" ).button({
@@ -337,7 +377,26 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-
+        $("#devlist").fancytree("getTree").getRootNode();
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/prgMuxSptsMap",
+            dataType: "json",
+            success: function(data){
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }else if(data.sts == 5){
+                    alert("该用户权限不足.");
+                    return false;
+                }else if(data.sts == 1){
+                    outprgList();
+                }
+            },
+            error : function(err) {
+                alert("AJAX ERROR---prgMuxSptsMap!!");
+            }
+        });
     });
 
     $( "#output-clear" ).button({
@@ -584,9 +643,13 @@ function createSendSrcUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        if($('.s_port').val()>65535 || $('.s_port').val()<0){
-            alert("端口号溢出.");
-            return false;
+        if(isNaN($('.s_port').val())){
+            alert("非法的端口号.");
+        }else{
+            if(parseInt($('.s_port').val())>65535 || parseInt($('.s_port').val()<0)){
+                alert("端口号溢出.");
+                return false;
+            }
         }
         var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
         var valid = regexp.test($('.s_ip').val());
