@@ -205,3 +205,85 @@ void OutChnPrg_output(int inChn, int prgId, int outChnId){
     list_append(db3->prgList, newOutPrg);
 }
 
+int CheckSameDest(){
+    int i = 0, j = 0, k = 0;
+    UcIpDestDbSt3_st *db3 = NULL;
+    UcIpDestDbSt3_st *dbj3 = NULL;
+    for(i = 1; i < list_len(clsGlobal.ucIpDestDb); i++){
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if (db3->outputEnable != 1)
+            continue;
+        for (j = 0; j < i; j++)
+        {
+            list_get(clsGlobal.ucIpDestDb, j, &dbj3);
+            if (dbj3->outputEnable != 1)
+                continue;
+            if(db3->port == dbj3->port)
+            {
+                int isSame = 1;
+                for(k = 0; k < 4; k++)
+                {
+                    if(db3->ip[k] != dbj3->ip[k])
+                    {
+                        isSame = 0;
+                        break;
+                    }
+                }
+                for(k = 0; k < 6; k++)
+                {
+                    if(db3->mac[k] != dbj3->mac[k])
+                    {
+                        isSame = 0;
+                        break;
+                    }
+                }
+                if(isSame)
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+int IpWrite(char *ip){
+    clsGlobal._moduleId = 1;
+    //int rslt = ucIpSrc1.ParamsWriteAll();
+    int rslt = ParamsWrite_dvbIptvMode(ip, clsGlobal.ipGwDb->dvbIptvMode);
+    if (!rslt) return 0;
+    rslt &= ParamsWrite_ttl(ip, clsGlobal.ipGwDb->ttl);
+    if (!rslt) return 0;
+    return rslt;
+}
+
+int IptvWrite(char *ip){
+    int rslt = 0, i = 0;
+    clsGlobal._moduleId = 0;
+    rslt = ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
+    rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
+    UcIpDestDbSt3_st *db3 = NULL;
+    for (i = 0; i < list_len(clsGlobal.ucIpDestDb); i++)
+    {
+        clsGlobal._moduleId = (unsigned char)(i + 1);
+        SetDb3(i);
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if (clsGlobal.ipGwDb->dvbIptvMode == 0)
+        {
+            if (db3->outputEnable == 0) // 如果未启用，则只发送“enable、apply”命令
+                rslt &= ParamsWriteAll(0x20);
+            else
+                rslt &= ParamsWriteAll(0xbf);
+            break;
+        }
+        else
+        {
+            if (db3->outputEnable == 0) // 如果未启用，则只发送“enable、apply”命令
+                rslt &= ParamsWriteAll(0x20);
+            else
+                rslt &= ParamsWriteAll(0xff);
+        }
+    }
+    return rslt;
+}
+

@@ -136,7 +136,6 @@ void SetDb3(int index){
     clsGlobal._ucDb4->port = ucDb->port;
     clsGlobal._ucDb4->outputEnable = ucDb->outputEnable;
     clsGlobal._ucDb4->outChn = 0;
-    printf("-=SetDb3 11-=-\n");
     if (ucDb->prgList != NULL)
     {
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
@@ -159,4 +158,107 @@ void SetDb3(int index){
             list_append(clsGlobal._ucDb4->prgList, curPrg);
         }
     }
+}
+
+int ParamsWrite_dvbIptvMode(char *ip, int outMode){
+    unsigned char cmdBytes[3] = { 0xf2, 0, 1 };
+    return ParamWriteInt(ip, cmdBytes, 3, outMode, 1);
+}
+
+int ParamsWrite_ttl(char *ip, int ttl){
+    unsigned char cmdBytes[3] = { 0xf2, 0, 2 };
+    return ParamWriteInt(ip, cmdBytes, 3, ttl, 1);
+}
+
+// 发送设备参数
+int ParamsWriteAll(char *ip, int bitMask){
+    int isGood = 1, i = 0, j = 0;
+    if ((bitMask & 0x2) !=0)
+        isGood &= ParamWriteByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);
+    if (clsGlobal._ucDb4->outMode < 3)//m_multicastEnable &&
+    {
+        if ((bitMask & 0x4) != 0)
+            isGood &= ParamWriteByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
+    }
+    if ((bitMask & 0x8) != 0)
+        isGood &= ParamReadByIntCmd(ip, (unsigned char)3, clsGlobal._ucDb4->port, 2);
+    if ((bitMask & 0x10) != 0)
+        isGood &= ParamReadByIntCmd(ip, (unsigned char)4, clsGlobal._ucDb4->outMode, 1);
+    if (1)//m_supportOutputEnable || m_autoEnableByPrgCnt
+    {
+        if ((bitMask & 0x20) != 0)
+            isGood &= ParamReadByIntCmd(ip, (unsigned char)5, clsGlobal._ucDb4->outputEnable, 1);
+    }
+
+    if ((bitMask & 0x40) != 0)//m_supportPrgMuxInfo &&
+    {
+        unsigned char muxPrgBytes[128] = {0};
+        UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
+        int ia = 0;
+
+//        if (0)//m_supportMultiMux
+//        {
+//            isGood &= ParamWriteByBytesCmd((byte)UcIpDest_cmd.prgMuxInfoMultiChnId, _ucDb.outChn, 1);
+//        }
+
+        if (clsGlobal._ucDb4->prgList != NULL ){
+            if(list_len(clsGlobal._ucDb4->prgList) > 0){
+                list_get(clsGlobal._ucDb4->prgList, 0, &eachPrg);
+                muxPrgBytes[0] = 1;
+                muxPrgBytes[1] = (unsigned char)(eachPrg->inChn);
+                muxPrgBytes[2] = (unsigned char)(eachPrg->prgId);
+                muxPrgBytes[3] = (unsigned char)(eachPrg->prgId >> 8);
+            }
+        }
+        isGood &= ParamWriteByBytesCmd(ip, (unsigned char)6, muxPrgBytes, sizeof(muxPrgBytes));
+
+        if (1)//m_supportIPTVInfo
+        {
+            ia = 0;
+            eachPrg = NULL;
+            if (clsGlobal._ucDb4->prgList != NULL && list_len(clsGlobal._ucDb4->prgList) > 0){
+                muxPrgBytes[ia++] = (unsigned char)list_len(clsGlobal._ucDb4->prgList);
+                for(i=0;i<list_len(clsGlobal._ucDb4->prgList);i++){
+                    list_get(clsGlobal._ucDb4->prgList, i , &eachPrg);
+                    muxPrgBytes[ia++] = (unsigned char)(eachPrg->prgId);
+                    muxPrgBytes[ia++] = (unsigned char)(eachPrg->prgId >> 8);
+                    muxPrgBytes[ia++] = (unsigned char)(eachPrg->pmtPID);
+                    muxPrgBytes[ia++] = (unsigned char)(eachPrg->pmtPID >> 8);
+                    if (eachPrg->avPidListLen == 0){
+                        muxPrgBytes[ia++] = 0;
+                    }else{
+                        muxPrgBytes[ia++] = (unsigned char)(eachPrg->avPidListLen);
+                        for(j=0;j<eachPrg->avPidListLen;j++){
+                            muxPrgBytes[ia++] = (unsigned char)(eachPrg->avPidList[j]);
+                            muxPrgBytes[ia++] = (unsigned char)(eachPrg->avPidList[j] >> 8);
+                        }
+                    }
+                }
+            }else{
+                muxPrgBytes[ia++] = 0;
+            }
+            isGood &= ParamWriteByBytesCmd(ip, (unsigned char)7, muxPrgBytes, ia);
+        }
+
+    }
+
+    if (isGood)
+    {
+        if ((bitMask & 0x1) != 0 || (bitMask & 0x20) != 0)
+            isGood &= ParamReadByIntCmd(ip, (unsigned char)0xf0, 0, 0);
+//        if (!m_applyBackEnable)
+//        {
+//            isGood = 1;
+//        }
+//
+//        if (isGood)
+//        {
+//            RefreshPlayBtn();
+//        }
+//        else
+//        {
+//            btn_play.Visible = false;
+//        }
+    }
+    return isGood;
 }

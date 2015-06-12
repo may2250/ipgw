@@ -10,5 +10,7 @@ int RefreshOutPrgCnt();
 void DeleteInvalidOutputChn();
 void EnableValidOutChn();
 void OutChnPrg_output(int inChn, int prgId, int outChnId);
+int CheckSameDest();
+int IptvWrite(char *ip);
 
 #endif

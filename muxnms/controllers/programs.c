@@ -371,6 +371,8 @@ static void outChnConfig(HttpConn *conn) {
         if(list_len(clsGlobal._ucDb4->prgList)>0){
             if(ucDb->prgList != NULL){
                 freeUcIpDestPrg(ucDb->prgList);
+                free(ucDb->prgList);
+                ucDb->prgList = NULL;
             }
             ucDb->prgList = malloc(sizeof(list_t));
             list_init(ucDb->prgList);
@@ -442,10 +444,6 @@ static void prgMuxSptsMap(HttpConn *conn) {
             free(db3->prgList);
             db3->prgList = NULL;
         }
-        if(db3->prgList != NULL){
-            printf("woca prgList != null\n");
-        }
-
         list_get(&clsProgram.inPrgList, 0, &pst);
         if(&pst->prgNodes != NULL){
             if(prgIndex < list_len(&pst->prgNodes)){
@@ -480,7 +478,117 @@ static void prgMuxSptsMap(HttpConn *conn) {
     render(str);
 }
 
+static void clearprgMux(HttpConn *conn) {
+    char str[32] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    int i = 0;
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+    UcIpDestDbSt3_st *db3 = NULL;
+    for(i = 0; i < list_len(clsGlobal.ucIpDestDb); i++)
+    {
+        list_get(clsGlobal.ucIpDestDb, i, &db3);
+        if(db3->prgList != NULL){
+            freeUcIpDestPrg(db3->prgList);
+            free(db3->prgList);
+            db3->prgList = NULL;
+        }
+    }
+    EnableValidOutChn();
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户清空输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
+}
 
+static void muxprgwrite(HttpConn *conn) {
+    char str[32] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+    MprJson *jsonparam = httpGetParams(conn);
+    int ttl = atoi(mprGetJson(jsonparam, "ttl"));
+    clsGlobal.ipGwDb->ttl = ttl;
+    EnableValidOutChn();
+    if(CheckSameDest() == 0){
+        rendersts(str, 2);
+        render(str);
+        return;
+    }
+
+    if(clsGlobal.ipGwDb->devNetFun == 0){
+        if (!IpWrite(tmpip)){
+            rendersts(str, 6);
+            render(str);
+            return;
+        }
+        if (!IptvWrite(tmpip)){
+            rendersts(str, 6);
+            render(str);
+            return;
+        }
+    }
+    else
+    {
+//        if (!ucIpIn1.ParamsWriteAll())
+//        {
+//            //frmWait.label_msg.Text = lang.Get("通讯错误");
+//            //break;
+//        }
+    }
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户下发输出配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
+}
 
 static void common(HttpConn *conn) {
 
@@ -524,6 +632,8 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-outchnprg_output", outchnprg_output);
     espDefineAction(route, "programs-cmd-outChnConfig", outChnConfig);
     espDefineAction(route, "programs-cmd-prgMuxSptsMap", prgMuxSptsMap);
+    espDefineAction(route, "programs-cmd-clearprgMux", clearprgMux);
+    espDefineAction(route, "programs-cmd-muxprgwrite", muxprgwrite);
 
 
 #if SAMPLE_VALIDATIONS

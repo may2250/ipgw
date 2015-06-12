@@ -10,5 +10,8 @@ int ParamRead_outChnMax(char *ip, int *chnMax);
 int dest1_ParamsReadAll(char *ip);
 void GetDb3(list_t *ucDblist);
 void SetDb3(int index);
+int ParamsWrite_dvbIptvMode(char *ip, int outMode);
+int ParamsWrite_ttl(char *ip, int ttl);
+int ParamsWriteAll(char *ip, int bitMask);
 
 #endif

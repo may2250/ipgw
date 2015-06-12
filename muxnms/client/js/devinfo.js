@@ -377,7 +377,7 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        $("#devlist").fancytree("getTree").getRootNode();
+        $("#devlist").fancytree("getTree").getRootNode().setActive();
         $.ajax({
             type: "GET",
             async: false,
@@ -405,7 +405,26 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-
+        $("#devlist").fancytree("getTree").getRootNode().setActive();
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/clearprgMux",
+            dataType: "json",
+            success: function(data){
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }else if(data.sts == 5){
+                    alert("该用户权限不足.");
+                    return false;
+                }else if(data.sts == 1){
+                    outprgList();
+                }
+            },
+            error : function(err) {
+                alert("AJAX ERROR---clearprgMux!!");
+            }
+        });
     });
 
     $( "#output-write" ).button({
@@ -414,6 +433,32 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
+        $('.notification-tips')[0].textContent = "正在下发配置..."
+        dig_notification.dialog( "open" );
+        var ttl = $('.output_ttl').val();
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/muxprgwrite?ttl="+ttl,
+            dataType: "json",
+            success: function(data){
+                dig_notification.dialog( "close" );
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }else if(data.sts == 5){
+                    alert("该用户权限不足.");
+                    return false;
+                }else if(data.sts == 1){
+                    //outprgList();
+                }else if(data.sts == 2){
+                    alert("检测到错误的IP输出通道设置！");
+                }
+
+            },
+            error : function(err) {
+                alert("AJAX ERROR---muxprgwrite!!");
+            }
+        });
 
     });
 
@@ -543,8 +588,12 @@ function createHomeUI(){
         setIpTvmode(spstindex);
         if(spstindex){
             $('.input_spts').css("display", "block");
+            $('#output-auto').css("display", "");
+            $('#output-clear').css("display", "");
         }else{
             $('.input_spts').css("display", "none");
+            $('#output-auto').css("display", "none");
+            $('#output-clear').css("display", "none");
         }
         outprgList();
     });

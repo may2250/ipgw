@@ -340,7 +340,6 @@ void getPrgoutListJson(char *outprg){
         // 节目
         if(eachPrg->prgList != NULL){
             UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
-            printf("eachPrg->prgList--len===%d\n", list_len(eachPrg->prgList));
             for(j=0;j<list_len(eachPrg->prgList);j++){
                 list_get(eachPrg->prgList, j, &muxPrg);
                 if(muxPrg->inChn >0){
