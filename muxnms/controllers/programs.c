@@ -114,7 +114,7 @@ static void readinputsts(HttpConn *conn) {
     render(str);
 }
 
-static void ParamsWriteAll(HttpConn *conn) {
+static void paramswriteAll(HttpConn *conn) {
     if(isAuthed()){
         return;
     }
@@ -551,18 +551,17 @@ static void muxprgwrite(HttpConn *conn) {
         render(str);
         return;
     }
-
     if(clsGlobal.ipGwDb->devNetFun == 0){
         if (!IpWrite(tmpip)){
             rendersts(str, 6);
             render(str);
             return;
         }
-        if (!IptvWrite(tmpip)){
-            rendersts(str, 6);
-            render(str);
-            return;
-        }
+//        if (!IptvWrite(tmpip)){
+//            rendersts(str, 6);
+//            render(str);
+//            return;
+//        }
     }
     else
     {
@@ -623,7 +622,7 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-ipRead", ipRead);
     espDefineAction(route, "programs-cmd-getPrgs", getPrgs);
     espDefineAction(route, "programs-cmd-readinputsts", readinputsts);
-    espDefineAction(route, "programs-cmd-ParamsWriteAll", ParamsWriteAll);
+    espDefineAction(route, "programs-cmd-ParamsWriteAll", paramswriteAll);
     espDefineAction(route, "programs-cmd-iptvRead", iptvRead);
     espDefineAction(route, "programs-cmd-outprgList", outprgList);
     espDefineAction(route, "programs-cmd-setIpTvmode", setIpTvmode);

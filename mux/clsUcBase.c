@@ -40,7 +40,7 @@ int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *
 }
 
 int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int needLen){
-    //int i = 0;
+    int i = 0;
     if (cmdBytes == NULL)
         return 0;
     unsigned char buf[1024] = {0};
@@ -71,22 +71,18 @@ int ParamReadint(char *ip, unsigned char *cmdBytes, int cmdLen, int *dbInt, int 
         if (rlen < iAddr + needLen)
             return 0;
         memcpy(outBuf, buf+iAddr, needLen);
-
+//        printf("========================\n");
 //        for(i=0;i<needLen;i++){
 //            printf("===outBuf==[%x]\n", outBuf[i]);
 //        }
-        *dbInt = LittleFormat_fromBytes(0, needLen, outBuf);
-        if(needLen == 1){
-            *dbInt = *dbInt & 0x000000ff;
-        }else if(needLen == 2){
-            *dbInt = *dbInt & 0x0000ffff;
-        }else if(needLen == 3){
-            *dbInt = *dbInt & 0x00ffffff;
-        }else{
-            *dbInt = *dbInt;
-        }
 
-        //printf("===dbInt==%x\n", *dbInt);
+        int offset = 0;
+        *dbInt = 0;
+        for (i = 0; i < needLen; i++)
+        {
+            *dbInt += (outBuf[offset++] << (i * 8));
+        }
+     //   printf("===dbInt==%d\n", *dbInt);
     }
     return 1;
 }
@@ -109,9 +105,10 @@ int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char 
     {
         memcpy(sendbuf+iAddr, writeBytes, writeLen);
     }
-//    for(i=0;i<12;i++){
-//        printf("[%d]::%x\n", i, sendbuf[i]);
-//    }
+    printf("======================\n");
+    for(i=0;i<12;i++){
+        printf("[%d]%x::", i, sendbuf[i]);
+    }
     communicate(ip, sendbuf, iAddr+writeLen, buf, &rlen);
 
 //    if (rlen != iAddr + 1 || buf[iAddr] != 0)
@@ -145,7 +142,11 @@ int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, i
     {
         memcpy(sendbuf+iAddr, writeBytes, writeLen);
     }
-
+    printf("======================\n");
+    for (i = 0; i < 12; i++)
+    {
+        printf("[%d]=%x::", i, sendbuf[i]);
+    }
     communicate(ip, sendbuf, iAddr+writeLen, buf, &rlen);
 //    if (rlen != iAddr + 1 || buf[iAddr] != 0)
 //    {

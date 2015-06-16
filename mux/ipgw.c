@@ -193,8 +193,9 @@ void OutChnPrg_output(int inChn, int prgId, int outChnId){
     outChnId--;
     list_get(clsGlobal.ucIpDestDb, outChnId, &db3);
     if (db3->prgList != NULL){
-        printf("=OutChnPrg_output==prgList!!!===NULL\n");
-        //freeUcIpDestPrg(db3->prgList);
+        freeUcIpDestPrg(db3->prgList);
+        free(db3->prgList);
+        db3->prgList = NULL;
     }
     db3->prgList = malloc(sizeof(list_t));
     list_init(db3->prgList);
@@ -260,6 +261,7 @@ int IpWrite(char *ip){
 int IptvWrite(char *ip){
     int rslt = 0, i = 0;
     clsGlobal._moduleId = 0;
+    printf("----IptvWrite start---\n ");
     rslt = ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
     rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
     UcIpDestDbSt3_st *db3 = NULL;
