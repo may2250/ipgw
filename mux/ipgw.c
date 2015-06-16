@@ -108,6 +108,8 @@ void DeleteInvalidOutputChn(){
                 list_get(eachChn->prgList, j, &prg);
                 if(&clsProgram.inPrgList == NULL || list_len(&clsProgram.inPrgList) <= 0){
                     freeUcIpDestPrg(eachChn->prgList);
+                    free(eachChn->prgList);
+                    eachChn->prgList = NULL;
                     break;
                 }
                 int isInValidPrg = 1;
@@ -184,6 +186,9 @@ void OutChnPrg_output(int inChn, int prgId, int outChnId){
                 list_get(db3->prgList, j, &muxinfo);
                 if(muxinfo->inChn == inChn && muxinfo->prgId == prgId){
                     freeUcIpDestPrg(db3->prgList);
+                    free(db3->prgList);
+                    db3->prgList = NULL;
+                    break;
                 }
             }
         }
@@ -261,7 +266,6 @@ int IpWrite(char *ip){
 int IptvWrite(char *ip){
     int rslt = 0, i = 0;
     clsGlobal._moduleId = 0;
-    printf("----IptvWrite start---\n ");
     rslt = ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
     rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
     UcIpDestDbSt3_st *db3 = NULL;
@@ -273,17 +277,18 @@ int IptvWrite(char *ip){
         if (clsGlobal.ipGwDb->dvbIptvMode == 0)
         {
             if (db3->outputEnable == 0) // 如果未启用，则只发送“enable、apply”命令
-                rslt &= ParamsWriteAll(0x20);
+                rslt &= ParamsWriteAll(ip, 0x20);
             else
-                rslt &= ParamsWriteAll(0xbf);
+                rslt &= ParamsWriteAll(ip, 0xbf);
             break;
         }
         else
         {
-            if (db3->outputEnable == 0) // 如果未启用，则只发送“enable、apply”命令
-                rslt &= ParamsWriteAll(0x20);
-            else
-                rslt &= ParamsWriteAll(0xff);
+            if (db3->outputEnable == 0){    // 如果未启用，则只发送“enable、apply”命令
+                rslt &= ParamsWriteAll(ip, 0x20);
+            }else{
+                rslt &= ParamsWriteAll(ip, 0xff);
+            }
         }
     }
     return rslt;

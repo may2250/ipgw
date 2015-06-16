@@ -92,7 +92,7 @@ int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char 
     if (cmdBytes == NULL)
         return 0;
     unsigned char buf[1024] = {0};
-    unsigned char sendbuf[32] = {0};
+    unsigned char sendbuf[256] = {0};
     int iAddr = 0, i = 0;
 
     sendbuf[iAddr++] = 0x77;
@@ -105,10 +105,10 @@ int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char 
     {
         memcpy(sendbuf+iAddr, writeBytes, writeLen);
     }
-    printf("======================\n");
-    for(i=0;i<12;i++){
-        printf("[%d]%x::", i, sendbuf[i]);
-    }
+//    printf("======================\n");
+//    for(i=0;i<12;i++){
+//        printf("[%d]%x::", i, sendbuf[i]);
+//    }
     communicate(ip, sendbuf, iAddr+writeLen, buf, &rlen);
 
 //    if (rlen != iAddr + 1 || buf[iAddr] != 0)
@@ -142,11 +142,11 @@ int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, i
     {
         memcpy(sendbuf+iAddr, writeBytes, writeLen);
     }
-    printf("======================\n");
-    for (i = 0; i < 12; i++)
-    {
-        printf("[%d]=%x::", i, sendbuf[i]);
-    }
+//    printf("======================\n");
+//    for (i = 0; i < 12; i++)
+//    {
+//        printf("[%d]=%x::", i, sendbuf[i]);
+//    }
     communicate(ip, sendbuf, iAddr+writeLen, buf, &rlen);
 //    if (rlen != iAddr + 1 || buf[iAddr] != 0)
 //    {

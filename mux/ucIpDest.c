@@ -35,6 +35,8 @@ int dest1_ParamsReadAll(char *ip){
     if (1)//m_supportPrgMuxInfo
     {
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
+        free(clsGlobal._ucDb4->prgList);
+        clsGlobal._ucDb4->prgList = NULL;
         if (clsGlobal._ucDb4->prgList == NULL){
             clsGlobal._ucDb4->prgList = malloc(sizeof(list_t));
             list_init(clsGlobal._ucDb4->prgList);
@@ -118,7 +120,11 @@ void GetDb3(list_t *ucDblist)
                     curPrg->prgId = eachPrg->prgId;
                     list_append(ucDb->prgList, curPrg);
                 }
+            }else{
+                ucDb->prgList = NULL;
             }
+        }else{
+            ucDb->prgList = NULL;
         }
     }else{
         ucDb->prgList = NULL;
@@ -139,6 +145,8 @@ void SetDb3(int index){
     if (ucDb->prgList != NULL)
     {
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
+        free(clsGlobal._ucDb4->prgList);
+        clsGlobal._ucDb4->prgList = NULL;
         if (clsGlobal._ucDb4->prgList == NULL){
             clsGlobal._ucDb4->prgList = malloc(sizeof(list_t));
             list_init(clsGlobal._ucDb4->prgList);
@@ -180,18 +188,19 @@ int ParamsWriteAll(char *ip, int bitMask){
         if ((bitMask & 0x4) != 0)
             isGood &= ParamWriteByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
     }
+
     if ((bitMask & 0x8) != 0)
         isGood &= ParamWriteByIntCmd(ip, (unsigned char)3, clsGlobal._ucDb4->port, 2);
     if ((bitMask & 0x10) != 0)
         isGood &= ParamWriteByIntCmd(ip, (unsigned char)4, clsGlobal._ucDb4->outMode, 1);
+
     if (1)//m_supportOutputEnable || m_autoEnableByPrgCnt
     {
         if ((bitMask & 0x20) != 0){
             isGood &= ParamWriteByIntCmd(ip, (unsigned char)5, clsGlobal._ucDb4->outputEnable, 1);
         }
     }
-
-    if ((bitMask & 0x40) != 0)//m_supportPrgMuxInfo &&
+    if (1 && ((bitMask & 0x40) != 0))//m_supportPrgMuxInfo &&
     {
         unsigned char muxPrgBytes[128] = {0};
         UcIpDestPrgMuxInfoSt_st *eachPrg = NULL;
@@ -210,6 +219,7 @@ int ParamsWriteAll(char *ip, int bitMask){
                 muxPrgBytes[3] = (unsigned char)(eachPrg->prgId >> 8);
             }
         }
+
         isGood &= ParamWriteByBytesCmd(ip, (unsigned char)6, muxPrgBytes, sizeof(muxPrgBytes));
 
         if (0)//m_supportIPTVInfo
@@ -244,8 +254,10 @@ int ParamsWriteAll(char *ip, int bitMask){
 
     if (isGood)
     {
-        if ((bitMask & 0x1) != 0 || (bitMask & 0x20) != 0)
+        if ((bitMask & 0x1) != 0 || (bitMask & 0x20) != 0){
             isGood &= ParamWriteByIntCmd(ip, (unsigned char)0xf0, 0, 0);
+        }
+
 //        if (!m_applyBackEnable)
 //        {
 //            isGood = 1;

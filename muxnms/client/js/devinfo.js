@@ -258,27 +258,25 @@ function createHomeUI(){
         var selectednode = $("#devlist").fancytree("getTree").getActiveNode();
         if(selectednode != null && selectednode.data.prgnum != undefined){
             var prgId = selectednode.data.prgnum;
-            if($(".spts_ch").get(0).selectedIndex > 0){
-                var outChnId = $(".spts_ch").val();
-                var jsonstr = '{"inCh":1,"prgId":' + prgId + ',"outChnId":' + outChnId + '}';
-                $.ajax({
-                    type: "GET",
-                    async: false,
-                    url: "http://"+localip+":4000/do/programs/outchnprg_output",
-                    data: JSON.parse(jsonstr),
-                    dataType: "json",
-                    success: function(data){
-                        if(data.sts == 6){
-                            alert("通讯错误");
-                            return false;
-                        }
-                        outprgList();
-                    },
-                    error : function(err) {
-                        alert("AJAX ERROR---outchnprg_output!!");
+            var outChnId = isNaN($(".spts_ch").val())?0:$(".spts_ch").val();
+            var jsonstr = '{"inCh":1,"prgId":' + prgId + ',"outChnId":' + outChnId + '}';
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://"+localip+":4000/do/programs/outchnprg_output",
+                data: JSON.parse(jsonstr),
+                dataType: "json",
+                success: function(data){
+                    if(data.sts == 6){
+                        alert("通讯错误");
+                        return false;
                     }
-                });
-            }
+                    outprgList();
+                },
+                error : function(err) {
+                    alert("AJAX ERROR---outchnprg_output!!");
+                }
+            });
         }
     });
 
@@ -330,7 +328,7 @@ function createHomeUI(){
                 }else if(data.outMode == 3){
                     $('.prg_outmode')[0].selectedIndex = 1;
                 }
-                $('.prg_ch').val(index + 1);
+                //$('.prg_ch').val(index + 1);
                 $('.prg_destip').val(data.ipStr);
                 $('.prg_destport').val(data.port);
                 $('.prg_destmac').val(data.macStr);

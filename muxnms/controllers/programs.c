@@ -557,11 +557,11 @@ static void muxprgwrite(HttpConn *conn) {
             render(str);
             return;
         }
-//        if (!IptvWrite(tmpip)){
-//            rendersts(str, 6);
-//            render(str);
-//            return;
-//        }
+        if (!IptvWrite(tmpip)){
+            rendersts(str, 6);
+            render(str);
+            return;
+        }
     }
     else
     {
