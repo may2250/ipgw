@@ -666,6 +666,12 @@ span.fancytree-node.userprg > span.fancytree-title {
 
 .fieldset_tbl input{
     width: 100px;
+    border:1px solid #666666;
+}
+
+.fieldset_tbl input:hover{
+    width: 100px;
+    border:1px solid #00bcd4;
 }
 
 .fieldset_tbl select{
@@ -763,5 +769,20 @@ span.fancytree-node.userprg > span.fancytree-title {
     padding: 2px 10px;
     margin-right: 5px;
     float: right;
+}
+
+.panel_lock {
+    width: 32px;
+    height: 32px;
+    line-height: 40px;
+    vertical-align:middle;
+}
+
+.lb_ml1 {
+    margin-left: 5px;
+}
+
+.chkb_valid {
+    width: 30px!important;
 }
 

@@ -16,5 +16,6 @@ int getInputStsJson(char *ip, char *outprg);
 void getPrgoutListJson(char *outprg);
 void getDb3Json(char *outprg);
 void getSPTSCHJson(int prgnum, int chnid, char *outprg);
+void getIPINJson(char *ip, int flag, char *outprg);
 
 #endif

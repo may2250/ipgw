@@ -17,7 +17,12 @@ int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *
     iAddr += cmdLen;
     sendbuf[iAddr++] = 1; // read
 
+//    int i = 0;
+//    for(i=0;i<8;i++){
+//        printf("===sendbuf==[%x]\n", sendbuf[i]);
+//    }
     communicate(ip, sendbuf, iAddr, buf, &rlen);
+
     if (needLen == -1)
     {
         if (rlen > iAddr)
@@ -29,12 +34,12 @@ int ParamReadbyte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *
     }
     else
     {
-        //outBuf = new byte[needLen];
         if (rlen < iAddr + needLen)
             return 0;
-
+//        for(i=0;i<rlen;i++){
+//            printf("===buf==[%x]\n", buf[i]);
+//        }
         memcpy(outBuf, buf+iAddr, needLen);
-
     }
     return 1;
 }
@@ -168,6 +173,18 @@ int ParamReadByIntCmd(char *ip, int cmdType, int *outInt, int needBytesLen)
 {
     unsigned char cmdBytes[3] = { clsGlobal._moduleBaseCmd, clsGlobal._moduleId, (unsigned char)cmdType };
     return ParamReadint(ip, cmdBytes, 3, outInt, needBytesLen);
+}
+
+int ipin_ParamReadByBytesCmd(char *ip, unsigned char cmdType, unsigned char cmdSubType, unsigned char *outBytes, int needBytesLen)
+{
+    unsigned char cmdBytes[4] = { clsGlobal._moduleBaseCmd, clsGlobal._moduleId, cmdType, cmdSubType };
+    return ParamReadbyte(ip, cmdBytes, 4, outBytes, needBytesLen);
+}
+
+int ipin_ParamReadByIntCmd(char *ip, unsigned char cmdType, unsigned char cmdSubType, int *outInt, int needBytesLen)
+{
+    unsigned char cmdBytes[4] = { clsGlobal._moduleBaseCmd, clsGlobal._moduleId, cmdType, cmdSubType };
+    return ParamReadint(ip, cmdBytes, 4, outInt, needBytesLen);
 }
 
 int ParamWriteByBytesCmd(char *ip, int cmdType, unsigned char *writeBytes, int writeBytesLen)

@@ -20,14 +20,17 @@ void Init(){
     memset(clsGlobal.ipGwDb, 0 ,sizeof(IpGWDbSt_st));
     clsGlobal.ucIpDestDb = malloc(sizeof(list_t));
     list_init(clsGlobal.ucIpDestDb);
+
+    clsGlobal._inDb = malloc(sizeof(UcIpInDbSt_st));
+    memset(clsGlobal.ipGwDb, 0 ,sizeof(UcIpInDbSt_st));
+
 }
 
-void RefreshIpInOutMode(char *ip)
-{
+void RefreshIpInOutMode(char *ip){
     unsigned char buf[32] = {0};
     unsigned char sendbuf[6] ={0x77,0x6c,0xf0,0x0, 0x1, 0x1};
     int slen=0, i = 0;
-    communicate(ip, sendbuf, 5, buf, &slen);
+    communicate(ip, sendbuf, 6, buf, &slen);
 
     if(slen == sizeof(sendbuf) + 1){
         int mode = buf[6];
@@ -37,6 +40,14 @@ void RefreshIpInOutMode(char *ip)
             clsGlobal.ipGwDb->devNetFun = 0;
         }
     }
+}
+
+void NetApply(char *ip){
+    unsigned char buf[32] = {0};
+    unsigned char sendbuf[7] ={0x77, 0x6c, 0xf0, 0x0, 0x1, 0x2, (unsigned char)clsGlobal.ipGwDb->devNetFun};
+    int slen=0, i = 0;
+    communicate(ip, sendbuf, 7, buf, &slen);
+
 }
 
 int IpRead(char *ip){
@@ -119,7 +130,7 @@ void DeleteInvalidOutputChn(){
                         if(&pst->prgNodes != NULL){
                             for(m=0;m<list_len(&pst->prgNodes);m++){
                                 list_get(&pst->prgNodes, m, &inprg);
-                                if(inprg->prgNum == prg->prgId)                                {
+                                if(inprg->prgNum == prg->prgId) {
                                     isInValidPrg = 0;
                                     break;
                                 }

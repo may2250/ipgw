@@ -451,3 +451,59 @@ void getSPTSCHJson(int prgnum, int chnid, char *outprg){
     free(prgjsonstring);
 }
 
+void getIPINJson(char *ip, int flag, char *outprg){
+    cJSON *basejson = cJSON_CreateObject();
+    char *prgjsonstring;
+    char str[32] = {0};
+    if(!in_ParamsReadAll(ip, flag)){
+        cJSON_AddNumberToObject(basejson, "sts", 6);
+    }else{
+        cJSON_AddNumberToObject(basejson, "valid", clsGlobal._inDb->valid);
+        cJSON_AddNumberToObject(basejson, "port", clsGlobal._inDb->port);
+        cJSON_AddNumberToObject(basejson, "unicastMulticast", clsGlobal._inDb->unicastMulticast);
+        cJSON_AddNumberToObject(basejson, "inStreamType", clsGlobal._inDb->inStreamType);
+        cJSON_AddNumberToObject(basejson, "outStreamBitrate", clsGlobal._inDb->outStreamBitrate);
+
+
+
+        sprintf(str, "%d.%d.%d.%d", clsGlobal._inDb->ip[0], clsGlobal._inDb->ip[1],
+            clsGlobal._inDb->ip[2], clsGlobal._inDb->ip[3]);
+        cJSON_AddStringToObject(basejson, "ip", str);
+        memset(str, 0, sizeof(str));
+        sprintf(str, "%x:%x:%x:%x:%x:%x", clsGlobal._inDb->mac[0], clsGlobal._inDb->mac[1], clsGlobal._inDb->mac[2],
+            clsGlobal._inDb->mac[3], clsGlobal._inDb->mac[4], clsGlobal._inDb->mac[5]);
+        cJSON_AddStringToObject(basejson, "mac", str);
+        memset(str, 0, sizeof(str));
+        sprintf(str, "%d.%d.%d.%d", clsGlobal._inDb->srcIp[0], clsGlobal._inDb->srcIp[1],
+                    clsGlobal._inDb->srcIp[2], clsGlobal._inDb->srcIp[3]);
+        cJSON_AddStringToObject(basejson, "srcIp", str);
+    }
+    prgjsonstring = cJSON_PrintUnformatted(basejson);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+
+    //释放内存
+    cJSON_Delete(basejson);
+    free(prgjsonstring);
+}
+
+void getInputStatusJson(char *ip, char *outprg){
+    cJSON *basejson = cJSON_CreateObject();
+    char *prgjsonstring;
+    int ipMode = 0, lockStatu = 0, bitrate = 0, _bufUsed = 0;
+    if(!ipin_ReadInputStatus(ip, &ipMode, &lockStatu, &bitrate, &_bufUsed)){
+        cJSON_AddNumberToObject(basejson, "sts", 6);
+    }else{
+        cJSON_AddNumberToObject(basejson, "lockStatu", lockStatu);
+        cJSON_AddNumberToObject(basejson, "bufUsed", _bufUsed);
+        cJSON_AddNumberToObject(basejson, "bitrate", bitrate);
+        cJSON_AddNumberToObject(basejson, "ipMode", ipMode);
+    }
+    prgjsonstring = cJSON_PrintUnformatted(basejson);
+    memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
+
+    //释放内存
+    cJSON_Delete(basejson);
+    free(prgjsonstring);
+}
+
+

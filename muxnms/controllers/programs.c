@@ -49,6 +49,23 @@ static int isAuthed(){
     return 0;
 }
 
+static void getdevNetFun(){
+    char str[32] = {0};
+    if(isAuthed()){
+        return;
+    }
+    RefreshIpInOutMode(tmpip);
+    cJSON *result = cJSON_CreateObject();
+    char* jsonstring;
+    cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
+    jsonstring = cJSON_PrintUnformatted(result);
+    memcpy(str, jsonstring, strlen(jsonstring));
+    //释放内存
+    cJSON_Delete(result);
+    free(jsonstring);
+    render(str);
+}
+
 static void getDevinfo(HttpConn *conn) {
     if(isAuthed()){
         return;
@@ -86,6 +103,7 @@ static void getPrgs(HttpConn *conn) {
 }
 
 static void ipRead(HttpConn *conn) {
+    RefreshIpInOutMode(tmpip);
     if(isAuthed()){
         return;
     }
@@ -96,6 +114,7 @@ static void ipRead(HttpConn *conn) {
         render(outprg);
         return;
     }
+    clsGlobal._moduleBaseCmd = 0xf1;
     if(!getIpReadJson(tmpip, outprg)){
         rendersts(outprg, 8);
         render(outprg);
@@ -562,14 +581,11 @@ static void muxprgwrite(HttpConn *conn) {
             render(str);
             return;
         }
-    }
-    else
-    {
-//        if (!ucIpIn1.ParamsWriteAll())
-//        {
-//            //frmWait.label_msg.Text = lang.Get("通讯错误");
-//            //break;
-//        }
+    }else{
+        if (!ParamsWriteAll(tmpip, 0xff)){
+            rendersts(str, 6);
+            render(str);
+        }
     }
     //add optlog
     Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
@@ -587,6 +603,89 @@ static void muxprgwrite(HttpConn *conn) {
     ediUpdateRec(db, optlog);
     rendersts(str, 1);
     render(str);
+}
+
+static void refreshIpMode(HttpConn *conn) {
+    char str[32] = {0};
+    if(isAuthed()){
+        return;
+    }
+    RefreshIpInOutMode(tmpip);
+    cJSON *result = cJSON_CreateObject();
+    char* jsonstring;
+    cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
+    jsonstring = cJSON_PrintUnformatted(result);
+    memcpy(str, jsonstring, strlen(jsonstring));
+    //释放内存
+    cJSON_Delete(result);
+    free(jsonstring);
+    render(str);
+}
+
+static void netapply(HttpConn *conn) {
+    char str[32] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+    MprJson *jsonparam = httpGetParams(conn);
+    int mode = atoi(mprGetJson(jsonparam, "mode"));
+    clsGlobal.ipGwDb->devNetFun = mode;
+    NetApply(tmpip);
+
+    //add optlog
+    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户修改网络接口设置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
+}
+
+static void readipIN(HttpConn *conn) {
+    char outprg[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    clsGlobal._moduleBaseCmd = 0xf3;
+    clsGlobal._moduleId = 1;
+    MprJson *jsonparam = httpGetParams(conn);
+    int flag = atoi(mprGetJson(jsonparam, "flag"));
+    getIPINJson(tmpip, flag, outprg);
+
+    render(outprg);
+}
+
+static void readipinsts(HttpConn *conn) {
+    char outprg[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    MprJson *jsonparam = httpGetParams(conn);
+    int flag = atoi(mprGetJson(jsonparam, "flag"));
+    getInputStatusJson(tmpip, outprg);
+
+    render(outprg);
 }
 
 static void common(HttpConn *conn) {
@@ -618,6 +717,7 @@ static void espinit() {
 ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module) {
     espDefineBase(route, common);
     espinit();
+    espDefineAction(route, "programs-cmd-getdevNetFun", getdevNetFun);
     espDefineAction(route, "programs-cmd-getDevinfo", getDevinfo);
     espDefineAction(route, "programs-cmd-ipRead", ipRead);
     espDefineAction(route, "programs-cmd-getPrgs", getPrgs);
@@ -633,6 +733,11 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-prgMuxSptsMap", prgMuxSptsMap);
     espDefineAction(route, "programs-cmd-clearprgMux", clearprgMux);
     espDefineAction(route, "programs-cmd-muxprgwrite", muxprgwrite);
+    espDefineAction(route, "programs-cmd-refreshIpMode", refreshIpMode);
+    espDefineAction(route, "programs-cmd-netapply", netapply);
+
+    espDefineAction(route, "programs-cmd-readipIN", readipIN);
+    espDefineAction(route, "programs-cmd-readipinsts", readipinsts);
 
 
 #if SAMPLE_VALIDATIONS

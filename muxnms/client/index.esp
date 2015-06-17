@@ -20,17 +20,20 @@
 			<div class="ny_zb">
 				<div class="ny_zblb1">
 					<ul class="clearfix">
+                        <li id="l1">
+                            <a class="cur ipinmode" href="javascript:createIPINUI()"><strong>IP输入</strong></a>
+                        </li>
 						<li id="l2">
-							<a class="cur STRING_BASE" href="javascript:createHomeUI()"><strong>节目列表</strong></a>
+							<a class="cur ipoutmode" href="javascript:createHomeUI()"><strong>节目列表</strong></a>
 						</li>
 						<li class="subs" id="l3">
-							<a class="flag STRING_DETAIL" href="javascript:createSendSrcUI()"><strong>发送源</strong></a>
+							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong>发送源</strong></a>
 						</li>
 						<li class="subs" id="l4">
-							<a class="flag STRING_NETSET" href="javascript:void(0)"><strong>设备功能</strong></a>
+							<a class="flag" href="javascript:createDevFuncUI()"><strong>设备功能</strong></a>
 						</li>
 						<li class="subs" id="l5">
-							<a class="flag STRING_MDEVICE" href="javascript:void(0)"><strong>设备管理</strong></a>
+							<a class="flag" href="javascript:void(0)"><strong>设备管理</strong></a>
 							<ul>
                                 <li id="l51"><a href="javascript:gbl_setIp()">IP地址设置</a></li>
                                 <li id="l52"><a href="javascript:gbl_reset()">恢复出厂设置</a></li>
@@ -39,7 +42,7 @@
                             </ul>
                         </li>
                         <li class="subs" id="l6">
-                            <a class="flag STRING_LOG" href="javascript:void(0)"><strong>日志记录</strong></a>
+                            <a class="flag" href="javascript:void(0)"><strong>日志记录</strong></a>
                             <ul>
                                 <li id="l61"><a href="javascript:alarm_output(2)">操作日志</a></li>
                              </ul>
@@ -78,7 +81,7 @@
 	<script src="lib/jquery.fancytree.menu.js" type="text/javascript"></script>
     <script type="text/javascript">		
 		var localip = window.location.href.substr(7, window.location.href.indexOf(':', 7) - 7);
-        var recdata;
+        //var devmode;
 		var os = getOS();
 		function getOS(){
             var str=navigator.userAgent;
@@ -91,15 +94,21 @@
         $.ajax({
             type: "GET",
             async: false,
-            url: "http://"+localip+":4000/do/programs/ipRead",
+            url: "http://"+localip+":4000/do/programs/getdevNetFun",
             dataType: "json",
             success: function(res){
-                if(res.sts == 6){
-                    alert("通讯错误");
-                }else if(res.sts == 8){
+                if(res.sts == 8){
                     window.location = "/login.esp";
                 }else{
-
+                    if(res.mode == 0){
+                        $('.ipinmode').css("display", "none");
+                        $('.ipoutmode').css("display", "");
+                        createHomeUI();
+                    }else{
+                        $('.ipinmode').css("display", "");
+                        $('.ipoutmode').css("display", "none");
+                        createIPINUI();
+                    }
                 }
             },
             error : function(err) {

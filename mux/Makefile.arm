@@ -24,19 +24,11 @@ BIN_PATH = $(BUILD_PATH)/bin
 LIB_PATH = $(BUILD_PATH)/lib
 
 
-OBJ=  tcpclient.o list.o communicate.o getAllChannelSignal.o getOutRate.o \
-getMultiMethod.o getMultiProgNum.o getMultiProgNum2.o  getPidMapSumCnt.o \
-curCHNSearched.o getOutPidMapNum.o getPrgCnt.o getPrgramInfo.o getPrograms.o \
-freePrograms.o  sendPrograms.o clsMuxOutCh.o cJSON.o getPrgJson.o devinfo.o \
-clsMuxprgInfoGet.o clsMuxSend.o clsProgram.o  clsParams.o getBaseJson.o getOutPrograms.o clsMakeTable.o clsPsiTable.o \
-getTableJson.o clsMux.o
+OBJ=  tcpclient.o list.o communicate.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o \
+freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o ucIpIn.o
 
-LIB_OBJ=  communicate.o list.o getAllChannelSignal.o getOutRate.o \
-getMultiMethod.o getMultiProgNum.o getMultiProgNum2.o  getPidMapSumCnt.o \
-curCHNSearched.o getOutPidMapNum.o getPrgCnt.o getPrgramInfo.o getPrograms.o \
-freePrograms.o sendPrograms.o  clsMuxOutCh.o cJSON.o getPrgJson.o devinfo.o \
-clsMuxprgInfoGet.o clsMuxSend.o clsProgram.o clsParams.o getBaseJson.o getOutPrograms.o clsMakeTable.o clsPsiTable.o \
-getTableJson.o clsMux.o
+LIB_OBJ=  communicate.o list.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o  \
+freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o ucIpIn.o
 
 .PHONY: all clean distclean
 
@@ -44,36 +36,18 @@ all:build install
 
 build:
 	$(CC) $(CFLAGS) $(IFLAGS) -c tcpclient.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c communicate.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c list.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getAllChannelSignal.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getOutRate.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getMultiMethod.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getMultiProgNum.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getMultiProgNum2.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getPidMapSumCnt.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c curCHNSearched.c
-	
-	$(CC) $(CFLAGS) $(IFLAGS) -c getOutPidMapNum.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getPrgCnt.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getPrgramInfo.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getPrograms.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getOutPrograms.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c freePrograms.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c sendPrograms.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsMuxOutCh.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c cJSON.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getPrgJson.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsMuxSend.c	
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsMuxprgInfoGet.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsProgram.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsMakeTable.c		
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsPsiTable.c	
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsParams.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c clsMux.c	
-	$(CC) $(CFLAGS) $(IFLAGS) -c getBaseJson.c
-	$(CC) $(CFLAGS) $(IFLAGS) -c getTableJson.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c communicate.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c list.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c cJSON.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c ipgw.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpSrc.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c clsUcBase.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c freePrograms.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c clsMuxprgInfoGet.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c getJsonstr.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpDest.c
+    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpIn.c
 	
 	
 	

@@ -10,7 +10,12 @@ var channel_root = [
 
 var StreamData = [];
 
-createHomeUI();
+//if(devmode){
+//    createHomeUI();
+//}else{
+//    createIPINUI();
+//}
+
 
 var dig_notification = $( "#progress-notification" ).dialog({
     autoOpen: false,
@@ -157,6 +162,27 @@ function setIpTvmode(mod){
         },
         error : function(err) {
             alert("AJAX ERROR---setIpTvmode!!");
+        }
+    });
+}
+
+function refreshIpInOutMode(){
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/refreshIpMode",
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 6){
+                alert("通讯错误");
+            }else if(data.sts == 8){
+                window.location = "/login.esp";
+            }else{
+                $('.d_InterfaceMode')[0].selectedIndex = data.mode;
+            }
+        },
+        error : function(err) {
+            alert("AJAX ERROR---refreshIpMode!!");
         }
     });
 }
@@ -597,6 +623,204 @@ function createHomeUI(){
     });
 }
 
+function readipIN(){
+    var flag = 0;
+    if($('.chkb_valid')[0].checked == true){
+        flag = 1;
+    }
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/readipIN?flag="+ flag,
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 8){
+                window.location = "/login.esp";
+            }
+            $('.tb_bitrate').val();
+            $('.cb_net')[0].selectedIndex = data.unicastMulticast - 1;
+            $('.tb_srcip').val(data.srcIp);
+            $('.tb_ip').val(data.ip);
+            $('.tb_mac').val(data.mac);
+            $('.tb_port').val(data.port);
+            $('.cb_streamType')[0].selectedIndex = data.inStreamType;
+            if(data.valid){
+                $('.chkb_valid')[0].checked = true;
+            }else{
+                $('.chkb_valid')[0].checked = false;
+            }
+
+        },
+        error : function(err) {
+            alert("AJAX ERROR---readipIN!!");
+        }
+    });
+}
+
+function readipinsts(){
+    var flag = 0;
+    if($('.chkb_valid')[0].checked == true){
+        flag = 1;
+    }
+    $.ajax({
+        type: "GET",
+        async: true,
+        url: "http://"+localip+":4000/do/programs/readipinsts?flag="+ flag,
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 8){
+                window.location = "/login.esp";
+            }else if(data.sts == 6){
+                if(globalObj.timerID != undefined){
+                    clearInterval(globalObj.timerID);
+                }
+                alert("通讯错误");
+            }else{
+                if(data.lockStatu == 0){
+                    $('.panel_lock')[0].src = "../img/circle16_error.ico";
+                }else if(data.lockStatu == 1){
+                    $('.panel_lock')[0].src = "../img/circle16_green.ico";
+                }else{
+                    $('.panel_lock')[0].src = "../img/circle16_error.ico";
+                }
+                if (data.ipMode == 1){
+                    $('.tb_ipNet').val("10/100 M");
+                } else if (data.ipMode == 2){
+                    $('.tb_ipNet').val("1000 M");
+                } else if (data.ipMode == 3){
+                    $('.tb_ipNet').val("10 M");
+                } else if (data.ipMode == 4){
+                    $('.tb_ipNet').val("100 M");
+                }else{
+                    $('.tb_ipNet').val("----");
+                }
+                $('.tb_percent').val(data.bufUsed.toString() + "%");
+                $('.tb_bitrate').val(data.bitrate / 1000000);
+            }
+
+        },
+        error : function(err) {
+            alert("AJAX ERROR---readipinsts!!");
+        }
+    });
+}
+
+function createIPINUI(){
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
+    $('.main-content').empty();
+    $('.main-content').append(
+        '<div class="src_content">'
+            +'<div class="field_head">'
+                +'<fieldset>'
+                +'<legend>IP输入</legend>'
+                +'<table class="fieldset_tbl">'
+                    +'<tr>'
+                        +'<td>'
+                            +'<label class="lb_mr">输入锁定</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<img class="lb_mr panel_lock" src="../img/circle16_error.ico"></label>'
+                            +'<input class="tb_ipNet lb_ml1" type="text" disabled />'
+                            +'<input class="tb_percent lb_ml1" type="text" disabled />'
+                        +'</td>'
+                        +'<td>'
+                            +'<label class="lb_mr">输入码率</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<input class="tb_bitrate" type="text" disabled />'
+                            +'<label>Mbps</label>'
+                        +'</td>'
+                    +'</tr>'
+                    +'<tr>'
+                        +'<td></td>'
+                        +'<td>'
+                            +'<input class="chkb_valid" name="chkb" type="checkbox" />激活'
+                        +'</td>'
+                        +'<td>'
+                            +'<label class="lb_mr">网络模式</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<select class="cb_net">'
+                                +'<option value="0">Unicast</option><option value="1">Multicast</option>'
+                            +'</select>'
+                        +'</td>'
+                    +'</tr>'
+                    +'<tr>'
+                        +'<td>'
+                            +'<label class="lb_mr">发送源IP</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<input class="tb_srcip" type="text" style="width:120px" />'
+                        +'</td>'
+                        +'<td>'
+                            +'<label class="lb_mr">设备端IP</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<input class="tb_ip" type="text" style="width:120px"/>'
+                        +'</td>'
+                    +'</tr>'
+                    +'<tr>'
+                        +'<td>'
+                            +'<label class="lb_mr">接受端口号</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<input class="tb_port" type="text" />'
+                        +'</td>'
+                        +'<td>'
+                            +'<label class="lb_mr">设备端MAC</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<input class="tb_mac" type="text" style="width:120px" />'
+                        +'</td>'
+                    +'</tr>'
+                    +'<tr>'
+                        +'<td>'
+                            +'<label class="lb_mr">输入流类型</label>'
+                        +'</td>'
+                        +'<td>'
+                            +'<select class="cb_streamType" style="width:100px">'
+                                +'<option value="0">业务流</option><option value="1">音视频流</option>'
+                            +'</select>'
+                        +'</td>'
+                        +'<td>'
+                        +'</td>'
+                        +'<td>'
+                        +'</td>'
+                    +'</tr>'
+                +'</table>'
+                +'</fieldset>'
+            +'</div>'
+            +'<div class="tbn_div">'
+                +'<button id="btn_ipinRead">读取</button>'
+                +'<button id="btn_ipinApply">应用</button>'
+            +'</div>'
+        +'</div>'
+    );
+    readipIN();
+    //创建定时器定时获取输出比特率
+    globalObj.timerID = setInterval(readipinsts, 2000);
+    $( "#btn_ipinRead" ).button({
+        icons: {
+            primary: "ui-icon-pencil"
+        }
+    }).click(function( event ) {
+        event.preventDefault();
+        readipIN();
+    });
+
+    $( "#btn_ipinApply" ).button({
+        icons: {
+            primary: "ui-icon-pencil"
+        }
+    }).click(function( event ) {
+        event.preventDefault();
+
+    });
+
+}
+
 function readinputsts(){
     $.ajax({
         type: "GET",
@@ -734,6 +958,70 @@ function createSendSrcUI(){
                 alert("AJAX ERROR---ParamsWriteAll!!");
             }
         });
+    });
+}
+
+function createDevFuncUI(){
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
+    $('.main-content').empty();
+    $('.main-content').append(
+        '<div class="src_content">'
+        +'<fieldset>'
+        +'<legend>设备功能</legend>'
+        +'<div class="sendsrcdiv">'
+            +'<label class="lb_mr">网络接口设置</label>'
+            +'<select class="d_InterfaceMode lb_mr" style="width:100px"><option value="0">OUT</option>'
+                +'<option value="1">IN</option>'
+             +'</select>'
+        +'</div>'
+        +'<div><label class="lb_ml">警告：修改设备网络接口设置，将会导致设备重启！</label></div>'
+        +'<div class="tbn_div">'
+            +'<button id="devfunc-read">读取</button>'
+            +'<button id="devfunc-write">应用</button>'
+        +'</div>'
+    );
+
+    refreshIpInOutMode();
+
+    $( "#devfunc-read" ).button({
+        icons: {
+            primary: "ui-icon-comment"
+        }
+    }).click(function( event ) {
+        event.preventDefault();
+        refreshIpInOutMode();
+    });
+
+    $( "#devfunc-write" ).button({
+        icons: {
+            primary: "ui-icon-pencil"
+        }
+    }).click(function( event ) {
+        event.preventDefault();
+        if((confirm( "确定要修改吗？ ")==true)){
+            var mode = $('.d_InterfaceMode').get(0).selectedIndex;
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://"+localip+":4000/do/programs/netapply?mode="+mode,
+                dataType: "json",
+                success: function(data){
+                    if(data.sts == 6){
+                        alert("通讯错误");
+                    }else if(data.sts == 8){
+                        window.location = "/login.esp";
+                    }else{
+
+                    }
+                },
+                error : function(err) {
+                    alert("AJAX ERROR---netapply!!");
+                }
+            });
+        }
+
     });
 }
 

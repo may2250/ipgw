@@ -113,6 +113,18 @@ typedef struct UcIpDestDbSt4
     list_t *prgList; //UcIpDestPrgMuxInfoSt_st
 } UcIpDestDbSt4_st;
 
+typedef struct UcIpInDbSt
+{
+    int valid;
+    unsigned char ip[4];
+    unsigned char mac[6];
+    int port;
+    unsigned char srcIp[4];
+    int unicastMulticast;
+    int inStreamType;
+    int outStreamBitrate;
+} UcIpInDbSt_st;
+
 typedef struct ChannelProgramt
 {
 	int channelId;
@@ -151,6 +163,7 @@ typedef struct  ClsGlobal_t{
     UcIpDestDbSt4_st *_ucDb4;
     IpGWDbSt_st *ipGwDb;
     list_t *ucIpDestDb; //UcIpDestDbSt3_st
+    UcIpInDbSt_st *_inDb;
 }ClsGlobal_st;
 
 #pragma pack()

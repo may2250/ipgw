@@ -23,10 +23,10 @@ LIB_PATH = $(BUILD_PATH)/lib
 
 
 OBJ=  tcpclient.o list.o communicate.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o \
- freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o
+ freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o ucIpIn.o
 
 LIB_OBJ=  communicate.o list.o cJSON.o ipgw.o ucIpSrc.o clsUcBase.o  \
-freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o
+freePrograms.o clsMuxprgInfoGet.o getJsonstr.o devinfo.o ucIpDest.o ucIpIn.o
 
 .PHONY: all clean distclean
 
@@ -45,6 +45,7 @@ build:
 	$(CC) $(CFLAGS) $(IFLAGS) -c getJsonstr.c
 	$(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
 	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpDest.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpIn.c
 	
 	
 	
