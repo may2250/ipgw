@@ -15,7 +15,8 @@
 #include "ucIpDest.h"
 #include "clsMuxprgInfoGet.h"
 
-char *tmpip = "192.168.1.49";
+//char *tmpip = "192.168.1.49";
+//conn->rx->parsedUri->host
 
 extern ClsProgram_st clsProgram;
 extern ClsGlobal_st  clsGlobal;
@@ -54,7 +55,7 @@ static void getdevNetFun(){
     if(isAuthed()){
         return;
     }
-    RefreshIpInOutMode(tmpip);
+    RefreshIpInOutMode(conn->rx->parsedUri->host);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
     cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
@@ -74,7 +75,7 @@ static void getDevinfo(HttpConn *conn) {
     int r = 0;
     EdiField *src;
     printf("---------------getdevinfo===\n");
-    getbaseJson(tmpip, pProg);
+    getbaseJson(conn->rx->parsedUri->host, pProg);
     printf("---------------getdevinfo end===\n");
     render(pProg);
     //delete optlog 7days ago
@@ -98,12 +99,12 @@ static void getPrgs(HttpConn *conn) {
         return;
     }
     char outprg[102400] = {0};
-    getPrgsJson(tmpip, outprg);
+    getPrgsJson(conn->rx->parsedUri->host, outprg);
     render(outprg);
 }
 
 static void ipRead(HttpConn *conn) {
-    RefreshIpInOutMode(tmpip);
+    RefreshIpInOutMode(conn->rx->parsedUri->host);
     if(isAuthed()){
         return;
     }
@@ -115,7 +116,7 @@ static void ipRead(HttpConn *conn) {
         return;
     }
     clsGlobal._moduleBaseCmd = 0xf1;
-    if(!getIpReadJson(tmpip, outprg)){
+    if(!getIpReadJson(conn->rx->parsedUri->host, outprg)){
         rendersts(outprg, 8);
         render(outprg);
         return;
@@ -125,7 +126,7 @@ static void ipRead(HttpConn *conn) {
 
 static void readinputsts(HttpConn *conn) {
     char str[64] = {0};
-    if(!getInputStsJson(tmpip, str)){
+    if(!getInputStsJson(conn->rx->parsedUri->host, str)){
         rendersts(str, 8);
         render(str);
         return;
@@ -177,12 +178,12 @@ static void paramswriteAll(HttpConn *conn) {
     }
     //printf("===mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb->mac[0], clsGlobal._ucDb->mac[1],clsGlobal._ucDb->mac[2],clsGlobal._ucDb->mac[3],clsGlobal._ucDb->mac[4],clsGlobal._ucDb->mac[5]);
     int isGood = 1;
-    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)1, clsGlobal._ucDb->ip, 4);
-    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
-    isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)3, clsGlobal._ucDb->port, 2);
+    isGood &= ParamWriteByBytesCmd(conn->rx->parsedUri->host, (unsigned char)1, clsGlobal._ucDb->ip, 4);
+    isGood &= ParamWriteByBytesCmd(conn->rx->parsedUri->host, (unsigned char)2, clsGlobal._ucDb->mac, 6);
+    isGood &= ParamWriteByIntCmd(conn->rx->parsedUri->host, (unsigned char)3, clsGlobal._ucDb->port, 2);
 
     if (isGood){
-        isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
+        isGood &= ParamWriteByIntCmd(conn->rx->parsedUri->host, (unsigned char)0xf0, 0, 0);
     }
     //add optlog
     Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
@@ -210,7 +211,7 @@ static void paramswriteAll(HttpConn *conn) {
 
 static void iptvRead(HttpConn *conn) {
     char str[32] = {0};
-    if(!IptvRead(tmpip)){
+    if(!IptvRead(conn->rx->parsedUri->host)){
         rendersts(str, 6);
         render(str);
         return;
@@ -571,18 +572,18 @@ static void muxprgwrite(HttpConn *conn) {
         return;
     }
     if(clsGlobal.ipGwDb->devNetFun == 0){
-        if (!IpWrite(tmpip)){
+        if (!IpWrite(conn->rx->parsedUri->host)){
             rendersts(str, 6);
             render(str);
             return;
         }
-        if (!IptvWrite(tmpip)){
+        if (!IptvWrite(conn->rx->parsedUri->host)){
             rendersts(str, 6);
             render(str);
             return;
         }
     }else{
-        if (!ParamsWriteAll(tmpip, 0xff)){
+        if (!ParamsWriteAll(conn->rx->parsedUri->host, 0xff)){
             rendersts(str, 6);
             render(str);
         }
@@ -610,7 +611,7 @@ static void refreshIpMode(HttpConn *conn) {
     if(isAuthed()){
         return;
     }
-    RefreshIpInOutMode(tmpip);
+    RefreshIpInOutMode(conn->rx->parsedUri->host);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
     cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
@@ -642,7 +643,7 @@ static void netapply(HttpConn *conn) {
     MprJson *jsonparam = httpGetParams(conn);
     int mode = atoi(mprGetJson(jsonparam, "mode"));
     clsGlobal.ipGwDb->devNetFun = mode;
-    NetApply(tmpip);
+    NetApply(conn->rx->parsedUri->host);
 
     //add optlog
     Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
@@ -671,7 +672,7 @@ static void readipIN(HttpConn *conn) {
     clsGlobal._moduleId = 1;
     MprJson *jsonparam = httpGetParams(conn);
     int flag = atoi(mprGetJson(jsonparam, "flag"));
-    getIPINJson(tmpip, flag, outprg);
+    getIPINJson(conn->rx->parsedUri->host, flag, outprg);
 
     render(outprg);
 }
@@ -683,7 +684,7 @@ static void readipinsts(HttpConn *conn) {
     }
     MprJson *jsonparam = httpGetParams(conn);
     int flag = atoi(mprGetJson(jsonparam, "flag"));
-    getInputStatusJson(tmpip, outprg);
+    getInputStatusJson(conn->rx->parsedUri->host, outprg);
 
     render(outprg);
 }
