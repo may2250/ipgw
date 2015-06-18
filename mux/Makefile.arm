@@ -36,20 +36,19 @@ all:build install
 
 build:
 	$(CC) $(CFLAGS) $(IFLAGS) -c tcpclient.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c communicate.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c list.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c cJSON.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c ipgw.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpSrc.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c clsUcBase.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c freePrograms.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c clsMuxprgInfoGet.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c getJsonstr.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpDest.c
-    $(CC) $(CFLAGS) $(IFLAGS) -c ucIpIn.c
-	
-	
+	$(CC) $(CFLAGS) $(IFLAGS) -c communicate.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c list.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c cJSON.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ipgw.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpSrc.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c clsUcBase.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c freePrograms.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c clsMuxprgInfoGet.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c getJsonstr.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c devinfo.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpDest.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c ucIpIn.c
+
 	
 	$(CC) $(OBJ) -g -O0   -o tcpclient  $(DBS_LIB) $(BOARDAPI_LD_FLAGS) $(LDFLAGS)
 
