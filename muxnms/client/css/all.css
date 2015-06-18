@@ -617,6 +617,82 @@ p.signin.button{
 	width: 80%;
 }
 
+.register_form {
+    padding-right: 6rem !important;
+    padding-bottom: 3rem !important;
+}
+
+.register_formrow {
+    margin: 20px auto 0 auto;
+    display: block;
+    text-align: left;
+}
+
+.register_hr {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.register_item {
+    vertical-align: middle;
+    display: inline-block;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.rlb {
+    width: 33.33333% !important;
+}
+
+.rip {
+    width: 66.66667% !important;
+}
+
+.rab {
+    width: 40% !important;
+}
+
+.rnp {
+    width: 60% !important;
+}
+
+.register_item label{
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+.register_item input{
+    font-size: 1.2rem;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    font: inherit;
+    overflow: visible;
+    width: 60%;
+    margin: 0 0;
+    padding: 0.3rem;
+    border: 0.1rem solid #BABBC1;
+    border-radius: 0.2rem;
+    background-color: #FFFFFF;
+}
+
+.register_item input:hover{
+    border: 0.1rem solid black;
+}
+
+.register_item input:focus{
+    border: 0.1rem solid #00bcd4;
+}
+
+.src_btn {
+    float: left;
+    margin: 10px 0px 10px 300px;
+}
+
+.src_btn button {
+    margin-left: 10px;
+}
+
 #progressbar {
     margin-top: 20px;
 }
@@ -682,6 +758,10 @@ span.fancytree-node.userprg > span.fancytree-title {
     width: 30%;
     float:left;
     border: 1px solid #dddddd;
+}
+
+.src_btn button {
+    margin: auto;
 }
 
 .input_spts {
