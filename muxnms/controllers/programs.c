@@ -50,7 +50,7 @@ static int isAuthed(){
     return 0;
 }
 
-static void getdevNetFun(){
+static void getdevNetFun(HttpConn *conn){
     char str[32] = {0};
     if(isAuthed()){
         return;
