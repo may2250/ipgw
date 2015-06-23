@@ -79,7 +79,7 @@ static void getDevinfo(HttpConn *conn) {
     printf("---------------getdevinfo end===\n");
     render(pProg);
     //delete optlog 7days ago
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     time_t curTime;
     time(&curTime);
     EdiGrid *opts = ediReadTable(db, "optlog");
@@ -186,7 +186,7 @@ static void paramswriteAll(HttpConn *conn) {
         isGood &= ParamWriteByIntCmd(conn->rx->parsedUri->host, (unsigned char)0xf0, 0, 0);
     }
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -244,7 +244,7 @@ static void setIpTvmode(HttpConn *conn) {
     int mode = atoi(mprGetJson(jsonparam, "mode"));
     clsGlobal.ipGwDb->dvbIptvMode = mode;
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -317,7 +317,7 @@ static void outchnprg_output(HttpConn *conn) {
     OutChnPrg_output(inCh, prgId, outChnId);
     EnableValidOutChn();
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -417,7 +417,7 @@ static void outChnConfig(HttpConn *conn) {
     }
     getDb3Json(outprg);
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -481,7 +481,7 @@ static void prgMuxSptsMap(HttpConn *conn) {
     }
     EnableValidOutChn();
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -528,7 +528,7 @@ static void clearprgMux(HttpConn *conn) {
     }
     EnableValidOutChn();
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -589,7 +589,7 @@ static void muxprgwrite(HttpConn *conn) {
         }
     }
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -646,7 +646,7 @@ static void netapply(HttpConn *conn) {
     NetApply(conn->rx->parsedUri->host);
 
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");

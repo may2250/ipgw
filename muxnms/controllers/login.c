@@ -11,7 +11,7 @@ static void checkLogin() {
     char* jsonstring;
     char str[16] = {0};
     char optstr[256] = {0};
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
 
 	//读取用户认证信息
 	EdiRec *user = readRecWhere("user", "username", "==", name);

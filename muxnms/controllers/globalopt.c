@@ -55,7 +55,7 @@ static void reboot(HttpConn *conn) {
 	rendersts(str, 1);
 	render(str);
 	//add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -93,7 +93,7 @@ static void reset(HttpConn *conn) {
 	rendersts(str, 1);
 	render(str);
 	//add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -146,7 +146,7 @@ static void setDevip(HttpConn *conn) {
 	rendersts(str, 1);
 	render(str);
 	//add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -182,7 +182,7 @@ static void setPassword(HttpConn *conn) {
     cchar *newpassword = mprGetJson(jsonparam, "newpassword");
 
     cchar *username = getSessionVar("userName");
-    //Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE );
+    //Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE );
     EdiRec *user = readRecWhere("user", "username", "==", username);
     MprJson *userjson = mprParseJson(ediRecAsJson(user, 0));
     //printf("=======password====%s========%s\n", oldpassword, mprGetJson(userjson, "password"));
@@ -196,7 +196,7 @@ static void setPassword(HttpConn *conn) {
     //ediClose(db);
     render(str);
     //add optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");
     if(optlog == NULL){
        printf("================>>>optlog is NULL!!\n");
@@ -229,7 +229,7 @@ static void getoptlogs() {
         return;
     }
 	//find optlog
-    Edi *db = ediOpen("db/muxnms.mdb", "mdb", EDI_AUTO_SAVE);
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
 //    //删除7天前的日志
     time_t curTime;
     time(&curTime);

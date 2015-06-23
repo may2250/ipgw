@@ -9,7 +9,7 @@
     "import": true,
     "app": {
         "http": {
-            "database": "mdb://muxnms.mdb",
+            "database": "mdb://ipgw.mdb",
             "serverPrefix": "/do",
 			"indexes": [
 				"login.esp"
