@@ -99,6 +99,16 @@ static void getPrgs(HttpConn *conn) {
         return;
     }
     char outprg[102400] = {0};
+    MprJson *jsonparam = httpGetParams(conn);
+    int flag = atoi(mprGetJson(jsonparam, "flag"));
+    if(flag==1){
+        //search
+        if(Search(conn->rx->parsedUri->host, 1)){
+            rendersts(outprg, 6);
+            render(outprg);
+            return;
+        }
+    }
     getPrgsJson(conn->rx->parsedUri->host, outprg);
     render(outprg);
 }

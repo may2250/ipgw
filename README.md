@@ -79,5 +79,5 @@ telnet 192.168.1.49
     cd /mnt/nfs
 
     cp -a build-arm/mux-arm /usr/local/
-    
+
     /usr/local/mux-arm/bin/appweb --home /usr/local/mux-arm/muxnms/ --show --config /usr/local/mux-arm/muxnms/appweb.conf&

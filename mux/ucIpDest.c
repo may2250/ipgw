@@ -25,6 +25,8 @@ int dest1_ParamsReadAll(char *ip){
     clsGlobal._moduleBaseCmd = 0xf2;
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
+    printf("===mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+    ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
     //if (m_supportOutputEnable || m_autoEnableByPrgCnt)

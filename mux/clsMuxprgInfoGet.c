@@ -53,9 +53,9 @@ int GetSearchingStatus(char *ip, int inChn)
 
 int Search(char *ip, int inChn)
 {
-    unsigned char buf[1024];
-    int i = 0, j=0;
-    unsigned char sendbuf[1024];
+    unsigned char buf[1024] = {0};
+    int i = 0;
+    unsigned char sendbuf[12] = {0};
     int iAddr = 0;
     int rlen=0;
     //byte[] cmdBytes = new byte[20];
@@ -64,7 +64,6 @@ int Search(char *ip, int inChn)
     sendbuf[iAddr++] = 0x11;
     sendbuf[iAddr++] = 1;
     sendbuf[iAddr++] = (unsigned char)inChn;
-
     communicate(ip, sendbuf, iAddr, buf, &rlen);
     if(rlen <= iAddr){
         //搜索失败
@@ -99,7 +98,6 @@ int Search(char *ip, int inChn)
             break;
         }
     }
-
     if (searchStatus == 2)
         return 0;
     else

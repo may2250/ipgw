@@ -23,12 +23,12 @@ var dig_notification = $( "#progress-notification" ).dialog({
     width: 300
 });
 
-function getprgs(){
+function getprgs(flag){
     $('.notification-tips')[0].textContent = "正在获取节目..."
     $.ajax({
         type: "GET",
-        async:true,
-        url: "http://"+localip+":4000/do/programs/getPrgs",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/getPrgs?flag="+flag,
         dataType: "json",
         success: function(res){
             if(res.sts == 6){
@@ -373,7 +373,7 @@ function createHomeUI(){
     }).click(function( event ) {
         event.preventDefault();
         dig_notification.dialog( "open" );
-        getprgs();
+        getprgs(1);
         ipread(1);
         iptvread();
         outprgList();
@@ -387,7 +387,7 @@ function createHomeUI(){
     }).click(function( event ) {
         event.preventDefault();
         dig_notification.dialog( "open" );
-        getprgs();
+        getprgs(2);
         ipread(1);
         iptvread();
         outprgList();
