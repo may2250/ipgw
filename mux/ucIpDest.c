@@ -33,7 +33,8 @@ int dest1_ParamsReadAll(char *ip){
     //{
     isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
    // }
-    //printf("--dest1_ParamsReadAll---outputEnable==%d\n", clsGlobal._ucDb4->outputEnable);
+    printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                        ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     if (1)//m_supportPrgMuxInfo
     {
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
@@ -53,6 +54,8 @@ int dest1_ParamsReadAll(char *ip){
 //                //isGood = false;
 //            }
         }
+        printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
         if (1)//m_supportMultiMux || (m_supportMultiMux && _ucDb.outChn > 0)
         {
             unsigned char muxInfoBytes[4] = {0};
@@ -76,6 +79,8 @@ int dest1_ParamsReadAll(char *ip){
             }
         }
     }
+    printf("===udb4mac4==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                        ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
 //    UcIpDestPrgMuxInfoSt_st *tmpmuxinfo = NULL;
 //    for(i=0;i<list_len(clsGlobal._ucDb4->prgList);i++){
 //        list_get(clsGlobal._ucDb4->prgList, i, &tmpmuxinfo);
@@ -98,10 +103,7 @@ void GetDb3(list_t *ucDblist)
     UcIpDestDbSt3_st *ucDb = malloc(sizeof(UcIpDestDbSt3_st));
     memcpy(ucDb->ip, clsGlobal._ucDb4->ip, 4);
     memcpy(ucDb->mac, clsGlobal._ucDb4->mac, 6);
-    printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-        ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    printf("===udb3mac==%02x:%02x:%02x:%02x:%02x:%02x\n", ucDb->mac[0], ucDb->mac[1], ucDb->mac[2], ucDb->mac[3]
-        , ucDb->mac[4], ucDb->mac[5]);
+
     ucDb->outMode = clsGlobal._ucDb4->outMode;
     ucDb->port = clsGlobal._ucDb4->port;
     ucDb->outputEnable = clsGlobal._ucDb4->outputEnable;

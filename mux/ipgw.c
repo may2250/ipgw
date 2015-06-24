@@ -73,8 +73,7 @@ int IptvRead(char *ip){
         {
             clsGlobal._moduleId = (i + 1);
             rslt &= dest1_ParamsReadAll(ip);
-            printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-                    ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
+
             if (!rslt) return 0;
             GetDb3(clsGlobal.ucIpDestDb);
         }
