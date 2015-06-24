@@ -27,13 +27,19 @@ int dest1_ParamsReadAll(char *ip){
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
     printf("===udb4mac1==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
+    printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
+    printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
     //if (m_supportOutputEnable || m_autoEnableByPrgCnt)
     //{
+    printf("===udb4mac4==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
    // }
-    printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+    printf("===udb4mac5==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                         ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     if (1)//m_supportPrgMuxInfo
     {
@@ -54,8 +60,6 @@ int dest1_ParamsReadAll(char *ip){
 //                //isGood = false;
 //            }
         }
-        printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
         if (1)//m_supportMultiMux || (m_supportMultiMux && _ucDb.outChn > 0)
         {
             unsigned char muxInfoBytes[4] = {0};
@@ -79,8 +83,6 @@ int dest1_ParamsReadAll(char *ip){
             }
         }
     }
-    printf("===udb4mac4==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-                        ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
 //    UcIpDestPrgMuxInfoSt_st *tmpmuxinfo = NULL;
 //    for(i=0;i<list_len(clsGlobal._ucDb4->prgList);i++){
 //        list_get(clsGlobal._ucDb4->prgList, i, &tmpmuxinfo);
