@@ -99,7 +99,7 @@ void GetDb3(list_t *ucDblist)
     memcpy(ucDb->mac, clsGlobal._ucDb4->mac, 6);
     printf("===udb4mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
         ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    printf("===udb3mac==%x:%x:%x:%x:%x:%x\n", ucDb->mac[0], ucDb->mac[1], ucDb->mac[2], ucDbmac[3]
+    printf("===udb3mac==%x:%x:%x:%x:%x:%x\n", ucDb->mac[0], ucDb->mac[1], ucDb->mac[2], ucDb->mac[3]
         , ucDb->mac[4], ucDb->mac[5]);
     ucDb->outMode = clsGlobal._ucDb4->outMode;
     ucDb->port = clsGlobal._ucDb4->port;
