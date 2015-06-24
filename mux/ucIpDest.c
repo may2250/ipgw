@@ -29,7 +29,8 @@ int dest1_ParamsReadAll(char *ip){
             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
+    isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
+
     printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
@@ -37,7 +38,7 @@ int dest1_ParamsReadAll(char *ip){
     //{
     printf("===udb4mac4==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
+    isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
    // }
     printf("===udb4mac5==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                         ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
