@@ -25,7 +25,8 @@ int dest1_ParamsReadAll(char *ip){
     clsGlobal._moduleBaseCmd = 0xf2;
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
-
+    printf("===udb4mac1==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
     //if (m_supportOutputEnable || m_autoEnableByPrgCnt)
@@ -97,9 +98,9 @@ void GetDb3(list_t *ucDblist)
     UcIpDestDbSt3_st *ucDb = malloc(sizeof(UcIpDestDbSt3_st));
     memcpy(ucDb->ip, clsGlobal._ucDb4->ip, 4);
     memcpy(ucDb->mac, clsGlobal._ucDb4->mac, 6);
-    printf("===udb4mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
+    printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
         ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    printf("===udb3mac==%x:%x:%x:%x:%x:%x\n", ucDb->mac[0], ucDb->mac[1], ucDb->mac[2], ucDb->mac[3]
+    printf("===udb3mac==%02x:%02x:%02x:%02x:%02x:%02x\n", ucDb->mac[0], ucDb->mac[1], ucDb->mac[2], ucDb->mac[3]
         , ucDb->mac[4], ucDb->mac[5]);
     ucDb->outMode = clsGlobal._ucDb4->outMode;
     ucDb->port = clsGlobal._ucDb4->port;
