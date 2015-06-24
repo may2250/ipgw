@@ -104,12 +104,12 @@ typedef struct UcIpDestDbSt3
 typedef struct UcIpDestDbSt4
 {
     int outMode; // 0=udp,1=rtp,2=rtsp, 3=multicast
+    int outputEnable;
+    int outChn;
     unsigned char ip[4];
     int port;
     unsigned char mac[6];
-    int outputEnable;
 
-    int outChn;
     list_t *prgList; //UcIpDestPrgMuxInfoSt_st
 } UcIpDestDbSt4_st;
 

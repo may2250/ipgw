@@ -25,21 +25,15 @@ int dest1_ParamsReadAll(char *ip){
     clsGlobal._moduleBaseCmd = 0xf2;
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
-    printf("===udb4mac1==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    printf("===udb4mac2==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
-
-    printf("===udb4mac3==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
-                            ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
+    isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
     //if (m_supportOutputEnable || m_autoEnableByPrgCnt)
     //{
     printf("===udb4mac4==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                             ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
-    isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
+    isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
    // }
+    printf("---outputEnable==%d\n", clsGlobal._ucDb4->outputEnable);
     printf("===udb4mac5==%02x:%02x:%02x:%02x:%02x:%02x\n", clsGlobal._ucDb4->mac[0], clsGlobal._ucDb4->mac[1],clsGlobal._ucDb4->mac[2],clsGlobal._ucDb4->mac[3]
                         ,clsGlobal._ucDb4->mac[4],clsGlobal._ucDb4->mac[5]);
     if (1)//m_supportPrgMuxInfo
