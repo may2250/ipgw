@@ -741,12 +741,11 @@ span.fancytree-node.userprg > span.fancytree-title {
 }
 
 .fieldset_tbl input{
-    width: 100px;
+    width: 120px;
     border:1px solid #666666;
 }
 
 .fieldset_tbl input:hover{
-    width: 100px;
     border:1px solid #00bcd4;
 }
 
@@ -839,6 +838,7 @@ span.fancytree-node.userprg > span.fancytree-title {
     width: 32px;
     height: 32px;
     line-height: 40px;
+    vertical-align:middle;
 }
 
 .spts_ch {

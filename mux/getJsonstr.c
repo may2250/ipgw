@@ -340,25 +340,30 @@ void getPrgoutListJson(char *outprg){
         // 节目
         if(eachPrg->prgList != NULL){
             UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
-            for(j=0;j<list_len(eachPrg->prgList);j++){
-                list_get(eachPrg->prgList, j, &muxPrg);
-                if(muxPrg->inChn >0){
-                    ChannelProgramSt *pst = NULL;
-                    Dev_prgInfo_st *inprg = NULL;
-                    if(&clsProgram.inPrgList != NULL){
-                        list_get(&(clsProgram.inPrgList), 0, &pst);
-                        for(k=0;k<list_len(&(pst->prgNodes));k++){
-                            list_get(&(pst->prgNodes), k, &inprg);
-                            if(inprg->prgNum == muxPrg->prgId){
-                                memset(str, 0, sizeof(str));
-                                memcpy(str, inprg->prgName, inprg->prgNameLen);
-                                cJSON_AddStringToObject(prgjson,"nameStr", str);
-                                cJSON_AddNumberToObject(prgjson,"Isoutprg", 1);
-                                break;
+            if(list_len(eachPrg->prgList) > 0){
+                for(j=0;j<list_len(eachPrg->prgList);j++){
+                    list_get(eachPrg->prgList, j, &muxPrg);
+                    if(muxPrg->inChn >0){
+                        ChannelProgramSt *pst = NULL;
+                        Dev_prgInfo_st *inprg = NULL;
+                        if(&clsProgram.inPrgList != NULL){
+                            list_get(&(clsProgram.inPrgList), 0, &pst);
+                            for(k=0;k<list_len(&(pst->prgNodes));k++){
+                                list_get(&(pst->prgNodes), k, &inprg);
+                                if(inprg->prgNum == muxPrg->prgId){
+                                    memset(str, 0, sizeof(str));
+                                    memcpy(str, inprg->prgName, inprg->prgNameLen);
+                                    cJSON_AddStringToObject(prgjson,"nameStr", str);
+                                    cJSON_AddNumberToObject(prgjson,"Isoutprg", 1);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+            }else{
+                cJSON_AddStringToObject(prgjson,"nameStr", " ");
+                cJSON_AddNumberToObject(prgjson,"Isoutprg", 0);
             }
         }else{
             cJSON_AddStringToObject(prgjson,"nameStr", " ");
@@ -381,7 +386,6 @@ void getDb3Json(char *outprg){
     cJSON *prgarry, *prgjson;
     char *prgjsonstring;
     char str[32] = {0};
-
     sprintf(str, "%d.%d.%d.%d", clsGlobal._ucDb4->ip[0], clsGlobal._ucDb4->ip[1],
     clsGlobal._ucDb4->ip[2], clsGlobal._ucDb4->ip[3]);
     cJSON_AddStringToObject(baseinfo,"ipStr", str);
@@ -406,6 +410,7 @@ void getDb3Json(char *outprg){
             }
         }
     }
+
     prgjsonstring = cJSON_PrintUnformatted(baseinfo);
     memcpy(outprg, prgjsonstring, strlen(prgjsonstring));
 

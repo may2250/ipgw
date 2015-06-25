@@ -82,11 +82,10 @@ int freePrograms(list_t *prginfolist)
 
 int freeUcIpDestPrg(list_t *prginfolist)
 {
-	if(!prginfolist) {
+	if(prginfolist == NULL) {
 		printf("prginfolist==NULL not need to free.\n");
 		return -1;
 	}
-
 	UcIpDestPrgMuxInfoSt_st *ptmpPrgInfo = NULL;
 	int i;
 	int len = list_len(prginfolist);

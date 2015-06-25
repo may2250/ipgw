@@ -13,7 +13,7 @@
 /*
     Create a new resource in the database
  */
-//char *tmpip = "192.168.1.49";
+char *tmpip = "192.168.1.49";
 //conn->rx->parsedUri->host
 char optstr[256] = {0};
 extern ClsProgram_st clsProgram;
@@ -51,7 +51,7 @@ static void reboot(HttpConn *conn) {
         return;
     }
 
-	rebootDevice(conn->rx->parsedUri->host);
+	rebootDevice(tmpip);
 	rendersts(str, 1);
 	render(str);
 	//add optlog
@@ -89,7 +89,7 @@ static void reset(HttpConn *conn) {
         return;
     }
 
-	restoreFactory(conn->rx->parsedUri->host);
+	restoreFactory(tmpip);
 	rendersts(str, 1);
 	render(str);
 	//add optlog
@@ -139,9 +139,9 @@ static void setDevip(HttpConn *conn) {
 	unsigned int vip = ntohl( inet_addr( newip ) );
 	unsigned int tmpgatway = ntohl( inet_addr( newgatway ) );
 	unsigned int tmpsubmask = ntohl( inet_addr( submask ) );
-	if(0 == setIp(conn->rx->parsedUri->host, vip)){
-		setGateway(conn->rx->parsedUri->host, tmpgatway);
-		getSubMask(conn->rx->parsedUri->host, tmpsubmask);
+	if(0 == setIp(tmpip, vip)){
+		setGateway(tmpip, tmpgatway);
+		getSubMask(tmpip, tmpsubmask);
 	}
 	rendersts(str, 1);
 	render(str);

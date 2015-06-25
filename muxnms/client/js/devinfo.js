@@ -1,6 +1,7 @@
 var globalObj = {
     _outtable: null,
     _devtree: null,
+    _sync: false,
     timerID: undefined
 };
 
@@ -10,12 +11,6 @@ var channel_root = [
 
 var StreamData = [];
 
-//if(devmode){
-//    createHomeUI();
-//}else{
-//    createIPINUI();
-//}
-
 
 var dig_notification = $( "#progress-notification" ).dialog({
     autoOpen: false,
@@ -24,7 +19,8 @@ var dig_notification = $( "#progress-notification" ).dialog({
 });
 
 function getprgs(flag){
-    $('.notification-tips')[0].textContent = "正在获取节目..."
+    $('.notification-tips')[0].textContent = "正在获取节目...";
+    $( "#progress-notification").show();
     $.ajax({
         type: "GET",
         async: false,
@@ -42,6 +38,9 @@ function getprgs(flag){
                 res = JSON.stringify(res).replace('\\','');
                 var treeData = JSON.parse(res);
                 node.addChildren(treeData);
+                ipread(1);
+                iptvread();
+                outprgList();
             }
         },
         error : function(err) {
@@ -82,7 +81,7 @@ function ipread(flag){
 }
 
 function iptvread(){
-    $('.notification-tips')[0].textContent = "正在获取IPTV信息..."
+    $('.notification-tips')[0].textContent = "正在获取IPTV信息...";
     $.ajax({
         type: "GET",
         async: false,
@@ -98,13 +97,13 @@ function iptvread(){
             }
         },
         error : function(err) {
-            alert("AJAX ERROR---ipRead!!");
+            alert("AJAX ERROR---iptvRead!!");
         }
     });
 }
 
 function outprgList(){
-    $('.notification-tips')[0].textContent = "正在获取输出列表..."
+    $('.notification-tips')[0].textContent = "正在获取输出列表...";
     $.ajax({
         type: "GET",
         async: false,
@@ -358,6 +357,7 @@ function createHomeUI(){
                 $('.prg_destip').val(data.ipStr);
                 $('.prg_destport').val(data.port);
                 $('.prg_destmac').val(data.macStr);
+                outprgList();
             },
             error : function(err) {
                 alert("AJAX ERROR---outChnConfig!!");
@@ -372,11 +372,8 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        dig_notification.dialog( "open" );
+        dig_notification.dialog( "open");
         getprgs(1);
-        ipread(1);
-        iptvread();
-        outprgList();
         dig_notification.dialog( "close" );
     });
 
@@ -388,9 +385,6 @@ function createHomeUI(){
         event.preventDefault();
         dig_notification.dialog( "open" );
         getprgs(2);
-        ipread(1);
-        iptvread();
-        outprgList();
         dig_notification.dialog( "close" );
 
     });
@@ -457,12 +451,12 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        $('.notification-tips')[0].textContent = "正在下发配置..."
+        $('.notification-tips')[0].textContent = "正在下发配置...";
         dig_notification.dialog( "open" );
         var ttl = $('.output_ttl').val();
         $.ajax({
             type: "GET",
-            async: false,
+            async: true,
             url: "http://"+localip+":4000/do/programs/muxprgwrite?ttl="+ttl,
             dataType: "json",
             success: function(data){
@@ -519,40 +513,40 @@ function createHomeUI(){
                             $(".spts_ch").append(option);
                         });
                         $('.spts_ch')[0].selectedIndex = data.tag;
-                        var srow = globalObj._outtable[0].rows[$('.spts_ch').val()];
-                        $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
-                        $(srow).addClass('selected');
-                        //$(srow).addClass('outprg');
-                        if(srow != undefined){
-                            var index = $(srow)[0].cells[0].textContent-1;
-                            $.ajax({
-                                type: "GET",
-                                async: false,
-                                url: "http://"+localip+":4000/do/programs/tbl_selctdprg?index="+index,
-                                dataType: "json",
-                                success: function(data){
-                                    if(data.outMode < 3){
-                                        $('.prg_outmode')[0].selectedIndex = 0;
-                                    }else if(data.outMode == 3){
-                                        $('.prg_outmode')[0].selectedIndex = 1;
-                                    }
-                                    $('.prg_ch').val(index + 1);
-                                    $('.prg_destip').val(data.ipStr);
-                                    $('.prg_destport').val(data.port);
-                                    $('.prg_destmac').val(data.macStr);
-
-                                },
-                                error : function(err) {
-                                    alert("AJAX ERROR---tbl_selctdprg!!");
-                                }
-                            });
-                        }
 
                     },
                     error : function(err) {
                         alert("AJAX ERROR---tree_selctdprg!!");
                     }
                 });
+                var srow = globalObj._outtable[0].rows[$('.spts_ch').val()];
+                $('#tbl_outtable').DataTable().$('tr.selected').removeClass('selected');
+                $(srow).addClass('selected');
+                //$(srow).addClass('outprg');
+                if(srow != undefined){
+                    var index = $(srow)[0].cells[0].textContent-1;
+                    $.ajax({
+                        type: "GET",
+                        async: false,
+                        url: "http://"+localip+":4000/do/programs/tbl_selctdprg?index="+index,
+                        dataType: "json",
+                        success: function(data){
+                            if(data.outMode < 3){
+                                $('.prg_outmode')[0].selectedIndex = 0;
+                            }else if(data.outMode == 3){
+                                $('.prg_outmode')[0].selectedIndex = 1;
+                            }
+                            $('.prg_ch').val(index + 1);
+                            $('.prg_destip').val(data.ipStr);
+                            $('.prg_destport').val(data.port);
+                            $('.prg_destmac').val(data.macStr);
+
+                        },
+                        error : function(err) {
+                            alert("AJAX ERROR---tbl_selctdprg!!");
+                        }
+                    });
+                }
             }
         }
     });

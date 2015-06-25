@@ -141,8 +141,8 @@ void DeleteInvalidOutputChn(){
                     }
                 }
                 if(isInValidPrg){
-                    printf("===DeleteInvalidOutputChn===del\n");
                     list_pop(eachChn->prgList, j);
+                    printf("===DeleteInvalidOutputChn===del\n");
                 }else{
                     j++;
                 }
