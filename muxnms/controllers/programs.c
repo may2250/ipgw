@@ -55,6 +55,7 @@ static void getdevNetFun(HttpConn *conn){
     if(isAuthed()){
         return;
     }
+    printf("----ip==%s\n", conn->rx->parsedUri->host);
     RefreshIpInOutMode(conn->rx->parsedUri->host);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;

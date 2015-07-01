@@ -599,6 +599,11 @@ function createHomeUI(){
                 alert("AJAX ERROR---tbl_selctdprg!!");
             }
         });
+        if($(this)[0].cells[4].textContent == "Auto"){
+            $('.prg_destmac').attr("disabled", true);
+        }else{
+            $('.prg_destmac').attr("disabled", false);
+        }
     } );
 
     $('.output_mode').on('change', function(){
