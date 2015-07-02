@@ -33,7 +33,7 @@ function gbl_restart() {
                  }
 			 },    
 			 error : function(err) {   
-				alert("异常！====="+err);    
+				//alert("异常！====="+err);
 			 }   
 		});
 	});
@@ -73,7 +73,7 @@ function gbl_reset() {
                  }
 			 },    
 			 error : function(err) {   
-				alert("异常！====="+err);    
+				//alert("异常！====="+err);
 			 }   
 		});
 	});
@@ -120,60 +120,49 @@ function gbl_setIp() {
       }
     }).click(function( event ) {
         event.preventDefault();
-		var re=/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;//正则表达式     
-	    if(re.test($(".newip").val()))     
-	    {     
-		   if( !(RegExp.$1<256 && RegExp.$2<256 && RegExp.$3<256 && RegExp.$4<256)) {
-				$(".ipvalidate").css("display", "");
-				return false; 
-			}		       
+		var re=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;//正则表达式
+	    if(!re.test($(".newip").val()))
+	    {
+            $(".ipvalidate").css("display", "");
+            return false;
 	    }else{
-			$(".ipvalidate").css("display", "");    
-			return false; 
-		}
-		if(re.test($(".newgateway").val()))     
-	    {     
-		   if( !(RegExp.$1<256 && RegExp.$2<256 && RegExp.$3<256 && RegExp.$4<256)) {
-				$(".gatewayvalidate").css("display", "");
-				return false; 
-			}		       
-	    }else{
-			$(".gatewayvalidate").css("display", "");    
-			return false; 
-		}
-		if(re.test($(".newsubmask").val()))     
-	    {     
-		   if( !(RegExp.$1<256 && RegExp.$2<256 && RegExp.$3<256 && RegExp.$4<256)) {
-				$(".submaskvalidate").css("display", "");
-				return false; 
-			}		       
-	    }else{
-			$(".submaskvalidate").css("display", "");    
-			return false; 
-		}
-		$(".ipvalidate").css("display", "none");
-		$(".gatewayvalidate").css("display", "none");
-		$(".submaskvalidate").css("display", "none");
+            $(".ipvalidate").css("display", "none");
+        }
+		if(!re.test($(".newgateway").val()))
+	    {
+            $(".gatewayvalidate").css("display", "");
+            return false;
+        }else{
+            $(".gatewayvalidate").css("display", "none");
+        }
+		if(!re.test($(".newsubmask").val()))
+	    {
+            $(".submaskvalidate").css("display", "");
+            return false;
+        }else{
+            $(".submaskvalidate").css("display", "none");
+        }
+
 		$('.settip').empty();
 		$('.settip').append('设置命令已下发，请尝试重新连接');
-		$.ajax({
-			 type: "GET",
-			 async:false,
-			 url: "http://"+localip+":4000/do/globalopt/setDevip?"+$(".newip").val()+"&"+$(".newgateway").val()+"&"+$(".newsubmask").val(),
-			 dataType: "json",
-			 success: function(data){
-                 if(data.sts == 1){
-                     $('.settip').empty();
-                     $('.settip').append('设置命令已下发，请尝试重新连接');
-                 }else if(data.sts == 5){
-                     alert("权限不足，请与管理员联系");
-                 }
-			 },    
-			 error : function(err) {
-                 $('.settip').empty();
-                 $('.settip').append('下发失败，未知错误!');
-			 }   
-		});
+		//$.ajax({
+		//	 type: "GET",
+		//	 async:false,
+		//	 url: "http://"+localip+":4000/do/globalopt/setDevip?"+$(".newip").val()+"&"+$(".newgateway").val()+"&"+$(".newsubmask").val(),
+		//	 dataType: "json",
+		//	 success: function(data){
+         //        if(data.sts == 1){
+         //            $('.settip').empty();
+         //            $('.settip').append('设置命令已下发，请尝试重新连接');
+         //        }else if(data.sts == 5){
+         //            alert("权限不足，请与管理员联系");
+         //        }
+		//	 },
+		//	 error : function(err) {
+         //        $('.settip').empty();
+         //        $('.settip').append('下发失败，未知错误!');
+		//	 }
+		//});
 	});
 }
 
@@ -215,6 +204,9 @@ function gbl_password() {
             alert("两次新密码输入不一致");
             return;
         }
+        if($(".oldpassword").val() == "" || $(".newpassword").val() == ""){
+            alert("密码不能为空.");
+        }
         var strjson = '{oldpassword:'+$(".oldpassword").val() + ',newpassword:'+ $(".newpassword").val()
             +  '}';
         $.ajax({
@@ -231,10 +223,12 @@ function gbl_password() {
                     alert("密码修改成功");
                 }else if(data.sts == 5){
                     alert("权限不足，请与管理员联系");
+                }else if(data.sts == 0){
+                    alert("原密码输入不正确.");
                 }
             },
             error : function(err) {
-                alert("异常！====="+err);
+                //alert("异常！====="+err);
             }
         });
     });
