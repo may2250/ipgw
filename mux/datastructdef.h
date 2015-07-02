@@ -116,9 +116,9 @@ typedef struct UcIpDestDbSt4
 typedef struct UcIpInDbSt
 {
     int valid;
+    int port;
     unsigned char ip[4];
     unsigned char mac[6];
-    int port;
     unsigned char srcIp[4];
     int unicastMulticast;
     int inStreamType;
