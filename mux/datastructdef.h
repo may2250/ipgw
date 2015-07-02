@@ -117,12 +117,13 @@ typedef struct UcIpInDbSt
 {
     int valid;
     int port;
-    unsigned char ip[4];
-    unsigned char mac[6];
-    unsigned char srcIp[4];
     int unicastMulticast;
     int inStreamType;
     int outStreamBitrate;
+    unsigned char ip[4];
+    unsigned char mac[6];
+    unsigned char srcIp[4];
+
 } UcIpInDbSt_st;
 
 typedef struct ChannelProgramt
