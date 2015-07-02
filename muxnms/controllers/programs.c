@@ -15,7 +15,7 @@
 #include "ucIpDest.h"
 #include "clsMuxprgInfoGet.h"
 
-//char *tmpip = "192.168.1.49";
+char *tmpip = "192.168.1.49";
 //conn->rx->parsedUri->host
 
 extern ClsProgram_st clsProgram;
@@ -55,8 +55,8 @@ static void getdevNetFun(HttpConn *conn){
     if(isAuthed()){
         return;
     }
-    printf("----ip==%s\n", conn->rx->parsedUri->host);
-    RefreshIpInOutMode(conn->rx->parsedUri->host);
+    printf("----ip==%s\n", tmpip);
+    RefreshIpInOutMode(tmpip);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
     cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
@@ -76,7 +76,7 @@ static void getDevinfo(HttpConn *conn) {
     int r = 0;
     EdiField *src;
     printf("---------------getdevinfo===\n");
-    getbaseJson(conn->rx->parsedUri->host, pProg);
+    getbaseJson(tmpip, pProg);
     printf("---------------getdevinfo end===\n");
     render(pProg);
     //delete optlog 7days ago
@@ -104,18 +104,18 @@ static void getPrgs(HttpConn *conn) {
     int flag = atoi(mprGetJson(jsonparam, "flag"));
     if(flag==1){
         //search
-        if(Search(conn->rx->parsedUri->host, 1)){
+        if(Search(tmpip, 1)){
             rendersts(outprg, 6);
             render(outprg);
             return;
         }
     }
-    getPrgsJson(conn->rx->parsedUri->host, outprg);
+    getPrgsJson(tmpip, outprg);
     render(outprg);
 }
 
 static void ipRead(HttpConn *conn) {
-    RefreshIpInOutMode(conn->rx->parsedUri->host);
+    RefreshIpInOutMode(tmpip);
     if(isAuthed()){
         return;
     }
@@ -127,7 +127,7 @@ static void ipRead(HttpConn *conn) {
         return;
     }
     clsGlobal._moduleBaseCmd = 0xf1;
-    if(!getIpReadJson(conn->rx->parsedUri->host, outprg)){
+    if(!getIpReadJson(tmpip, outprg)){
         rendersts(outprg, 8);
         render(outprg);
         return;
@@ -137,7 +137,7 @@ static void ipRead(HttpConn *conn) {
 
 static void readinputsts(HttpConn *conn) {
     char str[64] = {0};
-    if(!getInputStsJson(conn->rx->parsedUri->host, str)){
+    if(!getInputStsJson(tmpip, str)){
         rendersts(str, 8);
         render(str);
         return;
@@ -189,12 +189,12 @@ static void paramswriteAll(HttpConn *conn) {
     }
     //printf("===mac==%x:%x:%x:%x:%x:%x\n", clsGlobal._ucDb->mac[0], clsGlobal._ucDb->mac[1],clsGlobal._ucDb->mac[2],clsGlobal._ucDb->mac[3],clsGlobal._ucDb->mac[4],clsGlobal._ucDb->mac[5]);
     int isGood = 1;
-    isGood &= ParamWriteByBytesCmd(conn->rx->parsedUri->host, (unsigned char)1, clsGlobal._ucDb->ip, 4);
-    isGood &= ParamWriteByBytesCmd(conn->rx->parsedUri->host, (unsigned char)2, clsGlobal._ucDb->mac, 6);
-    isGood &= ParamWriteByIntCmd(conn->rx->parsedUri->host, (unsigned char)3, clsGlobal._ucDb->port, 2);
+    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)1, clsGlobal._ucDb->ip, 4);
+    isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
+    isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)3, clsGlobal._ucDb->port, 2);
 
     if (isGood){
-        isGood &= ParamWriteByIntCmd(conn->rx->parsedUri->host, (unsigned char)0xf0, 0, 0);
+        isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
     }
     //add optlog
     Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
@@ -222,7 +222,7 @@ static void paramswriteAll(HttpConn *conn) {
 
 static void iptvRead(HttpConn *conn) {
     char str[32] = {0};
-    if(!IptvRead(conn->rx->parsedUri->host)){
+    if(!IptvRead(tmpip)){
         rendersts(str, 6);
         render(str);
         return;
@@ -583,18 +583,18 @@ static void muxprgwrite(HttpConn *conn) {
         return;
     }
     if(clsGlobal.ipGwDb->devNetFun == 0){
-        if (!IpWrite(conn->rx->parsedUri->host)){
+        if (!IpWrite(tmpip)){
             rendersts(str, 6);
             render(str);
             return;
         }
-        if (!IptvWrite(conn->rx->parsedUri->host)){
+        if (!IptvWrite(tmpip)){
             rendersts(str, 6);
             render(str);
             return;
         }
     }else{
-        if (!ParamsWriteAll(conn->rx->parsedUri->host, 0xff)){
+        if (!ParamsWriteAll(tmpip, 0xff)){
             rendersts(str, 6);
             render(str);
         }
@@ -622,7 +622,7 @@ static void refreshIpMode(HttpConn *conn) {
     if(isAuthed()){
         return;
     }
-    RefreshIpInOutMode(conn->rx->parsedUri->host);
+    RefreshIpInOutMode(tmpip);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
     cJSON_AddNumberToObject(result,"mode", clsGlobal.ipGwDb->devNetFun);
@@ -654,7 +654,7 @@ static void netapply(HttpConn *conn) {
     MprJson *jsonparam = httpGetParams(conn);
     int mode = atoi(mprGetJson(jsonparam, "mode"));
     clsGlobal.ipGwDb->devNetFun = mode;
-    NetApply(conn->rx->parsedUri->host);
+    NetApply(tmpip);
 
     //add optlog
     Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
@@ -683,7 +683,7 @@ static void readipIN(HttpConn *conn) {
     clsGlobal._moduleId = 1;
     MprJson *jsonparam = httpGetParams(conn);
     int flag = atoi(mprGetJson(jsonparam, "flag"));
-    getIPINJson(conn->rx->parsedUri->host, flag, outprg);
+    getIPINJson(tmpip, flag, outprg);
 
     render(outprg);
 }
@@ -695,9 +695,84 @@ static void readipinsts(HttpConn *conn) {
     }
     MprJson *jsonparam = httpGetParams(conn);
     int flag = atoi(mprGetJson(jsonparam, "flag"));
-    getInputStatusJson(conn->rx->parsedUri->host, outprg);
+    getInputStatusJson(tmpip, outprg);
 
     render(outprg);
+}
+
+static void ipinApply(HttpConn *conn) {
+    char str[32] = {0};
+    char optstr[256] = {0};
+    if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
+    MprJson *jsonparam = httpGetParams(conn);
+    int ch = atoi(mprGetJson(jsonparam, "chk"));
+    int port = atoi(mprGetJson(jsonparam, "port"));
+    int netMode = atoi(mprGetJson(jsonparam, "netMode"));
+    int streamType = atoi(mprGetJson(jsonparam, "streamType"));
+    cchar *strip = mprGetJson(jsonparam, "ipstr");
+    cchar *desip = mprGetJson(jsonparam, "desip");
+    cchar *macstr = mprGetJson(jsonparam, "macstr");
+    clsGlobal._inDb->valid = ch;
+    clsGlobal._inDb->port = port;
+    clsGlobal._inDb->unicastMulticast = netMode;
+    clsGlobal._inDb->inStreamType = streamType;
+    char *newip = strtok(strip, ".");
+    int i=0, tmp = 0;
+    while(newip)
+    {
+        clsGlobal._inDb->srcIp[i] = (unsigned char)atoi(newip);
+        newip = strtok(NULL, ".");
+        i++;
+    }
+    i=0;
+    char *dip = strtok(desip, ":");
+    while(dip)
+    {
+        clsGlobal._inDb->ip[i] = (unsigned char)atoi(dip);
+        dip = strtok(NULL, ".");
+        i++;
+    }
+    i=0;
+    char *tmpmac = strtok(macstr, ":");
+    while(tmpmac)
+    {
+        sscanf(tmpmac,"%x", &tmp);
+        clsGlobal._inDb->mac[i] = (unsigned char)tmp;
+        tmpmac = strtok(NULL, ":");
+        i++;
+    }
+
+    in_ParamsWriteAll(tmpip);
+
+    //add optlog
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+    sprintf(optstr, "{'user': '%s', 'desc': '用户修改IP输入信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
+    rendersts(str, 1);
+    render(str);
 }
 
 static void common(HttpConn *conn) {
@@ -750,6 +825,7 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
 
     espDefineAction(route, "programs-cmd-readipIN", readipIN);
     espDefineAction(route, "programs-cmd-readipinsts", readipinsts);
+    espDefineAction(route, "programs-cmd-ipinApply", ipinApply);
 
 
 #if SAMPLE_VALIDATIONS

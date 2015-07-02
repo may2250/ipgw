@@ -7,7 +7,7 @@
 
 int in_ParamsReadAll(char *ip, int flag);
 int ipin_ReadInputStatus(char *ip, int *ipMode, int *lockStatu, int *bitrate, int *_bufUsed);
-
+int in_ParamsWriteAll(char *ip);
 
 
 #endif

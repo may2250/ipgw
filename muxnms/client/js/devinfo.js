@@ -815,7 +815,56 @@ function createIPINUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
+        var chk = $('.chkb_valid')[0].checked == true?1:0;
+        var netMode = $('.cb_net').get(0).selectedIndex + 1;
+        var ipstr = $('.tb_srcip').val();
+        var desip = $('.tb_ip').val();
+        var port = $('.tb_port').val();
+        var macstr = $('.tb_mac').val();
+        var streamType = $('.cb_streamType').get(0).selectedIndex;
 
+        if(isNaN(port)){
+            alert("非法的端口号.");
+        }else{
+            if(parseInt(port)<1 || parseInt(port)>65535){
+                alert("非法的端口号.");
+            }
+        }
+        var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        var valid = regexp.test(ipstr) && regexp.test(desip);
+        if(!valid){
+            alert("无效的IP地址.");
+            return false;
+        }
+        if(macstr != "Auto"){
+            regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
+            valid = regexp.test(macstr);
+            if(!valid){
+                alert("无效的MAC地址.");
+                return false;
+            }
+        }
+        var jsonstr = '{"chk":"' + chk + '","netMode":' + netMode + ',"ipstr":"' + ipstr + '","desip":"'
+            + desip + '","macstr":"' + macstr + '","port":' + port + ',"streamType":' + streamType + '}';
+        $.ajax({
+            type: "GET",
+            async: true,
+            url: "http://"+localip+":4000/do/programs/ipinApply",
+            data: JSON.parse(jsonstr),
+            dataType: "json",
+            success: function(res){
+                if(res.sts == 6){
+                    alert("通讯错误");
+                }else if(res.sts == 8){
+                    window.location = "/login.esp";
+                }else{
+
+                }
+            },
+            error : function(err) {
+                alert("AJAX ERROR---readinputsts!!");
+            }
+        });
     });
 
 }

@@ -14,6 +14,7 @@ int ParamWriteInt(char *ip, unsigned char *cmdBytes, int cmdLen, int writeInt, i
 int ParamWriteByte(char *ip, unsigned char *cmdBytes, int cmdLen, unsigned char *writeBytes, int writeLen);
 int ipin_ParamReadByBytesCmd(char *ip, unsigned char cmdType, unsigned char cmdSubType, unsigned char *outBytes, int needBytesLen);
 int ipin_ParamReadByIntCmd(char *ip, unsigned char cmdType, unsigned char cmdSubType, int *outInt, int needBytesLen);
-
+int ParamWriteByBytesCmd2(char *ip, unsigned char cmdType, unsigned char cmdSubType, unsigned char *writeBytes, int writeBytesLen);
+int ParamWriteByIntCmd2(char *ip, unsigned char cmdType, unsigned char cmdSubType, int writeInt, int writeBytesLen);
 
 #endif

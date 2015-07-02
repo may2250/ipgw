@@ -199,3 +199,15 @@ int ParamWriteByIntCmd(char *ip, int cmdType, int writeBytes, int writeBytesLen)
    return ParamWriteInt(ip, cmdBytes, 3, writeBytes, writeBytesLen);
 }
 
+int ParamWriteByBytesCmd2(char *ip, unsigned char cmdType, unsigned char cmdSubType, unsigned char *writeBytes, int writeBytesLen)
+{
+    unsigned char cmdBytes[] = { clsGlobal._moduleBaseCmd, clsGlobal._moduleId, cmdType, cmdSubType };
+    return ParamWriteByte(ip, cmdBytes, 4, writeBytes, writeBytesLen);
+}
+
+int ParamWriteByIntCmd2(char *ip, unsigned char cmdType, unsigned char cmdSubType, int writeInt, int writeBytesLen)
+{
+    unsigned char cmdBytes[] = { clsGlobal._moduleBaseCmd, clsGlobal._moduleId, cmdType, cmdSubType };
+    return ParamWriteInt(ip, cmdBytes, 4, writeInt, writeBytesLen);
+}
+
