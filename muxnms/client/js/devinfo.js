@@ -374,6 +374,10 @@ function createHomeUI(){
         event.preventDefault();
         dig_notification.dialog( "open");
         getprgs(1);
+        $('.input_spts').css("display", "block");
+        $('#output-auto').css("display", "");
+        $('#output-clear').css("display", "");
+        $('.output_mode').get(0).selectedIndex = 1;
         dig_notification.dialog( "close" );
     });
 
@@ -385,6 +389,10 @@ function createHomeUI(){
         event.preventDefault();
         dig_notification.dialog( "open" );
         getprgs(2);
+        $('.input_spts').css("display", "block");
+        $('#output-auto').css("display", "");
+        $('#output-clear').css("display", "");
+        $('.output_mode').get(0).selectedIndex = 1;
         dig_notification.dialog( "close" );
 
     });

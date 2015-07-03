@@ -1,6 +1,9 @@
 	var dataSet = [];
 
     function alarm_output(flag){
+        if(globalObj.timerID != undefined){
+            clearInterval(globalObj.timerID);
+        }
 		if(flag == 1){
 			//告警日志
 			//TODO

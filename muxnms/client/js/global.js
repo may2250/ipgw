@@ -1,4 +1,7 @@
 function gbl_restart() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
 	$('.main-content').empty();
 	$('.main-content').append(
 		'<div class="src_content">'
@@ -40,6 +43,9 @@ function gbl_restart() {
 }
 
 function gbl_reset() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
 	$('.main-content').empty();
 	$('.main-content').append(
 		'<div class="src_content">'
@@ -70,6 +76,8 @@ function gbl_reset() {
                      $('.gbltips').append('恢复出厂设置命令已下发，请30秒后尝试重新连接');
                  }else if(data.sts == 5){
                      alert("权限不足，请与管理员联系");
+                 }else{
+                     alert("恢复出厂设置出现异常，请30秒后尝试重新连接");
                  }
 			 },    
 			 error : function(err) {   
@@ -80,6 +88,9 @@ function gbl_reset() {
 }
 
 function gbl_setIp() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
 	$('.main-content').empty();
 	$('.main-content').append(
 		'<div class="src_content">'
@@ -145,28 +156,31 @@ function gbl_setIp() {
 
 		$('.settip').empty();
 		$('.settip').append('设置命令已下发，请尝试重新连接');
-		//$.ajax({
-		//	 type: "GET",
-		//	 async:false,
-		//	 url: "http://"+localip+":4000/do/globalopt/setDevip?"+$(".newip").val()+"&"+$(".newgateway").val()+"&"+$(".newsubmask").val(),
-		//	 dataType: "json",
-		//	 success: function(data){
-         //        if(data.sts == 1){
-         //            $('.settip').empty();
-         //            $('.settip').append('设置命令已下发，请尝试重新连接');
-         //        }else if(data.sts == 5){
-         //            alert("权限不足，请与管理员联系");
-         //        }
-		//	 },
-		//	 error : function(err) {
-         //        $('.settip').empty();
-         //        $('.settip').append('下发失败，未知错误!');
-		//	 }
-		//});
+		$.ajax({
+			 type: "GET",
+			 async:false,
+			 url: "http://"+localip+":4000/do/globalopt/setDevip?"+$(".newip").val()+"&"+$(".newgateway").val()+"&"+$(".newsubmask").val(),
+			 dataType: "json",
+			 success: function(data){
+                 if(data.sts == 1){
+                     $('.settip').empty();
+                     $('.settip').append('设置命令已下发，请尝试重新连接');
+                 }else if(data.sts == 5){
+                     alert("权限不足，请与管理员联系");
+                 }
+			 },
+			 error : function(err) {
+                 $('.settip').empty();
+                 $('.settip').append('下发失败，未知错误!');
+			 }
+		});
 	});
 }
 
 function gbl_password() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
     $('.main-content').empty();
     $('.main-content').append(
         '<div class="src_content">'
@@ -206,6 +220,7 @@ function gbl_password() {
         }
         if($(".oldpassword").val() == "" || $(".newpassword").val() == ""){
             alert("密码不能为空.");
+            return;
         }
         var strjson = '{oldpassword:'+$(".oldpassword").val() + ',newpassword:'+ $(".newpassword").val()
             +  '}';
