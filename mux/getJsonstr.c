@@ -5,7 +5,7 @@
 extern ClsProgram_st clsProgram;
 extern ClsGlobal_st  clsGlobal;
 
-void getPrgsJson(char *ip, char *outprg){
+void getPrgsJson(char *ip, char *outprg, char *lan){
     int i = 0, j = 0, res = 0, inChn = 1;
     char str[200] = {0};
     char idstr[100] = {0};
@@ -37,7 +37,11 @@ void getPrgsJson(char *ip, char *outprg){
             //添加节目节点TITLE
             memset(idstr, 0, sizeof(idstr));
             memcpy(idstr, ptmpPrgInfo->prgName, ptmpPrgInfo->prgNameLen);
-            sprintf(str,"节目%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
+            if(!strcmp(lan, "zh-CN")){
+                            sprintf(str,"节目%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
+            }else{
+                            sprintf(str,"Programe-%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
+            }
             memset(idstr, 0, sizeof(idstr));
             cJSON_AddStringToObject(prgjson,"title", str);
             cJSON_AddStringToObject(prgjson,"tooltip", str);
@@ -149,7 +153,12 @@ void getPrgsJson(char *ip, char *outprg){
         }
 
         //添加通道节点TITLE
-        sprintf(str,"通道%d(ASI)", inChn);
+        if(!strcmp(lan, "zh-CN")){
+            sprintf(str,"通道%d(ASI)", inChn);
+        }else{
+            sprintf(str,"Channel%d(ASI)", inChn);
+        }
+        
         cJSON_AddStringToObject(channeljson,"title", str);
 
         prgjsonstring = cJSON_PrintUnformatted(channelsarray);
@@ -170,7 +179,11 @@ void getPrgsJson(char *ip, char *outprg){
         cJSON_AddStringToObject(channeljson,"key", idstr);
         cJSON_AddStringToObject(channeljson,"icon", "img/channel_in.ico");
         //添加通道节点TITLE
-        sprintf(str,"通道%d(ASI)", inChn);
+        if(!strcmp(lan, "zh-CN")){
+            sprintf(str,"通道%d(ASI)", inChn);
+        }else{
+            sprintf(str,"Channel%d(ASI)", inChn);
+        }
         cJSON_AddStringToObject(channeljson,"title", str);
         prgjsonstring = cJSON_PrintUnformatted(channelsarray);
         memcpy(outprg, prgjsonstring, strlen(prgjsonstring));

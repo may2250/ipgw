@@ -3,7 +3,7 @@
     function alarm_output(flag){
         if(globalObj.timerID != undefined){
             clearInterval(globalObj.timerID);
-        }
+        }        
 		if(flag == 1){
 			//告警日志
 			//TODO
@@ -86,23 +86,23 @@
 				"scrollY":  "368px",
 				"scrollCollapse": true,
                 "columns": [
-					{ "title": "序号", "width":"10%" },
-					{ "title": "用户" , "width":"10%"},
-					{ "title": "详细信息" , "width":"20%"},
-					{ "title": "时间", "class": "center" }
+					{ "title": nv=="zh-CN"?"序号":"NO.", "width":"10%" },
+					{ "title": nv=="zh-CN"?"用户":"USER" , "width":"10%"},
+					{ "title": nv=="zh-CN"?"详细信息":"DETAIL" , "width":"20%"},
+					{ "title": nv=="zh-CN"?"时间":"TIME", "class": "center" }
 				],
                 "oLanguage": {							//汉化
                     "sLengthMenu": "每页显示 _MENU_ 条记录",
-                    "sZeroRecords": "没有检索到数据",
+                    "sZeroRecords": nv=="zh-CN"?"没有检索到数据":"NO DATA",
                     "sInfo": "当前数据为从第 _START_ 到第 _END_ 条数据；总共有 _TOTAL_ 条记录",
-                    "sInfoEmtpy": "没有数据",
+                    "sInfoEmtpy": nv=="zh-CN"?"没有数据":"NO DATA",
                     "sProcessing": "正在加载数据...",
-                    "sSearch": "搜索",
+                    "sSearch": nv=="zh-CN"?"搜索":"Search",
                     "oPaginate": {
-                        "sFirst": "首页",
-                        "sPrevious": "前页",
-                        "sNext": "后页",
-                        "sLast": "尾页"
+                        "sFirst": nv=="zh-CN"?"首页":"HOME",
+                        "sPrevious": nv=="zh-CN"?"前页":"Pre",
+                        "sNext": nv=="zh-CN"?"后页":"Next",
+                        "sLast": nv=="zh-CN"?"尾页":"LAST"
                     }
                 }
 			});    

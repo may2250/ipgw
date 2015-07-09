@@ -64,9 +64,14 @@ static void reboot(HttpConn *conn) {
     time_t curTime;
     //struct tm *ts;
     time(&curTime);
-    //ts = localtime(&curTime);
     memset(optstr, 0, 256);
-    sprintf(optstr, "{'user': '%s', 'desc': '设备重启.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '设备重启.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'Device Reboot.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -102,7 +107,13 @@ static void reset(HttpConn *conn) {
     time_t curTime;
     time(&curTime);
     memset(optstr, 0, 256);
-    sprintf(optstr, "{'user': '%s', 'desc': '恢复出厂设置.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '恢复出厂设置.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'Restore Default.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -155,7 +166,13 @@ static void setDevip(HttpConn *conn) {
     time_t curTime;
     time(&curTime);
     memset(optstr, 0, 256);
-    sprintf(optstr, "{'user': '%s', 'desc': '设备修改IP【IP:%s】.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"),newip, curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '设备修改IP【IP:%s】.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"),newip, curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'Device change IP【IP:%s】.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"),newip, curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -205,7 +222,13 @@ static void setPassword(HttpConn *conn) {
     time_t curTime;
     time(&curTime);
     memset(optstr, 0, 256);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户修改了密码.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户修改了密码.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User changed password.', 'level': '2', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");

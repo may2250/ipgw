@@ -74,9 +74,7 @@ static void getDevinfo(HttpConn *conn) {
     char pProg[256] = {0};
     int r = 0;
     EdiField *src;
-    printf("---------------getdevinfo===\n");
     getbaseJson(conn->rx->parsedUri->host, pProg);
-    printf("---------------getdevinfo end===\n");
     render(pProg);
     //delete optlog 7days ago
     Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
@@ -109,7 +107,8 @@ static void getPrgs(HttpConn *conn) {
             return;
         }
     }
-    getPrgsJson(conn->rx->parsedUri->host, outprg);
+	cchar *lan = getSessionVar("language");
+    getPrgsJson(conn->rx->parsedUri->host, outprg, lan);
     render(outprg);
 }
 
@@ -204,7 +203,13 @@ static void paramswriteAll(HttpConn *conn) {
 
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户下发发送源配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户下发发送源配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User send source config.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -266,7 +271,13 @@ static void setIpTvmode(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出模式[%s].', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), str, curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出模式[%s].', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), str, curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User changed output mode[%s].', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), str, curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -334,7 +345,13 @@ static void outchnprg_output(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户更改节目[%d]SPTS通道.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户更改节目[%d]SPTS通道.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User changed programe's[%d]SPTS channel.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -434,7 +451,12 @@ static void outChnConfig(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出节目[%d]信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户更改输出节目[%d]信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User changed output programe's[%d] info.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), prgId, curTime);
+	}
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -498,7 +520,13 @@ static void prgMuxSptsMap(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户自动映射输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户自动映射输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User auto mapping output programes.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -545,7 +573,13 @@ static void clearprgMux(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户清空输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户清空输出节目.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User cleared output programes.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -606,13 +640,12 @@ static void muxprgwrite(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户下发输出配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
-    MprJson  *row = mprParseJson(optstr);
-    if(ediSetFields(optlog, row) == 0){
-       printf("================>>>ediSetFields Failed!!\n");
-    }
-    ediUpdateRec(db, optlog);
-    rendersts(str, 1);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户下发输出配置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User sending output config.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
     render(str);
 }
 
@@ -663,7 +696,13 @@ static void netapply(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户修改网络接口设置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户修改网络接口设置.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User modified Net interface mode.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");
@@ -764,7 +803,13 @@ static void ipinApply(HttpConn *conn) {
     }
     time_t curTime;
     time(&curTime);
-    sprintf(optstr, "{'user': '%s', 'desc': '用户修改IP输入信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	cchar *lan = getSessionVar("language");
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '用户修改IP输入信息.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'User changed IP input info.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
     MprJson  *row = mprParseJson(optstr);
     if(ediSetFields(optlog, row) == 0){
        printf("================>>>ediSetFields Failed!!\n");

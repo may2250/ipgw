@@ -839,8 +839,8 @@ function createIPINUI(){
                 +'</fieldset>'
             +'</div>'
             +'<div class="tbn_div">'
-                +'<button id="btn_ipinRead" class="i18n_READ">读取</button>'
-                +'<button id="btn_ipinApply" class="i18n_APPLY">应用</button>'
+                +'<button id="btn_ipinRead" class="i18n_BTNREAD">读取</button>'
+                +'<button id="btn_ipinApply" class="i18n_BTNAPPLY">应用</button>'
             +'</div>'
         +'</div>'
     );
@@ -1002,8 +1002,8 @@ function createSendSrcUI(){
         +'</div>'
 
         +'<div class="tbn_div">'
-            +'<button id="src-read" class="i18n_READ">读取</button>'
-            +'<button id="src-write" class="i18n_APPLY">应用</button>'
+            +'<button id="src-read" class="i18n_BTNREAD">读取</button>'
+            +'<button id="src-write" class="i18n_BTNAPPLY">应用</button>'
         +'</div>'
     );
     $.i18n.properties({
@@ -1111,8 +1111,8 @@ function createDevFuncUI(){
         +'</div>'
         +'<div><label class="lb_ml i18n_NETINTERFACEALARM">警告：修改设备网络接口设置，将会导致设备重启！</label></div>'
         +'<div class="tbn_div">'
-            +'<button id="devfunc-read" class="i18n_READ">读取</button>'
-            +'<button id="devfunc-write" class="i18n_APPLY">应用</button>'
+            +'<button id="devfunc-read" class="i18n_BTNREAD">读取</button>'
+            +'<button id="devfunc-write" class="i18n_BTNAPPLY">应用</button>'
         +'</div>'
     );
     $.i18n.properties({

@@ -9,7 +9,7 @@
 #ifndef _IPGW_GETJSONSTR_GET_H_
 #define _IPGW_GETJSONSTR_GET_H_
 
-void getPrgsJson(char *ip, char *outprg);
+void getPrgsJson(char *ip, char *outprg, char *lan);
 void getbaseJson(char *ip, char *outprg);
 int getIpReadJson(char *ip, char *outprg);
 int getInputStsJson(char *ip, char *outprg);

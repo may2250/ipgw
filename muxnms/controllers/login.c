@@ -7,6 +7,7 @@
 static void checkLogin() {
     cchar *name = param("username");
     cchar *pwd = param("password");
+    cchar *lan = param("language");
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
     char str[16] = {0};
@@ -31,6 +32,7 @@ static void checkLogin() {
     {
         setSessionVar("isAuthed", "true");
         setSessionVar("userName", name);
+        setSessionVar("language", lan);
         setSessionVar("role", mprGetJson(userjson, "roles"));
         cJSON_AddNumberToObject(result,"sts", 0);
         jsonstring = cJSON_PrintUnformatted(result);
@@ -48,8 +50,12 @@ static void checkLogin() {
          time_t curTime;
          //struct tm *ts;
          time(&curTime);
-         //ts = localtime(&curTime);
-         sprintf(optstr, "{'user': '%s', 'desc': '用户登录', 'level': '1', 'logtime':'%d'}", name, curTime);
+         if(!strcmp(lan, "zh-CN")){
+            sprintf(optstr, "{'user': '%s', 'desc': '用户登录', 'level': '1', 'logtime':'%d'}", name, curTime);
+         }else{
+            sprintf(optstr, "{'user': '%s', 'desc': 'User Login', 'level': '1', 'logtime':'%d'}", name, curTime);
+         }
+         
          MprJson  *row = mprParseJson(optstr);
          if(ediSetFields(optlog, row) == 0){
             printf("================>>>ediSetFields Failed!!\n");
