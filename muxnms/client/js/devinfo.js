@@ -2,11 +2,12 @@ var globalObj = {
     _outtable: null,
     _devtree: null,
     _sync: false,
+    _nv: localStorage.getItem("language"),
     timerID: undefined
 };
 
 var channel_root = [
-    {"title": "输入通道", folder: true, key: "id1.0", expanded: true, "expanded": true, "icon": "img/book.ico"}
+    {"title": globalObj._nv == "zh-CN"?"输入通道":"INPUT-CH", folder: true, key: "id1.0", expanded: true, "expanded": true, "icon": "img/book.ico"}
 ];
 
 var StreamData = [];
@@ -19,7 +20,7 @@ var dig_notification = $( "#progress-notification" ).dialog({
 });
 
 function getprgs(flag){
-    $('.notification-tips')[0].textContent = "正在获取节目...";
+    $('.notification-tips')[0].textContent = globalObj._nv == "zh-CN"?"正在获取节目...":"Reading programes...";
     $( "#progress-notification").show();
     $.ajax({
         type: "GET",
@@ -28,7 +29,7 @@ function getprgs(flag){
         dataType: "json",
         success: function(res){
             if(res.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(res.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -57,7 +58,7 @@ function ipread(flag){
         dataType: "json",
         success: function(res){
             if(res.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(res.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -81,7 +82,7 @@ function ipread(flag){
 }
 
 function iptvread(){
-    $('.notification-tips')[0].textContent = "正在获取IPTV信息...";
+    $('.notification-tips')[0].textContent = globalObj._nv == "zh-CN"?"正在获取IPTV信息...":"Reading IPTV information...";
     $.ajax({
         type: "GET",
         async: false,
@@ -89,7 +90,7 @@ function iptvread(){
         dataType: "json",
         success: function(res){
             if(res.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(res.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -103,7 +104,7 @@ function iptvread(){
 }
 
 function outprgList(){
-    $('.notification-tips')[0].textContent = "正在获取输出列表...";
+    $('.notification-tips')[0].textContent = globalObj._nv == "zh-CN"?"正在获取输出列表...":"Reading Output List...";
     $.ajax({
         type: "GET",
         async: false,
@@ -111,7 +112,7 @@ function outprgList(){
         dataType: "json",
         success: function(data){
             if(data.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(data.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -152,7 +153,7 @@ function setIpTvmode(mod){
         dataType: "json",
         success: function(data){
             if(data.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(data.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -173,7 +174,7 @@ function refreshIpInOutMode(){
         dataType: "json",
         success: function(data){
             if(data.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(data.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -195,11 +196,11 @@ function createHomeUI(){
         '<div class="src_content">'
             +'<div class="field_head">'
                 +'<fieldset>'
-                    +'<legend>发送设置</legend>'
+                    +'<legend class="i18n_SENDSETTING">发送设置</legend>'
                     +'<table class="fieldset_tbl">'
                         +'<tr>'
                             +'<td>'
-                                +'<label class="lb_mr">输出模式</label>'
+                                +'<label class="lb_mr i18n_OUTMODE">输出模式</label>'
                                 +'<select class="output_mode lb_mr">'
                                     +'<option value="0">MPTS</option>'
                                     +'<option value="1">SPTS</option>'
@@ -211,7 +212,7 @@ function createHomeUI(){
                                 +'<label class="lb_mr">[0:255]</label>'
                             +'</td>'
                             +'<td>'
-                                +'<label class="lb_mr">输出节目总数</label>'
+                                +'<label class="lb_mr i18n_OUTPRGTOTAL">输出节目总数</label>'
                                 +'<input class="output_cnt" type="text" />'
                             +'</td>'
                         +'</tr>'
@@ -221,9 +222,9 @@ function createHomeUI(){
             +'<div class="clearfix prg_content">'
                 +'<div class="input_tree">'
                     +'<div class="input_spts">'
-                        +'<lable class="lb_mr lb_ml">SPTS通道</lable>'
+                        +'<lable class="lb_mr lb_ml i18n_SPTSCH">SPTS通道</lable>'
                         +'<select class="spts_ch"></select>'
-                        +'<a href="javascript:void(0)" class="btn_css btn_spts">确定</a>'
+                        +'<a href="javascript:void(0)" class="btn_css btn_spts i18n_BTNOK">确定</a>'
                     +'</div>'
                     +'<div class="tree_content">'
                         +'<div id="devlist" class="channel_input"></div>'
@@ -232,29 +233,29 @@ function createHomeUI(){
                 +'<div class="prg_detail">'
                     +'<table class="fieldset_tbl">'
                         +'<tr>'
-                            +'<td><label class="lb_mr">通道</label></td>'
+                            +'<td><label class="lb_mr i18n_CHANNEL">通道</label></td>'
                             +'<td><input class="prg_ch lb_mr"></td>'
-                            +'<td><a href="javascript:void(0)" class="btn_css btn_prg">确定</a></td>'
+                            +'<td><a href="javascript:void(0)" class="btn_css btn_prg i18n_BTNOK">确定</a></td>'
                         +'</tr>'
                         +'<tr>'
-                            +'<td><label class="lb_mr">输出方式</label></td>'
+                            +'<td><label class="lb_mr i18n_OUTWAY">输出方式</label></td>'
                             +'<td><select class="prg_outmode">'
-                                +'<option value="0">单播-UDP</option><option value="1">组播-UDP</option>'
+                                +'<option value="0" class="i18n_UNICASTUDP">单播-UDP</option><option value="1" class="i18n_MUTICASTUDP">组播-UDP</option>'
                             +'</select></td>'
                             +'<td</td>'
                         +'</tr>'
                         +'<tr>'
-                            +'<td><label class="lb_mr">目的IP地址</label></td>'
+                            +'<td><label class="lb_mr i18n_DESTIPADDR">目的IP地址</label></td>'
                             +'<td><input class="prg_destip" type="text" /></td>'
                             +'<td><label>(eg:192.168.1.103)</label></td>'
                         +'</tr>'
                         +'<tr>'
-                            +'<td><label class="lb_mr">目的端口号</label></td>'
+                            +'<td><label class="lb_mr i18n_DESTPORT">目的端口号</label></td>'
                             +'<td><input class="prg_destport" type="text" /></td>'
                             +'<td><label>(1~65535)</label></td>'
                         +'</tr>'
                         +'<tr>'
-                            +'<td><label class="lb_mr">目的MAC</label></td>'
+                            +'<td><label class="lb_mr i18n_DESTMAC">目的MAC</label></td>'
                             +'<td><input class="prg_destmac" type="text" /></td>'
                             +'<td><label>(eg:00:11:22:33:44:55)</label></td>'
                         +'</tr>'
@@ -265,14 +266,42 @@ function createHomeUI(){
                 +'</div>'
             +'</div>'
             +'<div class="tbn_div">'
-                +'<button id="output-search">搜索</button>'
-                +'<button id="output-read">读取</button>'
-                +'<button id="output-auto">自动映射</button>'
-                +'<button id="output-clear">清空</button>'
-                +'<button id="output-write">应用</button>'
+                +'<button id="output-search" class="i18n_BTNSEARCH">搜索</button>'
+                +'<button id="output-read" class="i18n_BTNREAD">读取</button>'
+                +'<button id="output-auto" class="i18n_BTNAUTOTRANS">自动映射</button>'
+                +'<button id="output-clear" class="i18n_BTNCLEAR">清空</button>'
+                +'<button id="output-write" class="i18n_BTNAPPLY">应用</button>'
             +'</div>'
         +'</div>'
     );
+    
+    $.i18n.properties({
+        name : globalObj._nv, //资源文件名称
+        path : '/i18n/', //资源文件路径
+        mode : 'map', //用Map的方式使用资源文件中的值
+        language : globalObj._nv,
+        callback : function() {//加载成功后设置显示内容
+            $('.i18n_SENDSETTING').html($.i18n.prop('SENDSETTING'));
+            $('.i18n_OUTMODE').html($.i18n.prop('OUTMODE'));
+            $('.i18n_OUTPRGTOTAL').html($.i18n.prop('OUTPRGTOTAL'));
+            $('.i18n_SPTSCH').html($.i18n.prop('SPTSCH'));
+            $('.i18n_BTNOK')[0].textContent = $.i18n.prop('BTNOK');
+            $('.i18n_BTNOK')[1].textContent = $.i18n.prop('BTNOK');
+            $('.i18n_CHANNEL').html($.i18n.prop('CHANNEL'));            
+            $('.i18n_OUTWAY').html($.i18n.prop('OUTWAY'));            
+            $('.i18n_DESTIPADDR').html($.i18n.prop('DESTIPADDR'));
+            $('.i18n_DESTPORT').html($.i18n.prop('DESTPORT'));
+            $('.i18n_DESTMAC').html($.i18n.prop('DESTMAC'));
+            $('.i18n_UNICASTUDP')[0].textContent = $.i18n.prop('UNICASTUDP');
+            $('.i18n_MUTICASTUDP')[0].textContent = $.i18n.prop('MUTICASTUDP');            
+            $('.i18n_BTNSEARCH')[0].textContent = $.i18n.prop('BTNSEARCH');
+            $('.i18n_BTNREAD')[0].textContent = $.i18n.prop('BTNREAD');            
+            $('.i18n_BTNAUTOTRANS')[0].textContent = $.i18n.prop('BTNAUTOTRANS');
+            $('.i18n_BTNCLEAR')[0].textContent = $.i18n.prop('BTNCLEAR');            
+            $('.i18n_BTNAPPLY')[0].textContent = $.i18n.prop('BTNAPPLY');
+            
+        }
+    });
 
     $('.output_cnt').attr("disabled", true);
     $('.prg_ch').attr("disabled", true);
@@ -293,7 +322,7 @@ function createHomeUI(){
                 dataType: "json",
                 success: function(data){
                     if(data.sts == 6){
-                        alert("通讯错误");
+                        alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error!");
                         return false;
                     }
                     outprgList();
@@ -313,23 +342,23 @@ function createHomeUI(){
         var macstr = $('.prg_destmac').val();
 
         if(isNaN(port)){
-            alert("非法的端口号.");
+            alert(globalObj._nv == "zh-CN"?"非法的端口号.":"Illegal Port.");
         }else{
             if(parseInt(port)<1 || parseInt(port)>65535){
-                alert("非法的端口号.");
+                alert(globalObj._nv == "zh-CN"?"非法的端口号.":"Illegal Port.");
             }
         }
         var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
         var valid = regexp.test(ipstr);
         if(!valid){
-            alert("无效的IP地址.");
+            alert(globalObj._nv == "zh-CN"?"无效的IP地址.":"Invalid IP.");
             return false;
         }
         if(macstr != "Auto"){
             regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
             valid = regexp.test(macstr);
             if(!valid){
-                alert("无效的MAC地址.");
+                alert(globalObj._nv == "zh-CN"?"无效的MAC地址.":"Invalid MAC.");
                 return false;
             }
         }
@@ -345,7 +374,7 @@ function createHomeUI(){
                 if(data.sts == 8){
                     window.location = "/login.esp";
                 }else if(data.sts == 5){
-                    alert("该用户权限不足.");
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                     return false;
                 }
                 if(data.outMode < 3){
@@ -423,7 +452,7 @@ function createHomeUI(){
                 if(data.sts == 8){
                     window.location = "/login.esp";
                 }else if(data.sts == 5){
-                    alert("该用户权限不足.");
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                     return false;
                 }else if(data.sts == 1){
                     outprgList();
@@ -451,7 +480,7 @@ function createHomeUI(){
                 if(data.sts == 8){
                     window.location = "/login.esp";
                 }else if(data.sts == 5){
-                    alert("该用户权限不足.");
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                     return false;
                 }else if(data.sts == 1){
                     outprgList();
@@ -469,7 +498,7 @@ function createHomeUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        $('.notification-tips')[0].textContent = "正在下发配置...";
+        $('.notification-tips')[0].textContent = globalObj._nv == "zh-CN"?"正在下发配置...":"Sending Config...";
         dig_notification.dialog( "open" );
         var ttl = $('.output_ttl').val();
         $.ajax({
@@ -482,12 +511,12 @@ function createHomeUI(){
                 if(data.sts == 8){
                     window.location = "/login.esp";
                 }else if(data.sts == 5){
-                    alert("该用户权限不足.");
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                     return false;
                 }else if(data.sts == 1){
                     //outprgList();
                 }else if(data.sts == 2){
-                    alert("检测到错误的IP输出通道设置！");
+                    alert(globalObj._nv == "zh-CN"?"检测到错误的IP输出通道设置！":"Detected Error IP output channel setting!");
                 }
 
             },
@@ -580,12 +609,12 @@ function createHomeUI(){
         "scrollY": 265,
         "bAutoWidth": false,
         "columns": [
-            { "title": "通道"},
-            { "title": "输出方式"},
+            { "title": globalObj._nv == "zh-CN"?"通道":"CH"},
+            { "title": globalObj._nv == "zh-CN"?"输出方式":"OUT-MODE"},
             { "title": "IP"},
-            { "title": "端口号"},
+            { "title": globalObj._nv == "zh-CN"?"端口号":"PORT"},
             { "title": "MAC" },
-            { "title": "节目名称" }
+            { "title": globalObj._nv == "zh-CN"?"节目名称":"NAME" }
         ]
     });
 
@@ -691,7 +720,7 @@ function readipinsts(){
                 if(globalObj.timerID != undefined){
                     clearInterval(globalObj.timerID);
                 }
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else{
                 if(data.lockStatu == 0){
                     $('.panel_lock')[0].src = "../img/circle16_error.ico";
@@ -735,7 +764,7 @@ function createIPINUI(){
                 +'<table class="fieldset_tbl">'
                     +'<tr>'
                         +'<td>'
-                            +'<label class="lb_mr">输入锁定</label>'
+                            +'<label class="lb_mr i18n_INLOCK">输入锁定</label>'
                         +'</td>'
                         +'<td>'
                             +'<img class="lb_mr panel_lock" src="../img/circle16_error.ico"></label>'
@@ -743,7 +772,7 @@ function createIPINUI(){
                             +'<input class="tb_percent lb_ml1" type="text" disabled />'
                         +'</td>'
                         +'<td>'
-                            +'<label class="lb_mr">输入码率</label>'
+                            +'<label class="lb_mr i18n_INRATE">输入码率</label>'
                         +'</td>'
                         +'<td>'
                             +'<input class="tb_bitrate" type="text" disabled />'
@@ -753,10 +782,10 @@ function createIPINUI(){
                     +'<tr>'
                         +'<td></td>'
                         +'<td>'
-                            +'<input class="chkb_valid" name="chkb" type="checkbox" />激活'
+                            +'<input class="chkb_valid" name="chkb" type="checkbox" /><label class="i18n_ACTIVE">激活</label>'
                         +'</td>'
                         +'<td>'
-                            +'<label class="lb_mr">网络模式</label>'
+                            +'<label class="lb_mr i18n_NETMODE">网络模式</label>'
                         +'</td>'
                         +'<td>'
                             +'<select class="cb_net">'
@@ -766,13 +795,13 @@ function createIPINUI(){
                     +'</tr>'
                     +'<tr>'
                         +'<td>'
-                            +'<label class="lb_mr">发送源IP</label>'
+                            +'<label class="lb_mr i18n_SRCIP">发送源IP</label>'
                         +'</td>'
                         +'<td>'
                             +'<input class="tb_srcip" type="text" style="width:120px" />'
                         +'</td>'
                         +'<td>'
-                            +'<label class="lb_mr">设备端IP</label>'
+                            +'<label class="lb_mr i18n_DEVIP">设备端IP</label>'
                         +'</td>'
                         +'<td>'
                             +'<input class="tb_ip" type="text" style="width:120px"/>'
@@ -780,13 +809,13 @@ function createIPINUI(){
                     +'</tr>'
                     +'<tr>'
                         +'<td>'
-                            +'<label class="lb_mr">接受端口号</label>'
+                            +'<label class="lb_mr i18n_RECEIVEPORT">接收端口号</label>'
                         +'</td>'
                         +'<td>'
                             +'<input class="tb_port" type="text" />'
                         +'</td>'
                         +'<td>'
-                            +'<label class="lb_mr">设备端MAC</label>'
+                            +'<label class="lb_mr i18n_DEVMAC">设备端MAC</label>'
                         +'</td>'
                         +'<td>'
                             +'<input class="tb_mac" type="text" style="width:120px" />'
@@ -794,11 +823,11 @@ function createIPINUI(){
                     +'</tr>'
                     +'<tr>'
                         +'<td>'
-                            +'<label class="lb_mr">输入流类型</label>'
+                            +'<label class="lb_mr i18n_INSTREAMTYPE">输入流类型</label>'
                         +'</td>'
                         +'<td>'
                             +'<select class="cb_streamType" style="width:100px">'
-                                +'<option value="0">业务流</option><option value="1">音视频流</option>'
+                                +'<option value="0" class="i18n_BUSINESSSTREAM">业务流</option><option value="1" class="i18n_AVSTREAM">音视频流</option>'
                             +'</select>'
                         +'</td>'
                         +'<td>'
@@ -810,11 +839,32 @@ function createIPINUI(){
                 +'</fieldset>'
             +'</div>'
             +'<div class="tbn_div">'
-                +'<button id="btn_ipinRead">读取</button>'
-                +'<button id="btn_ipinApply">应用</button>'
+                +'<button id="btn_ipinRead" class="i18n_READ">读取</button>'
+                +'<button id="btn_ipinApply" class="i18n_APPLY">应用</button>'
             +'</div>'
         +'</div>'
     );
+    $.i18n.properties({
+        name : globalObj._nv, //资源文件名称
+        path : '/i18n/', //资源文件路径
+        mode : 'map', //用Map的方式使用资源文件中的值
+        language : globalObj._nv,
+        callback : function() {//加载成功后设置显示内容
+            $('.i18n_INLOCK').html($.i18n.prop('INLOCK'));
+            $('.i18n_INRATE').html($.i18n.prop('INRATE'));            
+            $('.i18n_ACTIVE').html($.i18n.prop('ACTIVE'));            
+            $('.i18n_NETMODE').html($.i18n.prop('NETMODE'));            
+            $('.i18n_SRCIP').html($.i18n.prop('SRCIP'));            
+            $('.i18n_DEVIP').html($.i18n.prop('DEVIP'));            
+            $('.i18n_RECEIVEPORT').html($.i18n.prop('RECEIVEPORT'));            
+            $('.i18n_DEVMAC').html($.i18n.prop('DEVMAC'));            
+            $('.i18n_INSTREAMTYPE').html($.i18n.prop('INSTREAMTYPE'));
+            $('.i18n_BUSINESSSTREAM')[0].textContent = $.i18n.prop('BUSINESSSTREAM');            
+            $('.i18n_AVSTREAM')[0].textContent = $.i18n.prop('AVSTREAM');
+            $('.i18n_BTNREAD')[0].textContent = $.i18n.prop('BTNREAD');             
+            $('.i18n_BTNAPPLY')[0].textContent = $.i18n.prop('BTNAPPLY');            
+        }
+    });
     readipIN();
     //创建定时器定时获取输出比特率
     globalObj.timerID = setInterval(readipinsts, 2000);
@@ -840,25 +890,24 @@ function createIPINUI(){
         var port = $('.tb_port').val();
         var macstr = $('.tb_mac').val();
         var streamType = $('.cb_streamType').get(0).selectedIndex;
-
         if(isNaN(port)){
-            alert("非法的端口号.");
+            alert(globalObj._nv == "zh-CN"?"非法的端口号.":"Illegal Port.");
         }else{
             if(parseInt(port)<1 || parseInt(port)>65535){
-                alert("非法的端口号.");
+                alert(globalObj._nv == "zh-CN"?"非法的端口号.":"Illegal Port.");
             }
         }
         var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
         var valid = regexp.test(ipstr) && regexp.test(desip);
         if(!valid){
-            alert("无效的IP地址.");
+            alert(globalObj._nv == "zh-CN"?"无效的IP地址.":"Invalid IP.");
             return false;
         }
         if(macstr != "Auto"){
             regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
             valid = regexp.test(macstr);
             if(!valid){
-                alert("无效的MAC地址.");
+                alert(globalObj._nv == "zh-CN"?"无效的MAC地址.":"Invalid MAC.");
                 return false;
             }
         }
@@ -872,7 +921,7 @@ function createIPINUI(){
             dataType: "json",
             success: function(res){
                 if(res.sts == 6){
-                    alert("通讯错误");
+                    alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
                 }else if(res.sts == 8){
                     window.location = "/login.esp";
                 }else{
@@ -895,7 +944,7 @@ function readinputsts(){
         dataType: "json",
         success: function(res){
             if(res.sts == 6){
-                alert("通讯错误");
+                alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
             }else if(res.sts == 8){
                 window.location = "/login.esp";
             }else{
@@ -921,42 +970,60 @@ function createSendSrcUI(){
     $('.main-content').append(
         '<div class="src_content">'
             +'<fieldset>'
-                +'<legend>发送源</legend>'
+                +'<legend class="i18n_SENDSRC">发送源</legend>'
                 +'<div class="sendsrcdiv">'
-                    +'<label class="lb_mr">网络接口模式</label>'
+                    +'<label class="lb_mr i18n_NETINTERFACEMODE">网络接口模式</label>'
                     +'<select class="s_netInterfaceMode lb_mr"><option value="0">10M</option>'
                         +'<option value="1">100M</option><option value="2">1000M</option>'
                         +'<option value="3">------</option>'
                     +'</select>'
-                    +'<label class="lb_mr">输入码率</label>'
+                    +'<label class="lb_mr i18n_INRATE">输入码率</label>'
                     +'<input class="s_inrate lb_mr" type="text" />Mbps'
                 +'</div>'
                 +'<div class="sendsrcdiv">'
-                    +'<label class="lb_mr">源IP地址</label>'
+                    +'<label class="lb_mr i18n_SOURCEIP">源IP地址</label>'
                     +'<input class="s_ip lb_mr" pattern="^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$" type="text" />'
                     +'<label class="lb_mr">eg(192.168.1.103)</label>'
                 +'</div>'
                 +'<div class="sendsrcdiv">'
-                    +'<label class="lb_mr">源端口号</label>'
+                    +'<label class="lb_mr i18n_SOURCEPORT">源端口号</label>'
                     +'<input class="s_port lb_mr" type="text" />'
                     +'<label class="lb_mr">[0~65535]</label>'
-                    +'<label class="lb_mr">输入锁定</label>'
+                    +'<label class="lb_mr i18n_INLOCK">输入锁定</label>'
                     +'<img src="" class="s_inlock lb_mr" />'
                 +'</div>'
                 +'<div class="sendsrcdiv">'
-                    +'<label class="lb_mr">源MAC</label>'
+                    +'<label class="lb_mr i18n_SOURCEMAC">源MAC</label>'
                     +'<input class="s_mac lb_mr" pattern="([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2})" type="text" />'
-                    +'<label class="lb_mr">值为16进制</label>'
+                    +'<label class="lb_mr i18n_16OX">值为16进制</label>'
                     +'<label class="lb_mr">eg(00:11:22:33:44:55)</label>'
                 +'</div>'
             +'</fieldset>'
         +'</div>'
 
         +'<div class="tbn_div">'
-            +'<button id="src-read">读取</button>'
-            +'<button id="src-write">应用</button>'
+            +'<button id="src-read" class="i18n_READ">读取</button>'
+            +'<button id="src-write" class="i18n_APPLY">应用</button>'
         +'</div>'
     );
+    $.i18n.properties({
+        name : globalObj._nv, //资源文件名称
+        path : '/i18n/', //资源文件路径
+        mode : 'map', //用Map的方式使用资源文件中的值
+        language : globalObj._nv,
+        callback : function() {//加载成功后设置显示内容
+            $('.i18n_SENDSRC').html($.i18n.prop('SENDSRC'));
+            $('.i18n_NETINTERFACEMODE').html($.i18n.prop('NETINTERFACEMODE'));            
+            $('.i18n_INRATE').html($.i18n.prop('INRATE'));            
+            $('.i18n_SOURCEIP').html($.i18n.prop('SOURCEIP'));            
+            $('.i18n_SOURCEPORT').html($.i18n.prop('SOURCEPORT'));            
+            $('.i18n_INLOCK').html($.i18n.prop('INLOCK'));            
+            $('.i18n_SOURCEMAC').html($.i18n.prop('SOURCEMAC'));            
+            $('.i18n_16OX').html($.i18n.prop('16OX'));           
+            $('.i18n_BTNREAD')[0].textContent = $.i18n.prop('BTNREAD');             
+            $('.i18n_BTNAPPLY')[0].textContent = $.i18n.prop('BTNAPPLY');            
+        }
+    });
 
     $('.s_inrate').attr("disabled", true);
     $('.s_netInterfaceMode').attr("disabled", true);
@@ -981,24 +1048,24 @@ function createSendSrcUI(){
     }).click(function( event ) {
         event.preventDefault();
         if(isNaN($('.s_port').val())){
-            alert("非法的端口号.");
+            alert(globalObj._nv == "zh-CN"?"非法的端口号.":"Illegal Port.");
         }else{
             if(parseInt($('.s_port').val())>65535 || parseInt($('.s_port').val()<0)){
-                alert("端口号溢出.");
+                alert(globalObj._nv == "zh-CN"?"端口号溢出.":"Port Overflow.");
                 return false;
             }
         }
         var regexp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
         var valid = regexp.test($('.s_ip').val());
         if(!valid){
-            alert("无效的IP地址.");
+            alert(globalObj._nv == "zh-CN"?"无效的IP地址.":"Invalid IP.");
             return false;
         }
 
         regexp = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
         var valid = regexp.test($('.s_mac').val());
         if(!valid){
-            alert("无效的MAC地址.");
+            alert(globalObj._nv == "zh-CN"?"无效的MAC地址.":"Invalid MAC.");
             return false;
         }
 
@@ -1011,13 +1078,13 @@ function createSendSrcUI(){
             dataType: "json",
             success: function(res){
                 if(res.sts == 6){
-                    alert("通讯错误");
+                    alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
                 }else if(res.sts == 8){
                     window.location = "/login.esp";
                 }else if(res.sts == 5){
-                    alert("该用户权限不足.");
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                 }else{
-                    alert("下发成功.");
+                    alert(globalObj._nv == "zh-CN"?"下发成功.":"Config Success!");
                 }
             },
             error : function(err) {
@@ -1035,19 +1102,32 @@ function createDevFuncUI(){
     $('.main-content').append(
         '<div class="src_content">'
         +'<fieldset>'
-        +'<legend>设备功能</legend>'
+        +'<legend class="i18n_DEVFUNC">设备功能</legend>'
         +'<div class="sendsrcdiv">'
-            +'<label class="lb_mr">网络接口设置</label>'
+            +'<label class="lb_mr i18n_NETINTERFACESET">网络接口设置</label>'
             +'<select class="d_InterfaceMode lb_mr" style="width:100px"><option value="0">OUT</option>'
                 +'<option value="1">IN</option>'
              +'</select>'
         +'</div>'
-        +'<div><label class="lb_ml">警告：修改设备网络接口设置，将会导致设备重启！</label></div>'
+        +'<div><label class="lb_ml i18n_NETINTERFACEALARM">警告：修改设备网络接口设置，将会导致设备重启！</label></div>'
         +'<div class="tbn_div">'
-            +'<button id="devfunc-read">读取</button>'
-            +'<button id="devfunc-write">应用</button>'
+            +'<button id="devfunc-read" class="i18n_READ">读取</button>'
+            +'<button id="devfunc-write" class="i18n_APPLY">应用</button>'
         +'</div>'
     );
+    $.i18n.properties({
+        name : globalObj._nv, //资源文件名称
+        path : '/i18n/', //资源文件路径
+        mode : 'map', //用Map的方式使用资源文件中的值
+        language : globalObj._nv,
+        callback : function() {//加载成功后设置显示内容
+            $('.i18n_DEVFUNC').html($.i18n.prop('DEVFUNC'));
+            $('.i18n_NETINTERFACESET').html($.i18n.prop('NETINTERFACESET'));            
+            $('.i18n_NETINTERFACEALARM').html($.i18n.prop('NETINTERFACEALARM'));              
+            $('.i18n_BTNREAD')[0].textContent = $.i18n.prop('BTNREAD');             
+            $('.i18n_BTNAPPLY')[0].textContent = $.i18n.prop('BTNAPPLY');            
+        }
+    });
 
     refreshIpInOutMode();
 
@@ -1066,7 +1146,7 @@ function createDevFuncUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        if((confirm( "确定要修改吗？ ")==true)){
+        if((confirm( globalObj._nv == "zh-CN"?"确定要修改吗？ ":"Sure to modify?")==true)){
             var mode = $('.d_InterfaceMode').get(0).selectedIndex;
             $.ajax({
                 type: "GET",
@@ -1075,7 +1155,7 @@ function createDevFuncUI(){
                 dataType: "json",
                 success: function(data){
                     if(data.sts == 6){
-                        alert("通讯错误");
+                        alert(globalObj._nv == "zh-CN"?"通讯错误":"Communication Error.");
                     }else if(data.sts == 8){
                         window.location = "/login.esp";
                     }else{
