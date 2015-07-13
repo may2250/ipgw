@@ -141,10 +141,10 @@
                         window.location.href="http://"+localip+":4000/index.esp";
                     }else if(data.sts == 1){
                         $('.username').addClass("inputerror");
-                        alert("用户名不存在!");
+                        alert(nv == "zh-CN"?"用户名不存在!":"User not exist!");
                     }else if(data.sts == 2){
                         $('.password').addClass("inputerror");
-                        alert("密码错误!");
+                        alert(nv == "zh-CN"?"密码错误!":"Password Error!");
                     }
                 },
                 error : function(err) {

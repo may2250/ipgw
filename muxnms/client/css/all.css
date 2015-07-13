@@ -745,6 +745,10 @@ span.fancytree-node.userprg > span.fancytree-title {
     border:1px solid #666666;
 }
 
+.prg_outmode {
+	width: 120px!important;
+}
+
 .fieldset_tbl input:hover{
     border:1px solid #00bcd4;
 }
