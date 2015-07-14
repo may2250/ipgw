@@ -760,7 +760,7 @@ function createIPINUI(){
         '<div class="src_content">'
             +'<div class="field_head">'
                 +'<fieldset>'
-                +'<legend>IP输入</legend>'
+                +'<legend class="i18n_IPINPUT">IP输入</legend>'
                 +'<table class="fieldset_tbl">'
                     +'<tr>'
                         +'<td>'
@@ -850,6 +850,7 @@ function createIPINUI(){
         mode : 'map', //用Map的方式使用资源文件中的值
         language : globalObj._nv,
         callback : function() {//加载成功后设置显示内容
+            $('.i18n_IPINPUT').html($.i18n.prop('IPINPUT'));
             $('.i18n_INLOCK').html($.i18n.prop('INLOCK'));
             $('.i18n_INRATE').html($.i18n.prop('INRATE'));            
             $('.i18n_ACTIVE').html($.i18n.prop('ACTIVE'));            

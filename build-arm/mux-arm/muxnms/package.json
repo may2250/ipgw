@@ -11,9 +11,13 @@
         "http": {
             "database": "default",
             "serverPrefix": "/do",
-            "auth": {
-                "store": "app"
-            },
+			"timeouts": {
+				"exit": '5secs',
+				"parse": '5secs',
+				"inactivity": '1mins',
+				"request": 'unlimited',
+				"session": '30mins',
+			},
             "routes": "esp-html-mvc",
             "xsrf": true
         },

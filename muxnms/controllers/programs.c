@@ -96,6 +96,7 @@ static void getPrgs(HttpConn *conn) {
     if(isAuthed()){
         return;
     }
+	char str[32] = {0};
     char outprg[102400] = {0};
     MprJson *jsonparam = httpGetParams(conn);
     int flag = atoi(mprGetJson(jsonparam, "flag"));
@@ -108,6 +109,11 @@ static void getPrgs(HttpConn *conn) {
         }
     }
 	cchar *lan = getSessionVar("language");
+	if(lan == NULL){
+		rendersts(str, 8);
+        render(str);
+        return 1;
+	}
     getPrgsJson(conn->rx->parsedUri->host, outprg, lan);
     render(outprg);
 }
@@ -630,6 +636,7 @@ static void muxprgwrite(HttpConn *conn) {
         if (!ParamsWriteAll(conn->rx->parsedUri->host, 0xff)){
             rendersts(str, 6);
             render(str);
+			return;
         }
     }
     //add optlog
@@ -646,6 +653,7 @@ static void muxprgwrite(HttpConn *conn) {
 	}else{
 		sprintf(optstr, "{'user': '%s', 'desc': 'User sending output config.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
 	}
+	rendersts(str, 1);
     render(str);
 }
 
