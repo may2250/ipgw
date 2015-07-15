@@ -62,7 +62,7 @@ vi /usr/local/Dev_Info/dev_run.local
 
     rm -rf build-arm/ mux-arm.tar.bz2
 
-    cp /home/stan/work/newsheng/ipgw/muxnms/mux-arm.tar.bz2 .
+    cp /home/long/work/ipgw/muxnms/mux-arm.tar.bz2 .
 
     tar -jxvf mux-arm.tar.bz2
 
@@ -74,7 +74,7 @@ telnet 192.168.1.49
 
     reboot
 
-    mount -t nfs -o nolock 192.168.1.249:/home/nfs /mnt/nfs
+    mount -t nfs -o nolock 192.168.1.233:/home/nfs /mnt/nfs
 
     cd /mnt/nfs
 

@@ -68,7 +68,7 @@
 	<div class="footer">
 		<hr/>
 		<p> <%= mprGetDate(0); %></p>
-		<p>© Prevail Software, 2014-2024.V0.1.0 All rights reserved.</p>
+		<p>© Prevail Software, 2014-2024.V1.0.2 All rights reserved.</p>
 	</div>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
