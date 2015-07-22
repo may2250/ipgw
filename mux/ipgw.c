@@ -267,8 +267,9 @@ int CheckSameDest(){
 
 int IpWrite(char *ip){
     clsGlobal._moduleId = 1;
-    //int rslt = ucIpSrc1.ParamsWriteAll();
-    int rslt = ParamsWrite_dvbIptvMode(ip, clsGlobal.ipGwDb->dvbIptvMode);
+    int rslt = SrcParamsWriteAll(ip);
+    if (!rslt) return 0;
+    rslt &= ParamsWrite_dvbIptvMode(ip, clsGlobal.ipGwDb->dvbIptvMode);
     if (!rslt) return 0;
     rslt &= ParamsWrite_ttl(ip, clsGlobal.ipGwDb->ttl);
     if (!rslt) return 0;

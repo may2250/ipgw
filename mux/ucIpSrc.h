@@ -9,6 +9,6 @@ int ParamsReadAll(char *ip);
 
 int ReadInputStatus(char *ip, int *lockStatus, int *bitrate);
 
-
+int SrcParamsWriteAll(char *ip);
 
 #endif

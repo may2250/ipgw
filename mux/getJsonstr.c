@@ -366,6 +366,9 @@ void getPrgoutListJson(char *outprg){
                                 if(inprg->prgNum == muxPrg->prgId){
                                     memset(str, 0, sizeof(str));
                                     memcpy(str, inprg->prgName, inprg->prgNameLen);
+                                    if(inprg->prgNameLen == 0){
+                                        memcpy(str, "UNDEFINED", strlen("UNDEFINED"));
+                                    }
                                     cJSON_AddStringToObject(prgjson,"nameStr", str);
                                     cJSON_AddNumberToObject(prgjson,"Isoutprg", 1);
                                     break;

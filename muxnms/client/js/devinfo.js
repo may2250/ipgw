@@ -504,7 +504,7 @@ function createHomeUI(){
         $.ajax({
             type: "GET",
             async: true,
-            url: "http://"+localip+":4000/do/programs/muxprgwrite?ttl="+ttl,
+            url: "http://"+localip+":4000/do/programs/muxprgwrite?ttl="+ttl +"&outmode="+$('.output_mode').get(0).selectedIndex ,
             dataType: "json",
             success: function(data){
                 dig_notification.dialog( "close" );

@@ -41,6 +41,18 @@ int ReadInputStatus(char *ip, int *lockStatus, int *bitrate){
     return 1;
 }
 
+int SrcParamsWriteAll(char *ip){
+    int isGood = 1;    
+    isGood &= ParamWriteByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb->ip, 4);
+    isGood &= ParamWriteByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
+    isGood &= ParamWriteByIntCmd(ip, (unsigned char)3, clsGlobal._ucDb->port, 2);
+    if(isGood){
+        isGood &= ParamWriteByBytesCmd(ip, (unsigned char)0xf0, 0, 0);
+    }
+    return isGood;
+    
+}
+
 
 
 

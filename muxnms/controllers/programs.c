@@ -13,6 +13,7 @@
 #include "getJsonstr.h"
 #include "clsUcBase.h"
 #include "ucIpDest.h"
+#include "devinfo.h"
 #include "clsMuxprgInfoGet.h"
 
 //char *tmpip = "192.168.1.49";
@@ -616,7 +617,9 @@ static void muxprgwrite(HttpConn *conn) {
     }
     MprJson *jsonparam = httpGetParams(conn);
     int ttl = atoi(mprGetJson(jsonparam, "ttl"));
+	int outmode = atoi(mprGetJson(jsonparam, "outmode"));
     clsGlobal.ipGwDb->ttl = ttl;
+	clsGlobal.ipGwDb->dvbIptvMode = outmode;
     EnableValidOutChn();
     if(CheckSameDest() == 0){
         rendersts(str, 2);
@@ -673,7 +676,7 @@ static void refreshIpMode(HttpConn *conn) {
     //释放内存
     cJSON_Delete(result);
     free(jsonstring);
-    render(str);
+    render(str);	
 }
 
 static void netapply(HttpConn *conn) {
@@ -720,6 +723,7 @@ static void netapply(HttpConn *conn) {
     ediUpdateRec(db, optlog);
     rendersts(str, 1);
     render(str);
+	rebootDevice(conn->rx->parsedUri->host);
 }
 
 static void readipIN(HttpConn *conn) {
