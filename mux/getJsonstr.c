@@ -456,6 +456,10 @@ void getSPTSCHJson(int prgnum, int chnid, char *outprg){
                     cJSON_AddNumberToObject(iteminfo,"tag", i+1);
                     curindex = flag + 1;
                 }
+            }else{
+                flag++;
+                cJSON_AddItemToArray(itmearry,iteminfo = cJSON_CreateObject());
+                cJSON_AddNumberToObject(iteminfo,"tag", i+1);
             }
         }else{
             flag++;

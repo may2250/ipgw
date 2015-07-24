@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title class="i18n_NMS">数字网管</title>
+    <title class="i18n_NMS">DIGIT NMS</title>
     <meta charset="utf-8" />
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">    
     <link rel="stylesheet" href="css/ui.fancytree.min.css" type="text/css"> 
@@ -12,7 +12,7 @@
 <body>
 	<div class="navbar">
 		<nav>
-			<label class="i18n_NMSDEVTITLE">数字设备网管</label>
+			<label class="i18n_NMSDEVTITLE">DIGIT DEVICE NMS</label>
 		</nav>
     </div>
     <div class="container">
@@ -21,37 +21,37 @@
 				<div class="ny_zblb1">
 					<ul class="clearfix">
                         <li id="l1">
-                            <a class="cur ipinmode" href="javascript:createIPINUI()"><strong class="i18n_IPINPUT">IP输入</strong></a>
+                            <a class="cur ipinmode" href="javascript:createIPINUI()"><strong class="i18n_IPINPUT">IP-IN</strong></a>
                         </li>
 						<li id="l2">
-							<a class="cur ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">节目列表</strong></a>
+							<a class="cur ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAME LIST</strong></a>
 						</li>
 						<li class="subs" id="l3">
-							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong class="i18n_SRCSEND">发送源</strong></a>
+							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong class="i18n_SRCSEND">ORIGIN</strong></a>
 						</li>
 						<li class="subs" id="l4">
-							<a class="flag" href="javascript:createDevFuncUI()"><strong class="i18n_DEVFUNC">设备功能</strong></a>
+							<a class="flag" href="javascript:createDevFuncUI()"><strong class="i18n_DEVFUNC">DEVICE FUNCTION</strong></a>
 						</li>
 						<li class="subs" id="l5">
-							<a class="flag" href="javascript:void(0)"><strong class="i18n_DEVMANAGE">设备管理</strong></a>
+							<a class="flag" href="javascript:void(0)"><strong class="i18n_DEVMANAGE">MANAGEMENT</strong></a>
 							<ul>
-                                <li id="l51"><a href="javascript:gbl_setIp()" class="i18n_IPSET">IP地址设置</a></li>
-                                <li id="l52"><a href="javascript:gbl_reset()" class="i18n_RESTOREDEFAULT">恢复出厂设置</a></li>
-                                <li id="l53"><a href="javascript:gbl_restart()" class="i18n_RESTART">重启设备</a></li>
-                                <li id="l54"><a href="javascript:gbl_password()" class="i18n_CHANGEPASSWORD">修改密码</a></li>
+                                <li id="l51"><a href="javascript:gbl_setIp()" class="i18n_IPSET">IP SET</a></li>
+                                <li id="l52"><a href="javascript:gbl_reset()" class="i18n_RESTOREDEFAULT">RESTORE DEFAULT</a></li>
+                                <li id="l53"><a href="javascript:gbl_restart()" class="i18n_RESTART">REBOOT</a></li>
+                                <li id="l54"><a href="javascript:gbl_password()" class="i18n_CHANGEPASSWORD">CHANGE PASSWORD</a></li>
                             </ul>
                         </li>
                         <li class="subs" id="l6">
-                            <a class="flag" href="javascript:void(0)"><strong class="i18n_LOGSTORE">日志记录</strong></a>
+                            <a class="flag" href="javascript:void(0)"><strong class="i18n_LOGSTORE">LOG RECORD</strong></a>
                             <ul>
-                                <li id="l61"><a href="javascript:alarm_output(2)" class="i18n_OPERATELOG">操作日志</a></li>
+                                <li id="l61"><a href="javascript:alarm_output(2)" class="i18n_OPERATELOG">OPERATION LOG</a></li>
                              </ul>
                          </li>
                          <li id="l7">
                             <!-- <a href="javascript:void(0)" class="STRING_HELP"><strong>帮助</strong></a> -->
                          </li>
                          <li id="l8">
-                             <a href="javascript:btn_close()" class="STRING_EXIT"><strong class="i18n_EXIT">退出</strong></a>
+                             <a href="javascript:btn_close()" class="STRING_EXIT"><strong class="i18n_EXIT">EXIT</strong></a>
                          </li>
                      </ul>
                  </div>
