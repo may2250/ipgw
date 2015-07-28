@@ -294,3 +294,173 @@ function gbl_password() {
         });
     });
 }
+
+function gbl_upload() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
+    $('.main-content').empty();
+    $('.main-content').append(
+        '<div class="src_content">'
+
+                +'File:<input id="file1" type="file" name="file1">'
+
+                +'<button id="sendfile" value="send"> send</button>'
+
+        +'</div>'
+    );
+    
+    function upload(input) {
+      //支持chrome IE10
+      if (window.FileReader) {
+        var file = input.files[0];
+        filename = file.name.split(".")[0];
+        var reader = new FileReader();
+        reader.onload = function() {
+          console.log(this.result);
+          alert(this.result);
+          var paramjson = this.result;
+          //post file content
+          $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://"+localip+":4000/do/programs/uploads",
+                data: JSON.parse(paramjson),
+                dataType: "json",
+                success: function(data){
+                    if(data.sts == 8){
+                        window.location = "/login.esp";
+                    }else if(data.sts == 5){
+                        alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                        return false;
+                    }
+                    
+                },
+                error : function(err) {
+                    alert("AJAX ERROR---uploads!!");
+                }
+            });
+        }
+        reader.readAsText(file);
+      } 
+      //支持IE 7 8 9 10
+      else if (typeof window.ActiveXObject != 'undefined'){
+        var xmlDoc; 
+        xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
+        xmlDoc.async = false; 
+        xmlDoc.load(input.value); 
+        var paramjson = xmlDoc.xml;
+        //post file content
+          $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://"+localip+":4000/do/programs/uploads",
+                data: JSON.parse(paramjson),
+                dataType: "json",
+                success: function(data){
+                    if(data.sts == 8){
+                        window.location = "/login.esp";
+                    }else if(data.sts == 5){
+                        alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                        return false;
+                    }
+                    
+                },
+                error : function(err) {
+                    alert("AJAX ERROR---uploads!!");
+                }
+            });
+      } 
+      //支持FF
+      else if (document.implementation && document.implementation.createDocument) { 
+        var xmlDoc; 
+        xmlDoc = document.implementation.createDocument("", "", null); 
+        xmlDoc.async = false; 
+        xmlDoc.load(input.value); 
+        var paramjson = xmlDoc.xml;
+        //post file content
+          $.ajax({
+                type: "GET",
+                async: false,
+                url: "http://"+localip+":4000/do/programs/uploads",
+                data: JSON.parse(paramjson),
+                dataType: "json",
+                success: function(data){
+                    if(data.sts == 8){
+                        window.location = "/login.esp";
+                    }else if(data.sts == 5){
+                        alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                        return false;
+                    }
+                    
+                },
+                error : function(err) {
+                    alert("AJAX ERROR---uploads!!");
+                }
+            });
+      } else { 
+        alert('error'); 
+      } 
+    }
+
+    $('#sendfile').on('click', function(){
+        upload($('#file1')[0]);
+    });
+}
+
+function gbl_download() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
+    
+    function writeFile(data) {
+        var BB = this.Blob;
+        saveAs(
+              new BB(
+                  [data]
+                , {type: "text/plain;charset=" + document.characterSet}
+            )
+            , "test.txt"
+        );
+      }
+    //get back up data
+    $.ajax({
+          type: "GET",
+          async: false,
+          url: "http://"+localip+":4000/do/programs/downloads",
+          dataType: "json",
+          success: function(data){
+                if(data.sts == 8){
+                    window.location = "/login.esp";
+                }else if(data.sts == 5){
+                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                    return false;
+                }
+                alert(JSON.stringify(data));
+                writeFile(JSON.stringify(data));
+ 
+                
+                /*var fileWriter = new FileWriter();
+                fileWriter.onwriteend = function() {
+                    if (fileWriter.length === 0) {
+                        //fileWriter has been reset, write file
+                        fileWriter.write(blob);
+                    } else {
+                        //file has been overwritten with blob
+                        //use callback or resolve promise
+                    }
+                };
+                fileWriter.truncate(0);*/
+          },
+          error : function(err) {
+              alert("AJAX ERROR---downloads!!");
+          }
+      });
+}
+
+
+
+
+
+
+
