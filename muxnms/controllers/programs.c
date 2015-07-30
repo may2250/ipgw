@@ -834,21 +834,51 @@ static void ipinApply(HttpConn *conn) {
 }
 
 static void uploads(HttpConn *conn) {
+	char str[32] = {0};
+	if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
     printf("================>>>uploads start!!\n");
 	MprJson *jsonparam = httpGetParams(conn);
 	printf("==========uploads===========%s\n", mprJsonToString (jsonparam, MPR_JSON_QUOTES));
 	
-	char str[32] = {0};
+	
 	rendersts(str, 1);
     render(str);
 }
 
 static void downloads(HttpConn *conn) {
+	char str[32] = {0};
+	char outprg[20480] = {0};
+	if(isAuthed()){
+        return;
+    }
+    cchar *role = getSessionVar("role");
+    if(role == NULL){
+        rendersts(str, 8);
+        render(str);
+        return;
+    }
+    if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
+        rendersts(str, 5);//无权限
+        render(str);
+        return;
+    }
     printf("================>>>downloads start!!\n");
 	
-	char str[32] = {0};
-	rendersts(str, 1);
-    render(str);
+	getBackupJson(tmpip, outprg);
+	render(outprg);
 }
 
 static void common(HttpConn *conn) {

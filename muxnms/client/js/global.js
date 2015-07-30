@@ -302,26 +302,53 @@ function gbl_upload() {
     $('.main-content').empty();
     $('.main-content').append(
         '<div class="src_content">'
-
                 +'File:<input id="file1" type="file" name="file1">'
-
                 +'<button id="sendfile" value="send"> send</button>'
-
         +'</div>'
     );
     
     function upload(input) {
-      //支持chrome IE10
-      if (window.FileReader) {
-        var file = input.files[0];
-        filename = file.name.split(".")[0];
-        var reader = new FileReader();
-        reader.onload = function() {
-          console.log(this.result);
-          alert(this.result);
-          var paramjson = this.result;
-          //post file content
-          $.ajax({
+        //支持chrome IE10
+        if (window.FileReader) {
+            var file = input.files[0];
+            filename = file.name.split(".")[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                //console.log(this.result);
+                //alert(this.result);
+                var paramjson = this.result;
+                //post file content
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: "http://"+localip+":4000/do/programs/uploads",
+                    data: JSON.parse(paramjson),
+                    dataType: "json",
+                    success: function(data){
+                        if(data.sts == 8){
+                            window.location = "/login.esp";
+                        }else if(data.sts == 5){
+                            alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                            return false;
+                        }
+                          
+                    },
+                    error : function(err) {
+                        alert("AJAX ERROR---uploads!!");
+                    }
+                });
+            }
+            reader.readAsText(file);
+        } 
+        //支持IE 7 8 9 10
+        else if (typeof window.ActiveXObject != 'undefined'){
+            var xmlDoc; 
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
+            xmlDoc.async = false; 
+            xmlDoc.load(input.value); 
+            var paramjson = xmlDoc.xml;
+            //post file content
+            $.ajax({
                 type: "GET",
                 async: false,
                 url: "http://"+localip+":4000/do/programs/uploads",
@@ -334,52 +361,22 @@ function gbl_upload() {
                         alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
                         return false;
                     }
-                    
+                      
                 },
                 error : function(err) {
-                    alert("AJAX ERROR---uploads!!");
+                     alert("AJAX ERROR---uploads!!");
                 }
             });
-        }
-        reader.readAsText(file);
-      } 
-      //支持IE 7 8 9 10
-      else if (typeof window.ActiveXObject != 'undefined'){
-        var xmlDoc; 
-        xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
-        xmlDoc.async = false; 
-        xmlDoc.load(input.value); 
-        var paramjson = xmlDoc.xml;
-        //post file content
-          $.ajax({
-                type: "GET",
-                async: false,
-                url: "http://"+localip+":4000/do/programs/uploads",
-                data: JSON.parse(paramjson),
-                dataType: "json",
-                success: function(data){
-                    if(data.sts == 8){
-                        window.location = "/login.esp";
-                    }else if(data.sts == 5){
-                        alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
-                        return false;
-                    }
-                    
-                },
-                error : function(err) {
-                    alert("AJAX ERROR---uploads!!");
-                }
-            });
-      } 
+        } 
       //支持FF
-      else if (document.implementation && document.implementation.createDocument) { 
-        var xmlDoc; 
-        xmlDoc = document.implementation.createDocument("", "", null); 
-        xmlDoc.async = false; 
-        xmlDoc.load(input.value); 
-        var paramjson = xmlDoc.xml;
-        //post file content
-          $.ajax({
+        else if (document.implementation && document.implementation.createDocument) { 
+            var xmlDoc; 
+            xmlDoc = document.implementation.createDocument("", "", null); 
+            xmlDoc.async = false; 
+            xmlDoc.load(input.value); 
+            var paramjson = xmlDoc.xml;
+            //post file content
+            $.ajax({
                 type: "GET",
                 async: false,
                 url: "http://"+localip+":4000/do/programs/uploads",
@@ -398,9 +395,9 @@ function gbl_upload() {
                     alert("AJAX ERROR---uploads!!");
                 }
             });
-      } else { 
-        alert('error'); 
-      } 
+        } else { 
+            alert('error'); 
+        } 
     }
 
     $('#sendfile').on('click', function(){
@@ -420,7 +417,7 @@ function gbl_download() {
                   [data]
                 , {type: "text/plain;charset=" + document.characterSet}
             )
-            , "test.txt"
+            , "bakup.json"
         );
       }
     //get back up data

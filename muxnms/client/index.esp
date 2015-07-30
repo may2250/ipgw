@@ -64,7 +64,7 @@
          </div>
          <div class="main-content">
              <!--  CONTENT  -->
-		</div>
+		</div>		
         <div id="progress-notification" class="i18n_NOTIFICATIONTITLE" title="NOTICE">
             <p class="notification-tips"></p>
         </div>
