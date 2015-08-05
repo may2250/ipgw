@@ -428,37 +428,25 @@ function gbl_download() {
       }
     //get back up data
     $.ajax({
-          type: "GET",
-          async: false,
-          url: "http://"+localip+":4000/do/programs/downloads",
-          dataType: "json",
-          success: function(data){
-                if(data.sts == 8){
-                    window.location = "/login.esp";
-                }else if(data.sts == 5){
-                    alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
-                    return false;
-                }
-                alert(JSON.stringify(data));
-                writeFile(JSON.stringify(data));
- 
-                
-                /*var fileWriter = new FileWriter();
-                fileWriter.onwriteend = function() {
-                    if (fileWriter.length === 0) {
-                        //fileWriter has been reset, write file
-                        fileWriter.write(blob);
-                    } else {
-                        //file has been overwritten with blob
-                        //use callback or resolve promise
-                    }
-                };
-                fileWriter.truncate(0);*/
-          },
-          error : function(err) {
-              alert("AJAX ERROR---downloads!!");
-          }
-      });
+        type: "GET",
+        async: false,
+        url: "http://"+localip+":4000/do/programs/downloads",
+        dataType: "json",
+        success: function(data){
+            if(data.sts == 8){
+                window.location = "/login.esp";
+            }else if(data.sts == 5){
+                alert(globalObj._nv == "zh-CN"?"该用户权限不足.":"Permission Denied!");
+                return false;
+            }
+              //alert(JSON.stringify(data));
+            writeFile(JSON.stringify(data));           
+             
+        },
+        error : function(err) {
+            alert("AJAX ERROR---downloads!!");
+        }
+    });
 }
 
 function gbl_upgrade() {

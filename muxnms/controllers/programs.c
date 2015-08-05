@@ -851,8 +851,7 @@ static void uploads(HttpConn *conn) {
         return;
     }
 	MprJson *jsonparam = httpGetParams(conn);	
-	cchar *upstring = mprGetJson(jsonparam, "updatas");
-	//printf("==========upstring===========%s\n", upstring);
+	cchar *upstring = mprGetJson(jsonparam, "updatas");	
 	MprJson *updatas = mprParseJson(upstring);	
 	//赋值
 	clsGlobal.ipGwDb->devNetFun = atoi(mprGetJson(updatas, "devNetFun"));
@@ -863,6 +862,10 @@ static void uploads(HttpConn *conn) {
 		MprJson *destdb = NULL;
 		MprJson *prgjson = NULL;
 		UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
+		if(list_len(clsGlobal.ucIpDestDb) == 0){
+			redirect("/import.esp");
+			return;
+		}
 		cchar *ipstr = mprGetJson(updatas, "srcip");
 		cchar *macstr = mprGetJson(updatas, "srcmac");
 		char *newip = strtok(ipstr, ".");

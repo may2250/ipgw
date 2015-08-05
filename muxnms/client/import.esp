@@ -20,9 +20,6 @@
 			<div class="ny_zb">
 				<div class="ny_zblb1">
 					<ul class="clearfix">
-                        <li id="l1">
-                            <a class="ipinmode" href="javascript:createIPINUI()"><strong class="i18n_IPINPUT">IP-IN</strong></a>
-                        </li>
 						<li id="l2">
 							<a class="ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAME LIST</strong></a>
 						</li>
@@ -47,10 +44,10 @@
                                 <li id="l61"><a href="javascript:alarm_output(2)" class="i18n_OPERATELOG">OPERATION LOG</a></li>
                              </ul>
                          </li>
-                         <li id="l7">
-                            <a href="javascript:void(0)"><strong class="cur i18n_BACKUP">DATA BACK-UP</strong></a>
+                         <li class="subs" id="l7">
+                            <a class="cur" href="javascript:void(0)"><strong class="i18n_BACKUP">DATA BACK-UP</strong></a>
 							<ul>
-                                <li id="l71"><a href="import.esp" class="i18n_IMPORT">DATA IMPORT</a></li>
+                                <li id="l71"><a href="import.esp" class="cur i18n_IMPORT">DATA IMPORT</a></li>
                                 <li id="l72"><a href="javascript:gbl_download()" class="i18n_EXPORT">DATA EXPORT</a></li>
 								<!-- <li id="l73"><a href="upload-form.html" class="i18n_UPGRADE">UPGRADE</a></li> -->
                                </ul>
@@ -65,14 +62,20 @@
          </div>
          <div class="main-content">
              <div class="src_content">
-                File:<input id="file1" type="file" name="file1">
-                <form name="uploads" method="post" action="/do/programs/uploads">
-                    <table border="0">
-                        <tr><td><input type="text" id="updatas" name="updatas" value=""></td></tr>
-                    </table>
-                    <input type="submit" name="submit" value="send">
-                    <% inputSecurityToken(); %>
-                </form>
+                <fieldset>
+                    <legend class="i18n_IMPORT">DATA IMPORT</legend>
+                    <div class="sendsrcdiv">
+                        File:<input id="file1" type="file" name="file1">
+                        <form name="uploads" method="post" action="/do/programs/uploads">
+                            <table border="0">
+                                <tr><td><input type="text" id="updatas" style="display:none" name="updatas" value=""></td></tr>
+                            </table>
+                            </br>
+                            <input class="btn_send" type="submit" name="submit" value="SEND">
+                            <% inputSecurityToken(); %>
+                        </form>
+                    </div>
+                <fieldset>
             </div>
 		</div>
         <div id="progress-notification" class="i18n_NOTIFICATIONTITLE" title="NOTICE">
@@ -82,7 +85,7 @@
 	<div class="footer">
 		<hr/>
 		<p> <%= mprGetDate(0); %></p> 
-		<p>© Prevail Software, 2014-2024.V1.0.5 All rights reserved.</p>
+		<p>© Prevail Software, 2014-2024.V1.0.7 All rights reserved.</p>
 	</div>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
@@ -129,10 +132,11 @@
 				$('.i18n_IMPORT')[0].textContent = $.i18n.prop('IMPORT');
 				$('.i18n_EXPORT')[0].textContent = $.i18n.prop('EXPORT');
 				$('.i18n_EXIT').html($.i18n.prop('EXIT'));
-				
+				$('.i18n_IMPORT')[1].textContent = $.i18n.prop('IMPORT');
 			}
 		});
-        
+        $('#l7').children("ul").slideDown("fast");
+        $('.btn_send').attr("disabled",true); 
         function upload(input) {
             //支持chrome IE10
             if (window.FileReader) {
@@ -141,8 +145,13 @@
                 var reader = new FileReader();
                 reader.onload = function() {
                     var paramjson = this.result;
-                    $('#updatas').val($.trim(paramjson));               
-                    
+                    $('#updatas').val($.trim(paramjson));
+                    var xddfe = JSON.parse(paramjson);
+                    if(JSON.parse(paramjson) == "undefined"){
+                        $('.btn_send').attr("disabled",true); 
+                        return;
+                    }
+                    $('.btn_send').attr("disabled",false); 
                 }
                 reader.readAsText(file);
             } 
