@@ -838,6 +838,7 @@ static void uploads(HttpConn *conn) {
 	printf("================>>>uploads start!!\n");
 	int i = 0, j = 0, tmp = 0;
 	char str[32] = {0};
+	char optstr[256] = {0};
 	if(isAuthed()){
         redirect("/login.esp");
     }
@@ -852,7 +853,7 @@ static void uploads(HttpConn *conn) {
     }
 	MprJson *jsonparam = httpGetParams(conn);	
 	cchar *upstring = mprGetJson(jsonparam, "updatas");	
-	MprJson *updatas = mprParseJson(upstring);	
+	MprJson *updatas = mprParseJson(upstring);
 	//赋值
 	clsGlobal.ipGwDb->devNetFun = atoi(mprGetJson(updatas, "devNetFun"));
 	if(clsGlobal.ipGwDb->devNetFun){
@@ -861,6 +862,7 @@ static void uploads(HttpConn *conn) {
 	}else{
 		MprJson *destdb = NULL;
 		MprJson *prgjson = NULL;
+		UcIpDestDbSt3_st *eachPrg = NULL;
 		UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
 		if(list_len(clsGlobal.ucIpDestDb) == 0){
 			redirect("/import.esp");
@@ -895,8 +897,7 @@ static void uploads(HttpConn *conn) {
 		for(i=0;i<destdbcnt;i++){
 			memset(str, 0, sizeof(str));
 			sprintf(str, "destdb%d", i);
-			destdb = mprGetJsonObj(ucIpDestDb, str);
-			UcIpDestDbSt3_st *eachPrg = NULL;
+			destdb = mprGetJsonObj(ucIpDestDb, str);			
             list_get(clsGlobal.ucIpDestDb, i, &eachPrg);
 			eachPrg->outMode = atoi(mprGetJson(destdb, "outMode"));
 			eachPrg->port = atoi(mprGetJson(destdb, "port"));
@@ -925,17 +926,80 @@ static void uploads(HttpConn *conn) {
 			}
 			if(atoi(mprGetJson(destdb, "prgcnt")) == 1){
 				prgjson = mprGetJsonObj(destdb, "prgjson");
-				list_get(eachPrg->prgList, 0, &muxPrg);
-				muxPrg->inChn = atoi(mprGetJson(prgjson, "inChn"));
-				muxPrg->prgId = atoi(mprGetJson(prgjson, "prgId"));
-				muxPrg->pmtPID = atoi(mprGetJson(prgjson, "pmtPID"));
-				muxPrg->avPidListLen = atoi(mprGetJson(prgjson, "avPidListLen"));
-				if(muxPrg->avPidListLen > 0){
-					memcpy(muxPrg->avPidList, mprGetJson(prgjson, "avPidList"), muxPrg->avPidListLen);
-				}
+				if(eachPrg->prgList == NULL){
+					eachPrg->prgList = malloc(sizeof(list_t));
+					list_init(eachPrg->prgList);
+					muxPrg = malloc(sizeof(UcIpDestPrgMuxInfoSt_st));
+					muxPrg->inChn = atoi(mprGetJson(prgjson, "inChn"));
+					muxPrg->prgId = atoi(mprGetJson(prgjson, "prgId"));
+					muxPrg->pmtPID = atoi(mprGetJson(prgjson, "pmtPID"));
+					muxPrg->avPidListLen = atoi(mprGetJson(prgjson, "avPidListLen"));
+					if(muxPrg->avPidListLen > 0){
+						muxPrg->avPidList = malloc(sizeof(muxPrg->avPidListLen));
+						memcpy(muxPrg->avPidList, mprGetJson(prgjson, "avPidList"), muxPrg->avPidListLen);
+					}
+					list_append(eachPrg->prgList, muxPrg);
+				}else{
+					list_get(eachPrg->prgList, 0, &muxPrg);
+					muxPrg->inChn = atoi(mprGetJson(prgjson, "inChn"));
+					muxPrg->prgId = atoi(mprGetJson(prgjson, "prgId"));
+					muxPrg->pmtPID = atoi(mprGetJson(prgjson, "pmtPID"));
+					if(muxPrg->avPidListLen > 0){
+						memcpy(muxPrg->avPidList, mprGetJson(prgjson, "avPidList"), muxPrg->avPidListLen);
+					}
+				}			
 			}
 		}
 	}
+	EnableValidOutChn();
+	cchar *lan = getSessionVar("language");	
+	//write to device
+	if(clsGlobal.ipGwDb->devNetFun == 0){
+        if (!IpWrite(tmpip)){
+			if(!strcmp(lan, "zh-CN")){
+				feedback("error", "通信错误!");
+			}else{
+				feedback("error", "Communication Error!");
+			}            
+			redirect("/import.esp");
+        }
+        if (!IptvWrite(tmpip)){
+            if(!strcmp(lan, "zh-CN")){
+				feedback("error", "通信错误!");
+			}else{
+				feedback("error", "Communication Error!");
+			}            
+			redirect("/import.esp");
+        }
+    }else{
+        if (!ParamsWriteAll(tmpip, 0xff)){
+            if(!strcmp(lan, "zh-CN")){
+				feedback("error", "通信错误!");
+			}else{
+				feedback("error", "Communication Error!");
+			}            
+			redirect("/import.esp");
+        }
+    }
+	//add optlog
+    Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
+    EdiRec *optlog = ediCreateRec(db, "optlog");
+    if(optlog == NULL){
+       printf("================>>>optlog is NULL!!\n");
+    }
+    time_t curTime;
+    time(&curTime);
+	if(!strcmp(lan, "zh-CN")){
+		sprintf(optstr, "{'user': '%s', 'desc': '导入备份数据.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}else{
+		sprintf(optstr, "{'user': '%s', 'desc': 'Import backup datas.', 'level': '1', 'logtime':'%d'}", getSessionVar("userName"), curTime);
+	}
+    
+    MprJson  *row = mprParseJson(optstr);
+    if(ediSetFields(optlog, row) == 0){
+       printf("================>>>ediSetFields Failed!!\n");
+    }
+    ediUpdateRec(db, optlog);
 	redirect("/index.esp");
 }
 
