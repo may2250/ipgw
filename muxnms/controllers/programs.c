@@ -616,6 +616,7 @@ static void muxprgwrite(HttpConn *conn) {
         return;
     }
     MprJson *jsonparam = httpGetParams(conn);
+	//printf("==========jsonparam===========%s\n", mprJsonToString (jsonparam, MPR_JSON_QUOTES));
     int ttl = atoi(mprGetJson(jsonparam, "ttl"));
 	int outmode = atoi(mprGetJson(jsonparam, "outmode"));
     clsGlobal.ipGwDb->ttl = ttl;
@@ -834,28 +835,105 @@ static void ipinApply(HttpConn *conn) {
 }
 
 static void uploads(HttpConn *conn) {
+	printf("================>>>uploads start!!\n");
+	int i = 0, j = 0, tmp = 0;
 	char str[32] = {0};
 	if(isAuthed()){
-        return;
+        redirect("/login.esp");
     }
     cchar *role = getSessionVar("role");
     if(role == NULL){
-        rendersts(str, 8);
-        render(str);
-        return;
+        redirect("/login.esp");
     }
     if((strcmp(role, "root") !=0) && (strcmp(role, "admin") !=0)){
         rendersts(str, 5);//无权限
         render(str);
         return;
     }
-    printf("================>>>uploads start!!\n");
-	MprJson *jsonparam = httpGetParams(conn);
-	printf("==========uploads===========%s\n", mprJsonToString (jsonparam, MPR_JSON_QUOTES));
-	
-	
-	rendersts(str, 1);
-    render(str);
+	MprJson *jsonparam = httpGetParams(conn);	
+	cchar *upstring = mprGetJson(jsonparam, "updatas");
+	//printf("==========upstring===========%s\n", upstring);
+	MprJson *updatas = mprParseJson(upstring);	
+	//赋值
+	clsGlobal.ipGwDb->devNetFun = atoi(mprGetJson(updatas, "devNetFun"));
+	if(clsGlobal.ipGwDb->devNetFun){
+		//in-mode
+		
+	}else{
+		MprJson *destdb = NULL;
+		MprJson *prgjson = NULL;
+		UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
+		cchar *ipstr = mprGetJson(updatas, "srcip");
+		cchar *macstr = mprGetJson(updatas, "srcmac");
+		char *newip = strtok(ipstr, ".");
+		while(newip)
+		{
+			clsGlobal._ucDb->ip[i] = (unsigned char)atoi(newip);
+			newip = strtok(NULL, ".");
+			i++;
+		}
+		i=0;
+		char *tmpmac = strtok(macstr, ":");
+		while(tmpmac)
+		{
+			sscanf(tmpmac,"%x", &tmp);
+			clsGlobal._ucDb->mac[i] = (unsigned char)tmp;
+			tmpmac = strtok(NULL, ":");
+			i++;
+		}
+		clsGlobal._ucDb->port = atoi(mprGetJson(updatas, "srcport"));
+		clsGlobal.ipGwDb->ttl = atoi(mprGetJson(updatas, "ttl"));
+		clsGlobal.ipGwDb->dvbIptvMode = atoi(mprGetJson(updatas, "dvbIptvMode"));
+		clsGlobal._ucDb->netInterfaceMode = atoi(mprGetJson(updatas, "netInterfaceMode"));
+		int destdbcnt = atoi(mprGetJson(updatas, "destdbcnt"));	
+		MprJson *ucIpDestDb = mprGetJsonObj(updatas, "ucIpDestDb");
+		//printf("==============updatas=======>>%s\n", mprJsonToString (updatas, MPR_JSON_QUOTES));
+		char tmpstr[32] = {0};
+		for(i=0;i<destdbcnt;i++){
+			memset(str, 0, sizeof(str));
+			sprintf(str, "destdb%d", i);
+			destdb = mprGetJsonObj(ucIpDestDb, str);
+			UcIpDestDbSt3_st *eachPrg = NULL;
+            list_get(clsGlobal.ucIpDestDb, i, &eachPrg);
+			eachPrg->outMode = atoi(mprGetJson(destdb, "outMode"));
+			eachPrg->port = atoi(mprGetJson(destdb, "port"));
+			cchar *prgipstr = mprGetJson(destdb, "ipStr");			
+			cchar *prgmacstr = mprGetJson(destdb, "macStr");
+			memset(tmpstr, 0, sizeof(tmpstr));
+			memcpy(tmpstr, prgipstr, strlen(prgipstr));
+			newip = strtok(tmpstr, ".");
+			j = 0;
+			while(newip)
+			{
+				eachPrg->ip[j] = (unsigned char)atoi(newip);
+				newip = strtok(NULL, ".");
+				j++;
+			}
+			j = 0;
+			memset(tmpstr, 0, sizeof(tmpstr));
+			memcpy(tmpstr, prgmacstr, strlen(prgmacstr));
+			tmpmac = strtok(tmpstr, ":");
+			while(tmpmac)
+			{
+				sscanf(tmpmac,"%x", &tmp);
+				eachPrg->mac[j] = (unsigned char)tmp;
+				tmpmac = strtok(NULL, ":");
+				j++;
+			}
+			if(atoi(mprGetJson(destdb, "prgcnt")) == 1){
+				prgjson = mprGetJsonObj(destdb, "prgjson");
+				list_get(eachPrg->prgList, 0, &muxPrg);
+				muxPrg->inChn = atoi(mprGetJson(prgjson, "inChn"));
+				muxPrg->prgId = atoi(mprGetJson(prgjson, "prgId"));
+				muxPrg->pmtPID = atoi(mprGetJson(prgjson, "pmtPID"));
+				muxPrg->avPidListLen = atoi(mprGetJson(prgjson, "avPidListLen"));
+				if(muxPrg->avPidListLen > 0){
+					memcpy(muxPrg->avPidList, mprGetJson(prgjson, "avPidList"), muxPrg->avPidListLen);
+				}
+			}
+		}
+	}
+	redirect("/index.esp");
 }
 
 static void downloads(HttpConn *conn) {
@@ -875,11 +953,17 @@ static void downloads(HttpConn *conn) {
         render(str);
         return;
     }
-    printf("================>>>downloads start!!\n");
-	
 	getBackupJson(tmpip, outprg);
 	render(outprg);
 }
+
+static void gettoken(HttpConn *conn) {
+	char str[132] = {0};
+	printf("================>>>tokenkey--%s\n", httpGetSecurityToken(conn, 0));
+	memcpy(str, httpGetSecurityToken(conn, 0), 132);
+	render(str);
+}
+
 
 static void common(HttpConn *conn) {
 
@@ -934,6 +1018,7 @@ ESP_EXPORT int esp_controller_ipgw_programs(HttpRoute *route, MprModule *module)
     espDefineAction(route, "programs-cmd-ipinApply", ipinApply);
 	espDefineAction(route, "programs-cmd-uploads", uploads);
 	espDefineAction(route, "programs-cmd-downloads", downloads);
+	espDefineAction(route, "programs-cmd-gettoken", gettoken);
 
 
 #if SAMPLE_VALIDATIONS

@@ -533,14 +533,14 @@ void getInputStatusJson(char *ip, char *outprg){
 
 void getBackupJson(char *ip, char *outprg){
     cJSON *basejson = cJSON_CreateObject();
-     cJSON *iteminfo, *itmearry, *prgarray, *prgjson;
+    cJSON *iteminfo, *itemjson, *prgjsonlist, *prgjson;
     char *prgjsonstring;
     char str[32] = {0};
+    char idstr[16] = {0};
     cJSON_AddNumberToObject(basejson,"devNetFun", clsGlobal.ipGwDb->devNetFun);
     if(clsGlobal.ipGwDb->devNetFun){        
         //_inDb
-        cJSON_AddItemToObject(basejson, "_inDb", itmearry = cJSON_CreateArray());
-        cJSON_AddItemToArray(itmearry, iteminfo = cJSON_CreateObject());
+        cJSON_AddItemToObject(basejson, "_inDb", iteminfo= cJSON_CreateObject());
         clsGlobal._moduleBaseCmd = 0xf3;
         clsGlobal._moduleId = 1;
         if(!in_ParamsReadAll(ip, 0)){
@@ -572,31 +572,33 @@ void getBackupJson(char *ip, char *outprg){
         cJSON_AddNumberToObject(basejson,"netInterfaceMode", clsGlobal._ucDb->netInterfaceMode);
         cJSON_AddNumberToObject(basejson,"dvbIptvMode", clsGlobal.ipGwDb->dvbIptvMode);
         cJSON_AddNumberToObject(basejson,"ttl", clsGlobal.ipGwDb->ttl);
-            
         //ucIpDestDb
         int i = 0, j = 0;
         cJSON_AddNumberToObject(basejson,"destdbcnt", list_len(clsGlobal.ucIpDestDb));
-        cJSON_AddItemToObject(basejson, "ucIpDestDb", itmearry = cJSON_CreateArray());       
+        cJSON_AddItemToObject(basejson, "ucIpDestDb", iteminfo = cJSON_CreateObject());
         for(i=0;i<list_len(clsGlobal.ucIpDestDb);i++){
-            cJSON_AddItemToArray(itmearry, iteminfo = cJSON_CreateObject());
+            memset(idstr, 0, sizeof(idstr));
+            sprintf(idstr, "destdb%d", i);
+            cJSON_AddItemToObject(iteminfo, idstr, itemjson = cJSON_CreateObject());
             UcIpDestDbSt3_st *eachPrg = NULL;
             list_get(clsGlobal.ucIpDestDb, i, &eachPrg);
-            cJSON_AddNumberToObject(iteminfo,"outMode", eachPrg->outMode);
+            cJSON_AddNumberToObject(itemjson,"outMode", eachPrg->outMode);
             memset(str, 0, sizeof(str));
             sprintf(str, "%d.%d.%d.%d", eachPrg->ip[0], eachPrg->ip[1], eachPrg->ip[2], eachPrg->ip[3]);
-            cJSON_AddStringToObject(iteminfo,"ipStr", str);
-            cJSON_AddNumberToObject(iteminfo,"port", eachPrg->port);
+            cJSON_AddStringToObject(itemjson,"ipStr", str);
+            cJSON_AddNumberToObject(itemjson,"port", eachPrg->port);
             memset(str, 0, sizeof(str));
             sprintf(str, "%x:%x:%x:%x:%x:%x", eachPrg->mac[0], eachPrg->mac[1], eachPrg->mac[2],
             eachPrg->mac[3], eachPrg->mac[4], eachPrg->mac[5]);
-            cJSON_AddStringToObject(iteminfo,"macStr", str);
-            cJSON_AddItemToObject(iteminfo, "prglist", prgarray = cJSON_CreateArray());
-            cJSON_AddItemToArray(itmearry, prgjson = cJSON_CreateObject());
+            cJSON_AddStringToObject(itemjson,"macStr", str);
+            cJSON_AddNumberToObject(itemjson,"prgcnt", 0);
+
+            cJSON_AddItemToObject(itemjson, "prgjson", prgjson = cJSON_CreateObject());
             // 节目
             if(eachPrg->prgList != NULL){
                 UcIpDestPrgMuxInfoSt_st *muxPrg = NULL;
                 if(list_len(eachPrg->prgList) > 0){
-                    cJSON_AddNumberToObject(prgjson,"prgcnt", 1);
+                    cJSON_AddNumberToObject(itemjson,"prgcnt", list_len(eachPrg->prgList));
                     for(j=0;j<list_len(eachPrg->prgList);j++){
                         list_get(eachPrg->prgList, j, &muxPrg);
                         cJSON_AddNumberToObject(prgjson,"inChn", muxPrg->inChn);
@@ -606,12 +608,8 @@ void getBackupJson(char *ip, char *outprg){
                         if(muxPrg->avPidListLen > 0)
                             cJSON_AddStringToObject(prgjson,"avPidList", muxPrg->avPidList);
                     }
-                }else{
-                    cJSON_AddNumberToObject(prgjson,"prgcnt", 0);
                 }
-            }else{
-                cJSON_AddNumberToObject(prgjson,"prgcnt", 0);
-            }    
+            }           
         }          
     }    
     

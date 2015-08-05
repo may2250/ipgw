@@ -303,6 +303,13 @@ function gbl_upload() {
     $('.main-content').append(
         '<div class="src_content">'
                 +'File:<input id="file1" type="file" name="file1">'
+                +'<form name="uploads" method="post" action="/do/programs/uploads">'
+                    +'<table border="0">'
+                        +'<tr><td><input type="text" id="updatas" style="display:none" name="updatas" value=""></td></tr>'
+                    +'</table>'
+                    +'<input type="submit" name="submit" value="send">'
+                    +'<input name="-xsrf-" type="hidden" value="TOKEN-VALUE">'
+                +'</form>'
                 +'<button id="sendfile" value="send"> send</button>'
         +'</div>'
     );
@@ -314,15 +321,14 @@ function gbl_upload() {
             filename = file.name.split(".")[0];
             var reader = new FileReader();
             reader.onload = function() {
-                //console.log(this.result);
-                //alert(this.result);
                 var paramjson = this.result;
+                $('#updatas').val(paramjson);                
                 //post file content
                 $.ajax({
                     type: "POST",
                     async: false,
                     url: "http://"+localip+":4000/do/programs/uploads",
-                    data: JSON.parse(paramjson),
+                    data: jsondata,
                     dataType: "json",
                     success: function(data){
                         if(data.sts == 8){
@@ -454,6 +460,24 @@ function gbl_download() {
           }
       });
 }
+
+function gbl_upgrade() {
+    if(globalObj.timerID != undefined){
+        clearInterval(globalObj.timerID);
+    }
+    $('.main-content').empty();
+    $('.main-content').append(
+        '<div class="src_content">'
+                +'File:<input id="file1" type="file" name="file1">'
+                +'<button id="sendfile" value="send"> send</button>'
+                +'<input name="-xsrf-" type="hidden" value="TOKEN-VALUE">'
+        +'</div>'
+    );
+}
+
+
+
+
 
 
 

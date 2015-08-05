@@ -200,7 +200,7 @@ static const char *parse_string(cJSON *item,const char *str)
 }
 
 /* Render the cstring provided to an escaped version that can be printed. */
-static char *print_string_ptr(const char *str)
+char *print_string_ptr(const char *str)
 {
 	const char *ptr;char *ptr2,*out;int len=0;unsigned char token;
 	
@@ -238,7 +238,7 @@ static char *print_string_ptr(const char *str)
 static char *print_string(cJSON *item)	{return print_string_ptr(item->valuestring);}
 
 /* Predeclare these prototypes. */
-static const char *parse_value(cJSON *item,const char *value);
+/*static const char *parse_value(cJSON *item,const char *value);*/
 static char *print_value(cJSON *item,int depth,int fmt);
 static const char *parse_array(cJSON *item,const char *value);
 static char *print_array(cJSON *item,int depth,int fmt);
@@ -272,7 +272,7 @@ char *cJSON_Print(cJSON *item)				{return print_value(item,0,1);}
 char *cJSON_PrintUnformatted(cJSON *item)	{return print_value(item,0,0);}
 
 /* Parser core - when encountering text, process appropriately. */
-static const char *parse_value(cJSON *item,const char *value)
+const char *parse_value(cJSON *item,const char *value)
 {
 	if (!value)						return 0;	/* Fail on null. */
 	if (!strncmp(value,"null",4))	{ item->type=cJSON_NULL;  return value+4; }

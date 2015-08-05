@@ -20,7 +20,7 @@
                 }
             },
             "routes": "esp-html-mvc",
-            "xsrf": true
+            "xsrf": false
         },
         "esp": {
             "generate": {
