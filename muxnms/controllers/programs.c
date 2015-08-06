@@ -843,6 +843,7 @@ static void uploads(HttpConn *conn) {
         redirect("/login.esp");
     }
     cchar *role = getSessionVar("role");
+	cchar *lan = getSessionVar("language");		
     if(role == NULL){
         redirect("/login.esp");
     }
@@ -858,7 +859,44 @@ static void uploads(HttpConn *conn) {
 	clsGlobal.ipGwDb->devNetFun = atoi(mprGetJson(updatas, "devNetFun"));
 	if(clsGlobal.ipGwDb->devNetFun){
 		//in-mode
-		
+		MprJson *_inDb = mprGetJsonObj(updatas, "_inDb");
+		if(_inDb == NULL){
+			feedback("error", "Communication Error!");			           
+			redirect("/import.esp");
+		}
+		clsGlobal._inDb->valid = atoi(mprGetJson(_inDb, "valid"));
+		clsGlobal._inDb->port = atoi(mprGetJson(_inDb, "port"));
+		clsGlobal._inDb->unicastMulticast = atoi(mprGetJson(_inDb, "unicastMulticast"));
+		clsGlobal._inDb->inStreamType = atoi(mprGetJson(_inDb, "inStreamType"));
+		//clsGlobal._inDb->outStreamBitrate = atoi(mprGetJson(_inDb, "outStreamBitrate"));
+		cchar *ipstr = mprGetJson(_inDb, "ip");
+		cchar *macstr = mprGetJson(_inDb, "mac");
+		cchar *srcipstr = mprGetJson(_inDb, "srcip");
+		char *newip = strtok(ipstr, ".");
+		while(newip)
+		{
+			clsGlobal._inDb->ip[i] = (unsigned char)atoi(newip);
+			newip = strtok(NULL, ".");
+			i++;
+		}
+		i=0;
+		char *tmpmac = strtok(macstr, ":");
+		while(tmpmac)
+		{
+			sscanf(tmpmac,"%x", &tmp);
+			clsGlobal._inDb->mac[i] = (unsigned char)tmp;
+			tmpmac = strtok(NULL, ":");
+			i++;
+		}
+		i=0;
+		newip = strtok(srcipstr, ".");
+		while(newip)
+		{
+			clsGlobal._inDb->srcIp[i] = (unsigned char)atoi(newip);
+			newip = strtok(NULL, ".");
+			i++;
+		}
+		in_ParamsWriteAll(tmpip);
 	}else{
 		MprJson *destdb = NULL;
 		MprJson *prgjson = NULL;
@@ -890,9 +928,30 @@ static void uploads(HttpConn *conn) {
 		clsGlobal.ipGwDb->ttl = atoi(mprGetJson(updatas, "ttl"));
 		clsGlobal.ipGwDb->dvbIptvMode = atoi(mprGetJson(updatas, "dvbIptvMode"));
 		clsGlobal._ucDb->netInterfaceMode = atoi(mprGetJson(updatas, "netInterfaceMode"));
+		//write orgin info
+		clsGlobal._moduleBaseCmd = 0xf1;
+		clsGlobal._moduleId = 0x1;		
+		int isGood = 1;
+		isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)1, clsGlobal._ucDb->ip, 4);
+		isGood &= ParamWriteByBytesCmd(tmpip, (unsigned char)2, clsGlobal._ucDb->mac, 6);
+		isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)3, clsGlobal._ucDb->port, 2);
+		if (isGood){
+			isGood &= ParamWriteByIntCmd(tmpip, (unsigned char)0xf0, 0, 0);
+		}else{
+			if(!strcmp(lan, "zh-CN")){
+				feedback("error", "通信错误!");
+			}else{
+				feedback("error", "Communication Error!");
+			}            
+			redirect("/import.esp");
+		}
 		int destdbcnt = atoi(mprGetJson(updatas, "destdbcnt"));	
 		MprJson *ucIpDestDb = mprGetJsonObj(updatas, "ucIpDestDb");
 		//printf("==============updatas=======>>%s\n", mprJsonToString (updatas, MPR_JSON_QUOTES));
+		if(ucIpDestDb == NULL){
+			feedback("error", "Communication Error!");			           
+			redirect("/import.esp");
+		}
 		char tmpstr[32] = {0};
 		for(i=0;i<destdbcnt;i++){
 			memset(str, 0, sizeof(str));
@@ -924,6 +983,7 @@ static void uploads(HttpConn *conn) {
 				tmpmac = strtok(NULL, ":");
 				j++;
 			}
+			
 			if(atoi(mprGetJson(destdb, "prgcnt")) == 1){
 				prgjson = mprGetJsonObj(destdb, "prgjson");
 				if(eachPrg->prgList == NULL){
@@ -948,39 +1008,46 @@ static void uploads(HttpConn *conn) {
 						memcpy(muxPrg->avPidList, mprGetJson(prgjson, "avPidList"), muxPrg->avPidListLen);
 					}
 				}			
+			}else{
+				if(eachPrg->prgList != NULL){
+					freeUcIpDestPrg(eachPrg->prgList);
+					free(eachPrg->prgList);
+					eachPrg->prgList = NULL;
+				}
 			}
 		}
-	}
-	EnableValidOutChn();
-	cchar *lan = getSessionVar("language");	
-	//write to device
-	if(clsGlobal.ipGwDb->devNetFun == 0){
-        if (!IpWrite(tmpip)){
-			if(!strcmp(lan, "zh-CN")){
-				feedback("error", "通信错误!");
-			}else{
-				feedback("error", "Communication Error!");
-			}            
-			redirect("/import.esp");
-        }
-        if (!IptvWrite(tmpip)){
-            if(!strcmp(lan, "zh-CN")){
-				feedback("error", "通信错误!");
-			}else{
-				feedback("error", "Communication Error!");
-			}            
-			redirect("/import.esp");
-        }
-    }else{
-        if (!ParamsWriteAll(tmpip, 0xff)){
-            if(!strcmp(lan, "zh-CN")){
-				feedback("error", "通信错误!");
-			}else{
-				feedback("error", "Communication Error!");
-			}            
-			redirect("/import.esp");
-        }
-    }
+		EnableValidOutChn();
+		clsGlobal._moduleBaseCmd = 0xf2;
+		//write to device
+		if(clsGlobal.ipGwDb->devNetFun == 0){
+			if (!IpWrite(tmpip)){
+				if(!strcmp(lan, "zh-CN")){
+					feedback("error", "通信错误!");
+				}else{
+					feedback("error", "Communication Error!");
+				}            
+				redirect("/import.esp");
+			}
+			if (!IptvWrite(tmpip)){
+				if(!strcmp(lan, "zh-CN")){
+					feedback("error", "通信错误!");
+				}else{
+					feedback("error", "Communication Error!");
+				}            
+				redirect("/import.esp");
+			}
+		}else{
+			if (!ParamsWriteAll(tmpip, 0xff)){
+				if(!strcmp(lan, "zh-CN")){
+					feedback("error", "通信错误!");
+				}else{
+					feedback("error", "Communication Error!");
+				}            
+				redirect("/import.esp");
+			}
+		}
+		
+	}	
 	//add optlog
     Edi *db = ediOpen("db/ipgw.mdb", "mdb", EDI_AUTO_SAVE);
     EdiRec *optlog = ediCreateRec(db, "optlog");

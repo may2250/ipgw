@@ -141,7 +141,7 @@ void SetDb3(int index){
     clsGlobal._ucDb4->outMode = ucDb->outMode;
     clsGlobal._ucDb4->port = ucDb->port;
     clsGlobal._ucDb4->outputEnable = ucDb->outputEnable;
-    clsGlobal._ucDb4->outChn = 0;
+    clsGlobal._ucDb4->outChn = 0;    
     if(clsGlobal._ucDb4->prgList != NULL){
         freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
         //free(clsGlobal._ucDb4->prgList);
