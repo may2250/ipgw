@@ -746,7 +746,7 @@ function readipinsts(){
 
         },
         error : function(err) {
-            alert("AJAX ERROR---readipinsts!!");
+            //alert("AJAX ERROR---readipinsts!!");
         }
     });
 }

@@ -20,6 +20,9 @@
 			<div class="ny_zb">
 				<div class="ny_zblb1">
 					<ul class="clearfix">
+                        <li id="l1">
+                            <a class="ipinmode" href="javascript:createIPINUI()"><strong class="i18n_IPINPUT">IP-IN</strong></a>
+                        </li>
 						<li id="l2">
 							<a class="ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAME LIST</strong></a>
 						</li>
@@ -66,12 +69,13 @@
                     <legend class="i18n_IMPORT">DATA IMPORT</legend>
                     <div class="sendsrcdiv">
                         File:<input id="file1" type="file" name="file1">
-                        <form name="uploads" method="post" action="/do/programs/uploads">
+                        <form id="updataform" name="uploads" method="post" action="/do/programs/uploads">
                             <table border="0">
                                 <tr><td><input type="text" id="updatas" style="display:none" name="updatas" value=""></td></tr>
                             </table>
                             </br>
-                            <input class="btn_send" type="submit" name="submit" value="SEND">
+                            <input type="button" id="btn_import" class="i18n_BTNIMPORT" value="IMPORT" />
+                           <!-- <input class="btn_send" type="submit" name="submit" value="SEND"> -->
                             <% inputSecurityToken(); %>
                         </form>
                     </div>
@@ -133,8 +137,43 @@
 				$('.i18n_EXPORT')[0].textContent = $.i18n.prop('EXPORT');
 				$('.i18n_EXIT').html($.i18n.prop('EXIT'));
 				$('.i18n_IMPORT')[1].textContent = $.i18n.prop('IMPORT');
+                $('.i18n_BTNIMPORT').val($.i18n.prop('BTNIMPORT')); 
 			}
 		});
+        
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: "http://"+localip+":4000/do/programs/getdevNetFun",
+            dataType: "json",
+            setTimeout: 1,
+            success: function(res){
+                if(res.sts == 8){
+                    window.location = "/login.esp";
+                }else{
+                    if(res.mode == 0){
+                        $('.ipinmode').css("display", "none");
+                        $('.ipoutmode').css("display", "");
+                    }else{
+                        $('.ipinmode').css("display", "");
+                        $('.ipoutmode').css("display", "none");
+                    }
+                }
+            },
+            error : function(err) {
+            }
+        });
+        
+        $( "#btn_import" ).click(function( event ) {
+            $('.notification-tips')[0].textContent = globalObj._nv == "zh-CN"?"导入数据中...":"Data importing...";
+            $( "#progress-notification" ).dialog({
+                autoOpen: false,
+                modal: true,
+                width: 300
+            }).dialog( "open");
+            $("#updataform").submit();
+        });
+        
         $('#l7').children("ul").slideDown("fast");
         $('.btn_send').attr("disabled",true); 
         function upload(input) {
