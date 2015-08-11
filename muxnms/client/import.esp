@@ -175,7 +175,7 @@
         });
         
         $('#l7').children("ul").slideDown("fast");
-        $('.btn_send').attr("disabled",true); 
+        $('#btn_import').attr("disabled",true); 
         function upload(input) {
             //支持chrome IE10
             if (window.FileReader) {
@@ -185,12 +185,11 @@
                 reader.onload = function() {
                     var paramjson = this.result;
                     $('#updatas').val($.trim(paramjson));
-                    var xddfe = JSON.parse(paramjson);
                     if(JSON.parse(paramjson) == "undefined"){
-                        $('.btn_send').attr("disabled",true); 
+                        $('#btn_import').attr("disabled",true); 
                         return;
                     }
-                    $('.btn_send').attr("disabled",false); 
+                    $('#btn_import').attr("disabled",false); 
                 }
                 reader.readAsText(file);
             } 
