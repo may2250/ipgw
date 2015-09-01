@@ -40,7 +40,7 @@ void getPrgsJson(char *ip, char *outprg, char *lan){
             if(!strcmp(lan, "zh-CN")){
                 sprintf(str,"节目%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
             }else{
-                sprintf(str,"Programe-%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
+                sprintf(str,"Program-%d(0X%x):PID(0X%x) PCR_PID(0X%x) - %s",ptmpPrgInfo->prgNum, ptmpPrgInfo->prgNum, ptmpPrgInfo->pmtPid, ptmpPrgInfo->newPcrPid, idstr );
             }
             memset(idstr, 0, sizeof(idstr));
             cJSON_AddStringToObject(prgjson,"title", str);

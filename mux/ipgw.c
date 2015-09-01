@@ -15,7 +15,7 @@ void Init(){
     clsGlobal._ucDb4 = malloc(sizeof(UcIpDestDbSt4_st));
     memset(clsGlobal._ucDb4, 0 ,sizeof(UcIpDestDbSt4_st));
     clsGlobal._ucDb4->prgList = malloc(sizeof(list_t));
-
+    list_init(clsGlobal._ucDb4->prgList);
     clsGlobal.ipGwDb = malloc(sizeof(IpGWDbSt_st));
     memset(clsGlobal.ipGwDb, 0 ,sizeof(IpGWDbSt_st));
     clsGlobal.ucIpDestDb = malloc(sizeof(list_t));
@@ -60,22 +60,21 @@ int IpRead(char *ip){
 
 int IptvRead(char *ip){
     int rslt = 1, i = 0;
-    int chnMax = 0;
+    int chnMax = 0;    
     if (ParamRead_outChnMax(ip, &chnMax) && chnMax > 0){
-        clsGlobal._moduleId = 0;
+        clsGlobal._moduleId = 0;        
         rslt = ParamsRead_dvbIptvMode(ip, &clsGlobal.ipGwDb->dvbIptvMode);
         if (!rslt) return 0;
         rslt &= ParamsRead_ttl(ip, &clsGlobal.ipGwDb->ttl);
-        if (!rslt) return 0;
+        if (!rslt) return 0;        
         //clear db3
         freeUcIpDestdbs(clsGlobal.ucIpDestDb);
         for (i = 0; i < chnMax; i++)
         {
             clsGlobal._moduleId = (i + 1);
             rslt &= dest1_ParamsReadAll(ip);
-
             if (!rslt) return 0;
-            GetDb3(clsGlobal.ucIpDestDb);
+            GetDb3(clsGlobal.ucIpDestDb);            
         }
    }
    return rslt;

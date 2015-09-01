@@ -23,23 +23,26 @@ int ParamRead_outChnMax(char *ip, int *chnMax){
 int dest1_ParamsReadAll(char *ip){
     int isGood = 1, i = 0;
     clsGlobal._moduleBaseCmd = 0xf2;
-    isGood &= ParamReadByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);
+    isGood &= ParamReadByBytesCmd(ip, (unsigned char)1, clsGlobal._ucDb4->ip, 4);    
     isGood &= ParamReadByBytesCmd(ip, (unsigned char)2, clsGlobal._ucDb4->mac, 6);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)3, &clsGlobal._ucDb4->port, 2);
     isGood &= ParamReadByIntCmd(ip, (unsigned char)4, &clsGlobal._ucDb4->outMode, 1);
     //if (m_supportOutputEnable || m_autoEnableByPrgCnt)
-    //{
+    //{    
     isGood &= ParamReadByIntCmd(ip, (unsigned char)5, &clsGlobal._ucDb4->outputEnable, 1);
    // }
     if (1)//m_supportPrgMuxInfo
     {
-        freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
-        free(clsGlobal._ucDb4->prgList);
+        if(clsGlobal._ucDb4->prgList != NULL){
+            freeUcIpDestPrg(clsGlobal._ucDb4->prgList);
+            free(clsGlobal._ucDb4->prgList);
+        } 
         clsGlobal._ucDb4->prgList = NULL;
         if (clsGlobal._ucDb4->prgList == NULL){
             clsGlobal._ucDb4->prgList = malloc(sizeof(list_t));
             list_init(clsGlobal._ucDb4->prgList);
         }
+        
         if (0)//m_supportMultiMux
         {
 //            if (ParamReadByBytesCmd((byte)UcIpDest_cmd.prgMuxInfoMultiChnId, muxInfoBytes, 1))
@@ -56,7 +59,7 @@ int dest1_ParamsReadAll(char *ip){
             int muxGetRslt = ParamReadByBytesCmd(ip, (unsigned char)6, muxInfoBytes, 4);
 //            for(i=0;i<4;i++){
 //                printf("===muxInfoBytes==[%x]\n", muxInfoBytes[i]);
-//            }
+//            }  
             if (muxGetRslt && muxInfoBytes[0] > 0)
             {
                 if (muxInfoBytes[0] * 3 + 1 == 4)

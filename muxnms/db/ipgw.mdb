@@ -10,9 +10,9 @@
             'roles': { type: 'string' },
         },
         data: [
-            [ 1,'root','888888','root',],
-            [ 2,'admin','888888','admin',],
-            [ 3,'user','888888','user',],
+            [ 1,'root','wanlong','root',],
+            [ 2,'admin','wanlong','admin',],
+            [ 3,'user','wanlong','user',],
         ],
     },
     'optlog': {

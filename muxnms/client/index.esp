@@ -12,7 +12,7 @@
 <body>
 	<div class="navbar">
 		<nav>
-			<label class="i18n_NMSDEVTITLE">DIGIT DEVICE NMS</label>
+			<label class="i18n_NMSDEVTITLE">VL4119</label>
 		</nav>
     </div>
     <div class="container">
@@ -24,7 +24,7 @@
                             <a class="cur ipinmode" href="javascript:createIPINUI()"><strong class="i18n_IPINPUT">IP-IN</strong></a>
                         </li>
 						<li id="l2">
-							<a class="cur ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAME LIST</strong></a>
+							<a class="cur ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAM LIST</strong></a>
 						</li>
 						<li class="subs" id="l3">
 							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong class="i18n_SRCSEND">ORIGIN</strong></a>
@@ -73,8 +73,7 @@
     </div>
 	<div class="footer">
 		<hr/>
-		<p> <%= mprGetDate(0); %></p> 
-		<p>© Prevail Software, 2014-2024.V1.0.7 All rights reserved.</p>
+		<p>©Software, 2014-2024.V1.0.8 All rights reserved.</p>
 	</div>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui.min.js"></script>
@@ -124,7 +123,7 @@
 				
 			}
 		});
-		
+		//$('.localtime').html(new Date().toLocaleString());
 		function getOS(){
             var str=navigator.userAgent;
             var BrowserS=['MSIE 9.0','MSIE 8.0','MSIE 7.0','MSIE6.0',
