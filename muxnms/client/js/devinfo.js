@@ -667,6 +667,15 @@ function createHomeUI(){
         }
         outprgList();
     });
+    
+    $('.prg_outmode').on('change', function(){
+        var spstindex = $('.prg_outmode')[0].selectedIndex;
+        if(spstindex == 0){
+            $('.prg_destmac').removeAttr("disabled", "");
+        }else{
+            $('.prg_destmac').attr("disabled", "disabled");
+        }
+    });
 }
 
 function readipIN(){
@@ -1147,7 +1156,7 @@ function createDevFuncUI(){
         }
     }).click(function( event ) {
         event.preventDefault();
-        if((confirm( globalObj._nv == "zh-CN"?"确定要修改吗？ ":"Sure to modify?")==true)){
+        if((confirm( globalObj._nv == "zh-CN"?"确定要修改吗？ ":"Save Changes?")==true)){
             var mode = $('.d_InterfaceMode').get(0).selectedIndex;
             $.ajax({
                 type: "GET",

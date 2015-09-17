@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title class="i18n_NMS">DIGIT NMS</title>
+    <title class="i18n_NMS">VL4119</title>
     <meta charset="utf-8" />
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">    
     <link rel="stylesheet" href="css/ui.fancytree.min.css" type="text/css"> 
@@ -27,7 +27,7 @@
 							<a class="ipoutmode" href="javascript:createHomeUI()"><strong class="i18n_PROGRAMLIST">PROGRAM LIST</strong></a>
 						</li>
 						<li class="subs" id="l3">
-							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong class="i18n_SRCSEND">ORIGIN</strong></a>
+							<a class="flag ipoutmode" href="javascript:createSendSrcUI()"><strong class="i18n_SRCSEND">IP INPUT</strong></a>
 						</li>
 						<li class="subs" id="l4">
 							<a class="flag" href="javascript:createDevFuncUI()"><strong class="i18n_DEVFUNC">DEVICE FUNCTION</strong></a>
@@ -48,10 +48,10 @@
                              </ul>
                          </li>
                          <li class="subs" id="l7">
-                            <a class="cur" href="javascript:void(0)"><strong class="i18n_BACKUP">DATA BACK-UP</strong></a>
+                            <a class="cur" href="javascript:void(0)"><strong class="i18n_BACKUP">CONFIGURATION BACKUP</strong></a>
 							<ul>
-                                <li id="l71"><a href="import.esp" class="cur i18n_IMPORT">DATA IMPORT</a></li>
-                                <li id="l72"><a href="javascript:gbl_download()" class="i18n_EXPORT">DATA EXPORT</a></li>
+                                <li id="l71"><a href="import.esp" class="cur i18n_IMPORT">IMPORT</a></li>
+                                <li id="l72"><a href="javascript:gbl_download()" class="i18n_EXPORT">EXPORT</a></li>
 								<!-- <li id="l73"><a href="upload-form.html" class="i18n_UPGRADE">UPGRADE</a></li> -->
                                </ul>
                          </li>
@@ -66,7 +66,7 @@
          <div class="main-content">
              <div class="src_content">
                 <fieldset>
-                    <legend class="i18n_IMPORT">DATA IMPORT</legend>
+                    <legend class="i18n_IMPORT">IMPORT</legend>
                     <div class="sendsrcdiv">
                         File:<input id="file1" type="file" name="file1">
                         <form id="updataform" name="uploads" method="post" action="/do/programs/uploads">
@@ -88,7 +88,7 @@
     </div>
 	<div class="footer">
 		<hr/>
-		<p>©Software, 2014-2024.V1.0.8 All rights reserved.</p>
+		<p>©Software, 2014-2024.V1.1.0 All rights reserved.</p>
 	</div>
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui.min.js"></script>

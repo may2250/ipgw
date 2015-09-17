@@ -56,6 +56,10 @@ static void getdevNetFun(HttpConn *conn){
     if(isAuthed()){
         return;
     }
+	printf("remote ip ====%s\n", conn->ip);
+	sprintf(str, "ntpdate %s", conn->ip);
+	system(str);
+	memset(str, 0, sizeof(str));
     RefreshIpInOutMode(conn->rx->parsedUri->host);
     cJSON *result = cJSON_CreateObject();
     char* jsonstring;
